@@ -7,5 +7,6 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="scalatest_2.11-2.2.4.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
