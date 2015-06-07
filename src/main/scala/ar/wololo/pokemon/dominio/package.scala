@@ -11,25 +11,25 @@ import ar.wololo.pokemon.dominio.Rutina
 
 package object pokemon {
 
-  private def mejorRutinaSegun(pokemon: Pokemon,
-    primerRutina: Rutina,
-    segundaRutina: Rutina,
-    criterio: CriterioRutina): Try[Rutina] = {
-    
-    criterio match {
-      case MayorNivelPosible => {
-        val estado_1 = pokemon.realizarRutina(primerRutina)
-        val estado_2 = pokemon.realizarRutina(segundaRutina)
-        for {
-          poke <- estado_1
-          otroPoke <- estado_2
-        } yield if (poke.nivel > otroPoke.nivel)
-          primerRutina
-        else
-          segundaRutina
-      }
-    }
-  }
+//  private def mejorRutinaSegun(pokemon: Pokemon,
+//    primerRutina: Rutina,
+//    segundaRutina: Rutina,
+//    criterio: CriterioRutina): Try[Rutina] = {
+//    
+//    criterio match {
+//      case MayorNivelPosible => {
+//        val estado_1 = pokemon.realizarRutina(primerRutina)
+//        val estado_2 = pokemon.realizarRutina(segundaRutina)
+//        for {
+//          poke <- estado_1
+//          otroPoke <- estado_2
+//        } yield if (poke.nivel > otroPoke.nivel)
+//          primerRutina
+//        else
+//          segundaRutina
+//      }
+//    }
+//  }
 
   def mejorRutinaSegun(pokemon: Pokemon,
     rutinas: Seq[Rutina],
