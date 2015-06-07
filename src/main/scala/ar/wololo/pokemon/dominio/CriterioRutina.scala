@@ -8,10 +8,6 @@ package ar.wololo.pokemon.dominio
  * como estructura, no variará en el tiempo y es inmutable.
  */
 
-class Rutina(val actividades: Seq[Actividad]) {
-  def aplicateA(pokemon: Pokemon): Pokemon = null
-}
-
 abstract class CriterioRutina { }
 case object MayorNivelPosible extends CriterioRutina
 case object MayorEnergiaPosible extends CriterioRutina

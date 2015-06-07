@@ -1,4 +1,5 @@
 package ar.wololo.pokemon.dominio
+import scala.util.{Try,Success,Failure}
 
 class Pokemon ( val estado: EstadoPokemon,
                 val listaAtaques: List[Ataque],
@@ -14,6 +15,14 @@ class Pokemon ( val estado: EstadoPokemon,
                 val velocidad: Integer,
                 val condicionEvolutiva: CondicionEvolutiva) {
   
+  def hacerRutina(rutina:Rutina){
+    rutina.esHechaPor(this)
+  }
+  
+  def hacerActividad(actividad:Actividad): Try[Pokemon] = { //MOCK ACTIVIDAD
+     Success(this)
+  }
+
 }
 
 class Tipo
