@@ -1,4 +1,4 @@
-package ar.wololo.pockemon.dominio
+package ar.wololo.pokemon.dominio
 
 class Pokemon ( val estado: EstadoPokemon,
                 val listaAtaques: List[Ataque],
