@@ -8,37 +8,28 @@ import ar.wololo.pokemon.dominio.MayorEnergiaPosible
 import ar.wololo.pokemon.dominio.MenorPesoPosible
 import scala.util.Try
 import ar.wololo.pokemon.dominio.Rutina
+import scala.util.Success
 
 package object pokemon {
 
-//  private def mejorRutinaSegun(pokemon: Pokemon,
-//    primerRutina: Rutina,
-//    segundaRutina: Rutina,
-//    criterio: CriterioRutina): Try[Rutina] = {
-//    
-//    criterio match {
-//      case MayorNivelPosible => {
-//        val estado_1 = pokemon.realizarRutina(primerRutina)
-//        val estado_2 = pokemon.realizarRutina(segundaRutina)
-//        for {
-//          poke <- estado_1
-//          otroPoke <- estado_2
-//        } yield if (poke.nivel > otroPoke.nivel)
-//          primerRutina
-//        else
-//          segundaRutina
-//      }
-//    }
-//  }
+  case class NoHuboRutinaHacibleException(pokemon: Pokemon) extends Exception
 
-  def mejorRutinaSegun(pokemon: Pokemon,
+  def obtenerMejorRutinaSegun(pokemon: Pokemon,
     rutinas: Seq[Rutina],
     criterio: CriterioRutina): Try[Rutina] = {
+
+    var estadosYRutinas: Seq[(Try[Pokemon], Rutina)] = null
+
+    try {
+      estadosYRutinas = rutinas.map { rutina => (pokemon.hacerRutina(rutina), rutina) }.filter { case (estadoPokemon, _) => estadoPokemon.isSuccess }
+    } catch {
+      case e: Exception => throw new NoHuboRutinaHacibleException(pokemon)
+    }
+
     criterio match {
-      case MayorNivelPosible => null
-      case MayorEnergiaPosible => null
-      case MenorPesoPosible => null
+      case MayorNivelPosible => Success(estadosYRutinas.maxBy { case (estadoPokemon, _) => estadoPokemon.get.nivel }._2)
+      case MayorEnergiaPosible => Success(estadosYRutinas.maxBy { case (estadoPokemon, _) => estadoPokemon.get.energia }._2)
+      case MenorPesoPosible => Success(estadosYRutinas.minBy { case (estadoPokemon, _) => estadoPokemon.get.peso }._2)
     }
   }
-
 }
