@@ -32,6 +32,9 @@ case class Pokemon ( val estado: EstadoPokemon,
     this
   }
   //
+  def evolucionar(piedra :Piedra):Pokemon ={
+    this
+  }
 }
 
 trait ResultadoActividad 
@@ -40,7 +43,7 @@ case class Paso(pokemon :Pokemon) extends ResultadoActividad
 
 
 class Gimnasio(){
-    def realizaActividad(pokemon :Pokemon,actividad : Actividad):ResultadoActividad = pokemon.estado match {
+   def realizarActividad(pokemon :Pokemon,actividad : Actividad):ResultadoActividad = pokemon.estado match {
     case Ko => NoPaso (pokemon,"no pudo completar por estar ko")
     case Dormido => Paso (pokemon) //falta registrar que la cantidad de veces que durmio
     case _ => actividad match{
@@ -61,7 +64,12 @@ class Gimnasio(){
           case Hembra => Paso(pokemon.copy(peso = Math.max(0, pokemon.peso - 10)))
         }
       }
+      //case UsarPiedra => Paso(pokemon.evolucionar(pokemon.condicionEvolutiva)) //doble dispach sobre piedra y pokemon, polimorfismo adhoc
     }
+  }
+   
+  def realizarActividad(pokemon :Pokemon,actividad :Actividad,piedra :Piedra):ResultadoActividad = actividad match {
+    case UsarPiedra =>
   }
 }
 
@@ -110,6 +118,9 @@ class Ataque(val efecto: Pokemon => Pokemon,
  }
  object UsarUnaPiedra extends CondicionEvolutiva {
    def evaluaCondicion(unPokemon: Pokemon) = true // Implementar
+ }
+ object UsarUnaPiedraLunar extends CondicionEvolutiva{
+   def evaluaCondicion(unPokemon: Pokemon) = true // Implementar VA POR ENUNCIADO
  }
  
  abstract class Piedra
