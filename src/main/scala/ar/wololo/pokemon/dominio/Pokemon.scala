@@ -15,7 +15,7 @@ class Pokemon ( val estado: EstadoPokemon,
                 val velocidad: Integer,
                 val condicionEvolutiva: CondicionEvolutiva) {
   
-  def hacerRutina(rutina:Rutina){
+  def hacerRutina(rutina:Rutina): Try[Pokemon] = {
     rutina.esHechaPor(this)
   }
   
