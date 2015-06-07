@@ -24,12 +24,15 @@ case class Paso(pokemon :Pokemon) extends ResultadoActividad
 class Gimnasio(){
     def realizaActividad(pokemon :Pokemon,actividad : Actividad):ResultadoActividad = pokemon.estado match {
     case ko => NoPaso (pokemon,"no pudo completar por estar ko")
-    case dormido => Paso (pokemon)
+    case dormido => Paso (pokemon) //falta registrar que la cantidad de veces que durmio
     case _ => actividad match{
       case UsarPocion => Paso( pokemon.copy(energia = Math.min(pokemon.energia + 50, pokemon.energiaMax)))
       case UsarAntidoto => pokemon.estado match{
         case envenenado => Paso( pokemon.copy(estado = normal))
+        case _ => Paso (pokemon)
       }
+      case UsarEther => Paso( pokemon.copy(estado = normal))
+      
     }
   }
 }
