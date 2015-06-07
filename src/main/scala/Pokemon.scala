@@ -6,13 +6,15 @@ class Pokemon ( val estado: EstadoPokemon,
                 val objetoSecundario: Tipo,
                 val nivel: Integer,
                 val experiencia: Integer,
-                val genero: Integer,
+                val genero: Genero,
                 val energia: Integer,
                 val energiaMax: Integer,
                 val peso: Integer,
                 val fuerza: Integer,
                 val velocidad: Integer,
-                val condicionEvolutiva: CondicionEvolutiva)
+                val condicionEvolutiva: CondicionEvolutiva) {
+  
+}
 
 class Tipo
 object Fuego extends Tipo
@@ -74,4 +76,6 @@ class Ataque(val efecto: Pokemon => Pokemon,
  object Descansar extends Actividad
  object FingirIntercambio extends Actividad
  
-    
+ class Genero
+ object Macho extends Genero
+ object Hembra extends Genero
