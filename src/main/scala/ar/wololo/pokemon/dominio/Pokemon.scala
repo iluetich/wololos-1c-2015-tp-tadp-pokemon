@@ -1,6 +1,6 @@
 package ar.wololo.pokemon.dominio
 
-class Pokemon ( val estado: EstadoPokemon,
+case class Pokemon ( val estado: EstadoPokemon,
                 val listaAtaques: List[Ataque],
                 val objetoPrincipal: Tipo,
                 val objetoSecundario: Tipo,
@@ -14,6 +14,24 @@ class Pokemon ( val estado: EstadoPokemon,
                 val velocidad: Integer,
                 val condicionEvolutiva: CondicionEvolutiva) {
   
+}
+
+trait ResultadoActividad 
+case class NoPaso(pokemon :Pokemon,descripcion :String) extends ResultadoActividad
+case class Paso(pokemon :Pokemon) extends ResultadoActividad
+
+
+class Gimnasio(){
+    def realizaActividad(pokemon :Pokemon,actividad : Actividad):ResultadoActividad = pokemon.estado match {
+    case ko => NoPaso (pokemon,"no pudo completar por estar ko")
+    case dormido => Paso (pokemon)
+    case _ => actividad match{
+      case UsarPocion => Paso( pokemon.copy(energia = Math.min(pokemon.energia + 50, pokemon.energiaMax)))
+      case UsarAntidoto => pokemon.estado match{
+        case envenenado => Paso( pokemon.copy(estado = normal))
+      }
+    }
+  }
 }
 
 class Tipo
@@ -33,7 +51,8 @@ object Veneno extends Tipo
 object Dragon extends Tipo
 object Normal extends Tipo
 
-class EstadoPokemon
+abstract class EstadoPokemon
+object normal extends EstadoPokemon
 object dormido extends EstadoPokemon
 object paralizado extends EstadoPokemon
 object envenenado extends EstadoPokemon
