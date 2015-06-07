@@ -14,6 +14,18 @@ case class Pokemon ( val estado: EstadoPokemon,
                 val velocidad: Integer,
                 val condicionEvolutiva: CondicionEvolutiva) {
   
+  def aumentaPAMaximo(cant :Int):Pokemon = {
+    this.listaAtaques.foreach{ataque => ataque.aumentaPAMaximo(cant)}
+    this
+  }
+  
+  def descansa():Pokemon = {
+    this.listaAtaques.foreach{ataque => ataque.regenerate()}
+    if(this.energia < this.energiaMax * 0.5)
+      this.copy(estado = dormido)
+    else
+      this
+  }
 }
 
 trait ResultadoActividad 
@@ -32,7 +44,11 @@ class Gimnasio(){
         case _ => Paso (pokemon)
       }
       case UsarEther => Paso( pokemon.copy(estado = normal))
-      
+      case ComerHierro => Paso (pokemon.copy(fuerza = pokemon.fuerza + 5))
+      case ComerCalcio => Paso (pokemon.copy(velocidad = pokemon.velocidad +5))
+      case ComerZinc => Paso (pokemon.aumentaPAMaximo(2))
+      case Descansar => Paso (pokemon.descansa)
+
     }
   }
 }
@@ -64,7 +80,12 @@ object ko extends EstadoPokemon
 class Ataque(val efecto: Pokemon => Pokemon,
              val tipo: Tipo,
              var puntosAtaque: Integer,
-             var puntosAtaqueMax: Integer)
+             var puntosAtaqueMax: Integer){
+  
+  def aumentaPAMaximo(cantidad :Int){this.puntosAtaqueMax = this.puntosAtaqueMax + cantidad}
+  
+  def regenerate() {this.puntosAtaque = this.puntosAtaqueMax}
+}
 
  abstract class CondicionEvolutiva {
   def evaluaCondicion(unPokemon: Pokemon): Boolean
