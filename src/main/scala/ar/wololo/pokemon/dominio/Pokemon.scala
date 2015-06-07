@@ -22,10 +22,16 @@ case class Pokemon ( val estado: EstadoPokemon,
   def descansa():Pokemon = {
     this.listaAtaques.foreach{ataque => ataque.regenerate()}
     if(this.energia < this.energiaMax * 0.5)
-      this.copy(estado = dormido)
+      this.copy(estado = Dormido)
     else
       this
   }
+  
+  //metodo para que no rompa (ESTA MAL) 
+  def evolucionar(condEvolucion :CondicionEvolutiva):Pokemon ={
+    this
+  }
+  //
 }
 
 trait ResultadoActividad 
@@ -35,20 +41,26 @@ case class Paso(pokemon :Pokemon) extends ResultadoActividad
 
 class Gimnasio(){
     def realizaActividad(pokemon :Pokemon,actividad : Actividad):ResultadoActividad = pokemon.estado match {
-    case ko => NoPaso (pokemon,"no pudo completar por estar ko")
-    case dormido => Paso (pokemon) //falta registrar que la cantidad de veces que durmio
+    case Ko => NoPaso (pokemon,"no pudo completar por estar ko")
+    case Dormido => Paso (pokemon) //falta registrar que la cantidad de veces que durmio
     case _ => actividad match{
       case UsarPocion => Paso( pokemon.copy(energia = Math.min(pokemon.energia + 50, pokemon.energiaMax)))
       case UsarAntidoto => pokemon.estado match{
-        case envenenado => Paso( pokemon.copy(estado = normal))
+        case Envenenado => Paso( pokemon.copy(estado = Bueno))
         case _ => Paso (pokemon)
       }
-      case UsarEther => Paso( pokemon.copy(estado = normal))
+      case UsarEther => Paso( pokemon.copy(estado = Bueno))
       case ComerHierro => Paso (pokemon.copy(fuerza = pokemon.fuerza + 5))
       case ComerCalcio => Paso (pokemon.copy(velocidad = pokemon.velocidad +5))
       case ComerZinc => Paso (pokemon.aumentaPAMaximo(2))
       case Descansar => Paso (pokemon.descansa)
-
+      case FingirIntercambio => pokemon.condicionEvolutiva match {
+        case Intercambiar => Paso(pokemon.evolucionar(Intercambiar)) //metodo de pablo, evoluciona mandandole intercambiar, el metodo debe devolver el pokemon evolucionado
+        case _ => pokemon.genero match{
+          case Macho => Paso(pokemon.copy(peso = pokemon.peso +1))
+          case Hembra => Paso(pokemon.copy(peso = Math.max(0, pokemon.peso - 10)))
+        }
+      }
     }
   }
 }
@@ -71,11 +83,11 @@ object Dragon extends Tipo
 object Normal extends Tipo
 
 abstract class EstadoPokemon
-object normal extends EstadoPokemon
-object dormido extends EstadoPokemon
-object paralizado extends EstadoPokemon
-object envenenado extends EstadoPokemon
-object ko extends EstadoPokemon
+object Bueno extends EstadoPokemon
+object Dormido extends EstadoPokemon
+object Paralizado extends EstadoPokemon
+object Envenenado extends EstadoPokemon
+object Ko extends EstadoPokemon
 
 class Ataque(val efecto: Pokemon => Pokemon,
              val tipo: Tipo,
