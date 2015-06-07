@@ -1,17 +1,10 @@
-package ar.wololo.pokemon
+package ar.wololo.pokemon.dominio
 
-import ar.wololo.pokemon.dominio.CriterioRutina
-import ar.wololo.pokemon.dominio.Pokemon
-import ar.wololo.pokemon.dominio.Actividad
-import ar.wololo.pokemon.dominio.MayorNivelPosible
-import ar.wololo.pokemon.dominio.MayorEnergiaPosible
-import ar.wololo.pokemon.dominio.MenorPesoPosible
 import scala.util.Try
-import ar.wololo.pokemon.dominio.Rutina
 import scala.util.Success
 
-package object pokemon {
-
+class SuperSistemaDeAnalisis {
+  
   case class NoHuboRutinaHacibleException(pokemon: Pokemon) extends Exception
 
   def obtenerMejorRutinaSegun(pokemon: Pokemon,
@@ -32,4 +25,5 @@ package object pokemon {
       case MenorPesoPosible => Success(estadosYRutinas.minBy { case (estadoPokemon, _) => estadoPokemon.get.peso }._2)
     }
   }
+
 }
