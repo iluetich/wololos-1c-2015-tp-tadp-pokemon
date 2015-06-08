@@ -106,6 +106,11 @@ class Gimnasio(){
            Paso(pokemon.copy(estado= Paralizado))
        }
      }
+     case Nadar => (pokemon.objetoPrincipal , pokemon.objetoSecundario) match {
+       case (Agua ,_) => Paso(pokemon.copy(experiencia = pokemon.experiencia + cantidad *200 , energia= Math.max(0, pokemon.energia - cantidad),velocidad = pokemon.velocidad + Math.round(cantidad/60)))
+       case (Fuego,_)|(_,Fuego)|(Tierra,_)|(_,Tierra)|(Roca,_)|(_,Roca) => Paso(pokemon.copy(estado= Ko))
+       case _ => Paso(pokemon.copy(experiencia = pokemon.experiencia + cantidad *200 , energia= Math.max((0), pokemon.energia - cantidad)))
+     }
    }
 }
 
