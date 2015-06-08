@@ -27,6 +27,10 @@ case class Pokemon ( val estado: EstadoPokemon,
       this
   }
   
+  def sufriEfectosSecundarios(ataque :Ataque):Pokemon = {
+    ataque.efecto(this)   
+  }
+  
   //metodo para que no rompa (ESTA MAL) 
   def evolucionar(condEvolucion :CondicionEvolutiva):Pokemon ={
     this
@@ -64,13 +68,29 @@ class Gimnasio(){
           case Hembra => Paso(pokemon.copy(peso = Math.max(0, pokemon.peso - 10)))
         }
       }
-      //case UsarPiedra => Paso(pokemon.evolucionar(pokemon.condicionEvolutiva)) //doble dispach sobre piedra y pokemon, polimorfismo adhoc
     }
   }
-   
-  def realizarActividad(pokemon :Pokemon,actividad :Actividad,piedra :Piedra):ResultadoActividad = actividad match {
-    case UsarPiedra =>
-  }
+  
+   def realizarActividad(pokemon :Pokemon, actividad :Actividad, ataqueARealizar :String):ResultadoActividad = actividad match { 
+     case RealizarUnAtaque => {
+       val resultadoAtaque  = pokemon.listaAtaques.find { ataque => ataque.nombre == ataqueARealizar; ataque.puntosAtaque > 0 }
+       resultadoAtaque match{
+         case None => NoPaso (pokemon, "el pokemon no conoce el movimiento o no tien PA") 
+         case Some(resultadoAtaque) => {
+           resultadoAtaque.reduciPa
+           val pokemonAfectado = pokemon.sufriEfectosSecundarios(resultadoAtaque)
+           resultadoAtaque.tipo match{
+               case Dragon => Paso(pokemonAfectado.copy(experiencia = pokemon.experiencia + 80)) //el experiencia te tiene que hacer evolucionar
+               case pokemonAfectado.objetoPrincipal => Paso(pokemonAfectado.copy(experiencia = pokemonAfectado.experiencia +50)) 
+               case pokemonAfectado.objetoSecundario => pokemonAfectado.genero match{
+                 case Macho => Paso(pokemonAfectado.copy(experiencia = pokemonAfectado.experiencia +20))
+                 case Hembra => Paso(pokemonAfectado.copy(experiencia = pokemonAfectado.experiencia +40))
+               }                                         
+           }
+         } 
+       }        
+     }       
+   }  
 }
 
 class Tipo
@@ -97,7 +117,8 @@ object Paralizado extends EstadoPokemon
 object Envenenado extends EstadoPokemon
 object Ko extends EstadoPokemon
 
-class Ataque(val efecto: Pokemon => Pokemon,
+class Ataque(val nombre: String,
+             val efecto: Pokemon => Pokemon,
              val tipo: Tipo,
              var puntosAtaque: Integer,
              var puntosAtaqueMax: Integer){
@@ -105,6 +126,12 @@ class Ataque(val efecto: Pokemon => Pokemon,
   def aumentaPAMaximo(cantidad :Int){this.puntosAtaqueMax = this.puntosAtaqueMax + cantidad}
   
   def regenerate() {this.puntosAtaque = this.puntosAtaqueMax}
+  
+  
+  def reduciPa():Ataque = {
+    this.puntosAtaque = this.puntosAtaque -1
+    this  
+  }
 }
 
  abstract class CondicionEvolutiva {
