@@ -80,7 +80,7 @@ class Gimnasio(){
            resultadoAtaque.reduciPa
            val pokemonAfectado = pokemon.sufriEfectosSecundarios(resultadoAtaque)
            resultadoAtaque.tipo match{
-               case Dragon => Paso(pokemonAfectado.copy(experiencia = pokemon.experiencia + 80)) //el experiencia te tiene que hacer evolucionar
+               case Dragon => Paso(pokemonAfectado.copy(experiencia = pokemon.experiencia + 80)) //el experiencia te tiene que hacer evolucionar si tu condEvolutiva es por exp, Aca Invocar Metodo Pablo 
                case pokemonAfectado.objetoPrincipal => Paso(pokemonAfectado.copy(experiencia = pokemonAfectado.experiencia +50)) 
                case pokemonAfectado.objetoSecundario => pokemonAfectado.genero match{
                  case Macho => Paso(pokemonAfectado.copy(experiencia = pokemonAfectado.experiencia +20))
@@ -90,7 +90,23 @@ class Gimnasio(){
          } 
        }        
      }       
-   }  
+   }
+   
+   def realizarActividad(pokemon :Pokemon, actividad :Actividad, cantidad:Int):ResultadoActividad = actividad match { 
+     case LevantarPesas => pokemon.estado match {
+       case Paralizado => Paso(pokemon.copy(estado= Ko))
+       case _ => {
+         if(cantidad > 10 * pokemon.fuerza)
+           (pokemon.objetoPrincipal , pokemon.objetoSecundario) match {
+             case (Pelea ,_) | (_,Pelea) => Paso(pokemon.copy(experiencia = pokemon.experiencia + cantidad *2))
+             case (Fantasma,_)|(_,Fantasma) => NoPaso(pokemon,"los pokemon tipo fantasma no pueden levantar pesas")
+             case _ => Paso(pokemon.copy(experiencia = pokemon.experiencia + cantidad))
+           }
+         else
+           Paso(pokemon.copy(estado= Paralizado))
+       }
+     }
+   }
 }
 
 class Tipo
