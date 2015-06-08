@@ -36,8 +36,8 @@ case class Pokemon ( val estado: EstadoPokemon,
     this
   }
   //
-  def evolucionar(piedra :Piedra):Pokemon ={
-    this
+  def evolucionar():Pokemon ={
+    this //ACA SE TIENE QUE HACER LA EVOLUCION POR PIEDRA Y RETORNAR LA EVOLUCION
   }
 }
 
@@ -116,24 +116,76 @@ class Gimnasio(){
        case _ => Paso(pokemon.copy(experiencia = pokemon.experiencia + cantidad *200 , energia= Math.max((0), pokemon.energia - cantidad)))
      }
    }
+   
+   def realizarActividad(pokemon :Pokemon, actividad :Actividad, piedra:Piedra):ResultadoActividad = actividad match { 
+     case UsarPiedra => pokemon.condicionEvolutiva match{
+       case UsarUnaPiedraLunar => piedra match{
+         case PiedraLunar => Paso(pokemon.evolucionar)
+         case _ => Paso(pokemon)
+       }
+       case UsarUnaPiedra => piedra.asInstanceOf[PiedraEvolutiva].tipo match{
+         case pokemon.objetoPrincipal => Paso(pokemon.evolucionar())
+         case _ =>{
+           val piedraDaniaPokemon = piedra.asInstanceOf[PiedraEvolutiva].tipo.leGanaA.count{tipo => tipo == pokemon.objetoPrincipal | tipo == pokemon.objetoSecundario}
+           if(piedraDaniaPokemon > 0)
+             Paso(pokemon.copy(estado= Envenenado))
+           else 
+             Paso(pokemon)
+         }
+       } 
+     }
+   }
 }
 
-class Tipo
-object Fuego extends Tipo
-object Agua extends Tipo
-object Planta extends Tipo
-object Tierra extends Tipo
-object Hielo extends Tipo
-object Roca extends Tipo
-object Electrico extends Tipo
-object Psiquico extends Tipo
-object Pelea extends Tipo
-object Fantasma extends Tipo
-object Volador extends Tipo
-object Bicho extends Tipo
-object Veneno extends Tipo
-object Dragon extends Tipo
-object Normal extends Tipo
+trait Tipo{
+  def leGanaA():List[Tipo]
+}
+object Fuego extends Tipo{
+  def leGanaA():List[Tipo] = List(Planta , Hielo , Bicho )
+}
+object Agua extends Tipo{
+  def leGanaA():List[Tipo] = List(Fuego , Tierra , Roca )
+}
+object Planta extends Tipo{
+  def leGanaA():List[Tipo] = List(Agua , Tierra , Roca )
+}
+object Tierra extends Tipo{
+  def leGanaA():List[Tipo] = List(Fuego , Electrico , Veneno , Roca )
+}
+object Hielo extends Tipo{
+  def leGanaA():List[Tipo] = List(Planta , Tierra , Volador , Dragon )
+}
+object Roca extends Tipo{
+  def leGanaA():List[Tipo] = List(Fuego , Hielo , Volador , Bicho )
+}
+object Electrico extends Tipo{
+  def leGanaA():List[Tipo] = List(Agua , Volador )
+}
+object Psiquico extends Tipo{
+  def leGanaA():List[Tipo] = List(Pelea , Veneno )
+}
+object Pelea extends Tipo{
+  def leGanaA():List[Tipo] = List(Normal , Hielo , Roca )
+}
+object Fantasma extends Tipo{
+  def leGanaA():List[Tipo] = List(Psiquico , Fantasma )
+}
+object Volador extends Tipo{
+  def leGanaA():List[Tipo] = List(Planta , Pelea , Bicho )
+}
+object Bicho extends Tipo{
+  def leGanaA():List[Tipo] = List(Planta , Psiquico )
+}
+object Veneno extends Tipo{
+  def leGanaA():List[Tipo] = List(Planta )
+}
+object Dragon extends Tipo{
+  def leGanaA():List[Tipo] = List(Dragon )
+}
+object Normal extends Tipo{
+  def leGanaA():List[Tipo] = List( )
+}
+
 
 abstract class EstadoPokemon
 object Bueno extends EstadoPokemon
@@ -176,8 +228,8 @@ class Ataque(val nombre: String,
  }
  
  abstract class Piedra
- class PiedraEvolutiva (val tipo: Tipo) extends Piedra
- class PiedraLunar extends Piedra
+ case class PiedraEvolutiva (val tipo: Tipo) extends Piedra
+ object PiedraLunar extends Piedra
  
  abstract class Actividad
  object RealizarUnAtaque extends Actividad
