@@ -71,9 +71,9 @@ class Gimnasio(){
     }
   }
   
-   def realizarActividad(pokemon :Pokemon, actividad :Actividad, ataqueARealizar :String):ResultadoActividad = actividad match { 
+   def realizarActividad(pokemon :Pokemon, actividad :Actividad, paramAtaque :Ataque):ResultadoActividad = actividad match { 
      case RealizarUnAtaque => {
-       val resultadoAtaque  = pokemon.listaAtaques.find { ataque => ataque.nombre == ataqueARealizar; ataque.puntosAtaque > 0 }
+       val resultadoAtaque  = pokemon.listaAtaques.find { ataque => (ataque.nombre == paramAtaque.nombre && ataque.puntosAtaque > 0) }
        resultadoAtaque match{
          case None => NoPaso (pokemon, "el pokemon no conoce el movimiento o no tien PA") 
          case Some(resultadoAtaque) => {
@@ -89,7 +89,11 @@ class Gimnasio(){
            }
          } 
        }        
-     }       
+     }
+     case AprenderAtaque => paramAtaque.tipo match{
+       case Normal | pokemon.objetoPrincipal | pokemon.objetoSecundario => Paso(pokemon.copy(listaAtaques =  paramAtaque :: pokemon.listaAtaques))
+       case _ => Paso(pokemon.copy(estado = Ko))  
+     }
    }
    
    def realizarActividad(pokemon :Pokemon, actividad :Actividad, cantidad:Int):ResultadoActividad = actividad match { 
