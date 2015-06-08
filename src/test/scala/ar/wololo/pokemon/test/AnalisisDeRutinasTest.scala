@@ -15,20 +15,30 @@ import ar.wololo.pokemon.dominio.SuperSistemaDeAnalisis.NoHuboRutinaHacibleExcep
 import ar.wololo.pokemon.dominio.MinPeso
 import ar.wololo.pokemon.dominio.SuperSistemaDeAnalisis.NoHuboRutinaHacibleException
 import ar.wololo.pokemon.dominio.MaxEnergia
+import ar.wololo.pokemon.dominio.Bueno
+import ar.wololo.pokemon.dominio.SuperSistemaDeAnalisis.NoHuboRutinaHacibleException
 
 class AnalisisDeRutinasTest extends FunSuite {
 
-  test("Si a un pokemon sólo lo hago hacer una rutina, esa es la mejor") {
-    var pikachu = new Pokemon(null, null, Electrico, null, 1, 100, Macho, 100, 100, 1000, 100, 100, SubirDeNivel)
+  test("Si a un pokemon sólo lo hago hacer una rutina, esa es la mejor, salvo que no pueda hacerla") {
+    /*
+     * TODO Este test fallará hasta que se implemente la actividad Nadar
+     */
+    var pikachu = new Pokemon(Bueno, null, Electrico, null, 1, 100, Macho, 100, 100, 1000, 100, 100, SubirDeNivel)
     var rutinaNado = new Rutina(List[Actividad](Nadar, Nadar, Nadar, Nadar))
     var rutinaIntercambio = new Rutina(List[Actividad](FingirIntercambio, FingirIntercambio, FingirIntercambio))
     var mejorRutina = SuperSistemaDeAnalisis.obtenerMejorRutinaSegun(pikachu, List[Rutina](rutinaNado), MinPeso)
 
     assert(mejorRutina.get === rutinaNado)
+    pikachu = pikachu.copy(estado = Ko)
+    intercept[NoHuboRutinaHacibleException](SuperSistemaDeAnalisis.obtenerMejorRutinaSegun(pikachu, List[Rutina](rutinaNado), MinPeso))
   }
 
   test("Si pikachu es macho y su condicion evolutiva es SubirDeNivel y debe elegir entre nadar y fingir el intercambio, es mejor nadar para bajar de peso") {
-    var pikachu = new Pokemon(null, null, Electrico, null, 1, 100, Macho, 100, 100, 1000, 100, 100, SubirDeNivel)
+    /*
+     * TODO Este test fallará hasta que se implemente la actividad Nadar
+     */
+    var pikachu = new Pokemon(Bueno, null, Electrico, null, 1, 100, Macho, 100, 100, 1000, 100, 100, SubirDeNivel)
     var rutinaNado = new Rutina(List[Actividad](Nadar, Nadar, Nadar, Nadar))
     var rutinaIntercambio = new Rutina(List[Actividad](FingirIntercambio, FingirIntercambio, FingirIntercambio))
     var mejorRutina = SuperSistemaDeAnalisis.obtenerMejorRutinaSegun(pikachu, List[Rutina](rutinaNado, rutinaIntercambio), MinPeso)

@@ -19,8 +19,28 @@ case class Pokemon(val estado: EstadoPokemon,
     rutina.esHechaPor(this)
   }
 
-  def hacerActividad(actividad: Actividad): Try[Pokemon] = { //MOCK ACTIVIDAD
-    Success(this)
+  def hacerActividad(actividad: Actividad): Try[Pokemon] = this.estado match {
+    case Ko => throw new Exception("Estoy KO vieja.")
+    case Dormido => Success(this) //falta registrar que la cantidad de veces que durmio
+    case _ => actividad match {
+      case UsarPocion => Success(this.copy(energia = Math.min(this.energia + 50, this.energiaMax)))
+      case UsarAntidoto => this.estado match {
+        case Envenenado => Success(this.copy(estado = Bueno))
+        case _ => Success(this)
+      }
+      case UsarEther => Success(this.copy(estado = Bueno))
+      case ComerHierro => Success(this.copy(fuerza = this.fuerza + 5))
+      case ComerCalcio => Success(this.copy(velocidad = this.velocidad + 5))
+      case ComerZinc => Success(this.aumentaPAMaximo(2))
+      case Descansar => Success(this.descansa)
+      case FingirIntercambio => this.condicionEvolutiva match {
+        case Intercambiar => Success(this.evolucionar(Intercambiar)) //metodo de pablo, evoluciona mandandole intercambiar, el metodo debe devolver el pokemon evolucionado
+        case _ => this.genero match {
+          case Macho => Success(this.copy(peso = this.peso + 1))
+          case Hembra => Success(this.copy(peso = Math.max(0, this.peso - 10)))
+        }
+      }
+    }
   }
 
   def aumentaPAMaximo(cant: Int): Pokemon = {

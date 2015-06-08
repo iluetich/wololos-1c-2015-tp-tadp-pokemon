@@ -17,7 +17,7 @@ object SuperSistemaDeAnalisis {
     rutinas: Seq[Rutina],
     criterio: CriterioRutina): Try[Rutina] = {
 
-    val estadosYRutinas = rutinas.map { rutina => (rutina, pokemon.hacerRutina(rutina)) }.filter { case (_, estadoPokemon) => estadoPokemon.isSuccess }
+    var estadosYRutinas = rutinas.map { rutina => (rutina, pokemon.hacerRutina(rutina)) }.filter { case (_, e) => e.isSuccess }
 
     if (estadosYRutinas.isEmpty)
       throw NoHuboRutinaHacibleException(pokemon)
