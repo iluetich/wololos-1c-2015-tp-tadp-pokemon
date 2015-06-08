@@ -9,6 +9,8 @@ package ar.wololo.pokemon.dominio
  */
 
 abstract class CriterioRutina { }
-case object MayorNivelPosible extends CriterioRutina
-case object MayorEnergiaPosible extends CriterioRutina
-case object MenorPesoPosible extends CriterioRutina
+abstract class MayorAtributo extends CriterioRutina
+abstract class MenorAtributo extends CriterioRutina
+case object MaxNivel extends MayorAtributo
+case object MaxEnergia extends MayorAtributo
+case object MinPeso extends MenorAtributo
