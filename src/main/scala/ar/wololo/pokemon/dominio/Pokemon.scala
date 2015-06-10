@@ -39,15 +39,9 @@ case class Pokemon ( val estado: EstadoPokemon,
   def evolucionar():Pokemon ={
     this //ACA SE TIENE QUE HACER LA EVOLUCION POR PIEDRA Y RETORNAR LA EVOLUCION
   }
-}
-
-trait ResultadoActividad 
-case class NoPaso(pokemon :Pokemon,descripcion :String) extends ResultadoActividad
-case class Paso(pokemon :Pokemon) extends ResultadoActividad
-
-
-class Gimnasio(){
-   def realizarActividad(pokemon :Pokemon,actividad : Actividad):ResultadoActividad = pokemon.estado match {
+  
+  //-------------------------
+  def realizarActividad(pokemon :Pokemon,actividad : Actividad):ResultadoActividad = pokemon.estado match {
     case Ko => NoPaso (pokemon,"no pudo completar por estar ko")
     case Dormido => Paso (pokemon) //falta registrar que la cantidad de veces que durmio
     case _ => actividad match{
@@ -135,7 +129,12 @@ class Gimnasio(){
        } 
      }
    }
+   //*****************************************
 }
+
+trait ResultadoActividad 
+case class NoPaso(pokemon :Pokemon,descripcion :String) extends ResultadoActividad
+case class Paso(pokemon :Pokemon) extends ResultadoActividad
 
 trait Tipo{
   def leGanaA():List[Tipo]
