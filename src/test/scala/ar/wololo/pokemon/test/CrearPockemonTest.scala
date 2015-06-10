@@ -1,6 +1,10 @@
 package ar.wololo.pokemon.test
 
 import ar.wololo.pokemon.dominio.Pokemon
+<<<<<<< HEAD
+=======
+import ar.wololo.pokemon.dominio.Dormido
+>>>>>>> refs/remotes/origin/actividades
 import ar.wololo.pokemon.dominio.Ataque
 import ar.wololo.pokemon.dominio.Fuego
 import ar.wololo.pokemon.dominio.Agua
