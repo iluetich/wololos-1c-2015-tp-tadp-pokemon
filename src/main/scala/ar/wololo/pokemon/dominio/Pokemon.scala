@@ -1,5 +1,9 @@
 package ar.wololo.pokemon.dominio
 
+trait ResultadoActividad 
+case class NoPaso(pokemon :Pokemon,descripcion :String) extends ResultadoActividad
+case class Paso(pokemon :Pokemon) extends ResultadoActividad
+
 case class Pokemon ( val estado: EstadoPokemon,
                 val listaAtaques: List[Ataque],
                 val objetoPrincipal: Tipo,
@@ -40,71 +44,70 @@ case class Pokemon ( val estado: EstadoPokemon,
     this //ACA SE TIENE QUE HACER LA EVOLUCION POR PIEDRA Y RETORNAR LA EVOLUCION
   }
   
-  //-------------------------
-  def realizarActividad(pokemon :Pokemon,actividad : Actividad):ResultadoActividad = pokemon.estado match {
-    case Ko => NoPaso (pokemon,"no pudo completar por estar ko")
-    case Dormido => Paso (pokemon) //falta registrar que la cantidad de veces que durmio
+  def realizarActividad(actividad : Actividad):ResultadoActividad = this.estado match {
+    case Ko => NoPaso (this,"no pudo completar por estar ko")
+    case Dormido => Paso (this) //falta registrar que la cantidad de veces que durmio
     case _ => actividad match{
-      case UsarPocion => Paso( pokemon.copy(energia = Math.min(pokemon.energia + 50, pokemon.energiaMax)))
-      case UsarAntidoto => pokemon.estado match{
-        case Envenenado => Paso( pokemon.copy(estado = Bueno))
-        case _ => Paso (pokemon)
+      case UsarPocion => Paso( this.copy(energia = Math.min(this.energia + 50, this.energiaMax)))
+      case UsarAntidoto => this.estado match{
+        case Envenenado => Paso( this.copy(estado = Bueno))
+        case _ => Paso (this)
       }
-      case UsarEther => Paso( pokemon.copy(estado = Bueno))
-      case ComerHierro => Paso (pokemon.copy(fuerza = pokemon.fuerza + 5))
-      case ComerCalcio => Paso (pokemon.copy(velocidad = pokemon.velocidad +5))
-      case ComerZinc => Paso (pokemon.aumentaPAMaximo(2))
-      case Descansar => Paso (pokemon.descansa)
-      case FingirIntercambio => pokemon.condicionEvolutiva match {
-        case Intercambiar => Paso(pokemon.evolucionar(Intercambiar)) //metodo de pablo, evoluciona mandandole intercambiar, el metodo debe devolver el pokemon evolucionado
-        case _ => pokemon.genero match{
-          case Macho => Paso(pokemon.copy(peso = pokemon.peso +1))
-          case Hembra => Paso(pokemon.copy(peso = Math.max(0, pokemon.peso - 10)))
+      case UsarEther => Paso( this.copy(estado = Bueno))
+      case ComerHierro => Paso (this.copy(fuerza = this.fuerza + 5))
+      case ComerCalcio => Paso (this.copy(velocidad = this.velocidad +5))
+      case ComerZinc => Paso (this.aumentaPAMaximo(2))
+      case Descansar => Paso (this.descansa)
+      case FingirIntercambio => this.condicionEvolutiva match {
+        case Intercambiar => Paso(this.evolucionar(Intercambiar)) //metodo de pablo, evoluciona mandandole intercambiar, el metodo debe devolver el pokemon evolucionado
+        case _ => this.genero match{
+          case Macho => Paso(this.copy(peso = this.peso +1))
+          case Hembra => Paso(this.copy(peso = Math.max(0, this.peso - 10)))
         }
       }
-      case _ : UsarPiedra => pokemon.condicionEvolutiva match{
+      case _ : UsarPiedra => this.condicionEvolutiva match{
           case UsarUnaPiedraLunar => actividad.asInstanceOf[UsarPiedra].piedra match{
-                 case PiedraLunar => Paso(pokemon.evolucionar)
-                 case _ => Paso(pokemon)
+                 case PiedraLunar => Paso(this.evolucionar)
+                 case _ => Paso(this)
           }
           case UsarUnaPiedra => actividad.asInstanceOf[UsarPiedra].piedra.asInstanceOf[PiedraEvolutiva].tipo match{
-                 case pokemon.objetoPrincipal => Paso(pokemon.evolucionar())
+                 case this.objetoPrincipal => Paso(this.evolucionar())
                  case _ =>{
-                       val piedraDaniaPokemon = actividad.asInstanceOf[UsarPiedra].piedra.asInstanceOf[PiedraEvolutiva].tipo.leGanaA.count{tipo => tipo == pokemon.objetoPrincipal | tipo == pokemon.objetoSecundario}
+                       val piedraDaniaPokemon = actividad.asInstanceOf[UsarPiedra].piedra.asInstanceOf[PiedraEvolutiva].tipo.leGanaA.count{tipo => tipo == this.objetoPrincipal | tipo == this.objetoSecundario}
                        if(piedraDaniaPokemon > 0)
-                       Paso(pokemon.copy(estado= Envenenado))
+                       Paso(this.copy(estado= Envenenado))
                  else 
-                       Paso(pokemon)
+                       Paso(this)
                  }
           } 
       }
-      case _ : LevantarPesas => pokemon.estado match {
-           case Paralizado => Paso(pokemon.copy(estado= Ko))
+      case _ : LevantarPesas => this.estado match {
+           case Paralizado => Paso(this.copy(estado= Ko))
            case _ => {
-                 if(actividad.asInstanceOf[LevantarPesas].kg > 10 * pokemon.fuerza)
-                       (pokemon.objetoPrincipal , pokemon.objetoSecundario) match {
-                           case (Pelea ,_) | (_,Pelea) => Paso(pokemon.copy(experiencia = pokemon.experiencia + actividad.asInstanceOf[LevantarPesas].kg *2))
-                           case (Fantasma,_)|(_,Fantasma) => NoPaso(pokemon,"los pokemon tipo fantasma no pueden levantar pesas")
-                           case _ => Paso(pokemon.copy(experiencia = pokemon.experiencia + actividad.asInstanceOf[LevantarPesas].kg))
+                 if(actividad.asInstanceOf[LevantarPesas].kg > 10 * this.fuerza)
+                       (this.objetoPrincipal , this.objetoSecundario) match {
+                           case (Pelea ,_) | (_,Pelea) => Paso(this.copy(experiencia = this.experiencia + actividad.asInstanceOf[LevantarPesas].kg *2))
+                           case (Fantasma,_)|(_,Fantasma) => NoPaso(this,"los pokemon tipo fantasma no pueden levantar pesas")
+                           case _ => Paso(this.copy(experiencia = this.experiencia + actividad.asInstanceOf[LevantarPesas].kg))
                        }
                  else
-                       Paso(pokemon.copy(estado= Paralizado))
+                       Paso(this.copy(estado= Paralizado))
            }
      }
-     case _ : Nadar => (pokemon.objetoPrincipal , pokemon.objetoSecundario) match {
-           case (Agua ,_) => Paso(pokemon.copy(experiencia = pokemon.experiencia + actividad.asInstanceOf[Nadar].minutos *200 , energia= Math.max(0, pokemon.energia - actividad.asInstanceOf[Nadar].minutos),velocidad = pokemon.velocidad + Math.round(actividad.asInstanceOf[Nadar].minutos/60)))
-           case (Fuego,_)|(_,Fuego)|(Tierra,_)|(_,Tierra)|(Roca,_)|(_,Roca) => Paso(pokemon.copy(estado= Ko))
-           case _ => Paso(pokemon.copy(experiencia = pokemon.experiencia + actividad.asInstanceOf[Nadar].minutos *200 , energia= Math.max((0), pokemon.energia - actividad.asInstanceOf[Nadar].minutos)))
+     case _ : Nadar => (this.objetoPrincipal , this.objetoSecundario) match {
+           case (Agua ,_) => Paso(this.copy(experiencia = this.experiencia + actividad.asInstanceOf[Nadar].minutos *200 , energia= Math.max(0, this.energia - actividad.asInstanceOf[Nadar].minutos),velocidad = this.velocidad + Math.round(actividad.asInstanceOf[Nadar].minutos/60)))
+           case (Fuego,_)|(_,Fuego)|(Tierra,_)|(_,Tierra)|(Roca,_)|(_,Roca) => Paso(this.copy(estado= Ko))
+           case _ => Paso(this.copy(experiencia = this.experiencia + actividad.asInstanceOf[Nadar].minutos *200 , energia= Math.max((0), this.energia - actividad.asInstanceOf[Nadar].minutos)))
      }
      case _ : RealizarUnAtaque => {
-       val resultadoAtaque  = pokemon.listaAtaques.find { ataque => (ataque.nombre == actividad.asInstanceOf[RealizarUnAtaque].ataqueARealizar.nombre && ataque.puntosAtaque > 0) }
+       val resultadoAtaque  = this.listaAtaques.find { ataque => (ataque.nombre == actividad.asInstanceOf[RealizarUnAtaque].ataqueARealizar.nombre && ataque.puntosAtaque > 0) }
        resultadoAtaque match{
-         case None => NoPaso (pokemon, "el pokemon no conoce el movimiento o no tien PA") 
+         case None => NoPaso (this, "el pokemon no conoce el movimiento o no tien PA") 
          case Some(resultadoAtaque) => {
            resultadoAtaque.reduciPa
-           val pokemonAfectado = pokemon.sufriEfectosSecundarios(resultadoAtaque)
+           val pokemonAfectado = this.sufriEfectosSecundarios(resultadoAtaque)
            resultadoAtaque.tipo match{
-               case Dragon => Paso(pokemonAfectado.copy(experiencia = pokemon.experiencia + 80)) //el experiencia te tiene que hacer evolucionar si tu condEvolutiva es por exp, Aca Invocar Metodo Pablo 
+               case Dragon => Paso(pokemonAfectado.copy(experiencia = this.experiencia + 80)) //el experiencia te tiene que hacer evolucionar si tu condEvolutiva es por exp, Aca Invocar Metodo Pablo 
                case pokemonAfectado.objetoPrincipal => Paso(pokemonAfectado.copy(experiencia = pokemonAfectado.experiencia +50)) 
                case pokemonAfectado.objetoSecundario => pokemonAfectado.genero match{
                  case Macho => Paso(pokemonAfectado.copy(experiencia = pokemonAfectado.experiencia +20))
@@ -115,16 +118,13 @@ case class Pokemon ( val estado: EstadoPokemon,
        }        
      }
      case _ : AprenderAtaque => actividad.asInstanceOf[AprenderAtaque].ataqueAAprender.tipo match{
-       case Normal | pokemon.objetoPrincipal | pokemon.objetoSecundario => Paso(pokemon.copy(listaAtaques =  actividad.asInstanceOf[AprenderAtaque].ataqueAAprender :: pokemon.listaAtaques))
-       case _ => Paso(pokemon.copy(estado = Ko))  
+       case Normal | this.objetoPrincipal | this.objetoSecundario => Paso(this.copy(listaAtaques =  actividad.asInstanceOf[AprenderAtaque].ataqueAAprender :: this.listaAtaques))
+       case _ => Paso(this.copy(estado = Ko))  
      }
     }
   }
 }
 
-trait ResultadoActividad 
-case class NoPaso(pokemon :Pokemon,descripcion :String) extends ResultadoActividad
-case class Paso(pokemon :Pokemon) extends ResultadoActividad
 
 trait Tipo{
   def leGanaA():List[Tipo]
