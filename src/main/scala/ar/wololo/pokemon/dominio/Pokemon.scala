@@ -22,7 +22,7 @@ case class Pokemon ( val estado: EstadoPokemon,
   def descansa():Pokemon = {
     this.listaAtaques.foreach{ataque => ataque.regenerate()}
     if(this.energia < this.energiaMax * 0.5)
-      this.copy(estado = Dormido)
+      this.copy(estado = Dormido(3))
     else
       this
   }
@@ -42,7 +42,13 @@ case class Pokemon ( val estado: EstadoPokemon,
   
   def realizarActividad(actividad : Actividad):Pokemon = this.estado match {
     case Ko => throw EstaKo(this)
-    case Dormido => throw EstaDormido(this) //falta registrar que la cantidad de veces que durmio
+    case _: Dormido =>{
+      val estado = this.estado.asInstanceOf[Dormido]
+      if(estado.turnos > 0)
+        this.copy(estado= Dormido(estado.turnos -1))
+      else
+        this.copy(estado = Bueno).realizarActividad(actividad)
+    }
     case _ => actividad match{
       case UsarPocion => this.copy(energia = Math.min(this.energia + 50, this.energiaMax))
       case UsarAntidoto => this.estado match{
@@ -122,7 +128,6 @@ case class Pokemon ( val estado: EstadoPokemon,
 }
 
 case class EstaKo(val pokemon:Pokemon) extends Exception
-case class EstaDormido(val pokemon:Pokemon) extends Exception
 case class FantasmaNoPuedeLevantarPesas(val pokemon:Pokemon) extends Exception
 case class PokemonNoConoceMovONoTienePA(val pokemon:Pokemon) extends Exception
 
@@ -179,7 +184,7 @@ object Normal extends Tipo{
 
 abstract class EstadoPokemon
 object Bueno extends EstadoPokemon
-object Dormido extends EstadoPokemon
+case class Dormido(val turnos:Int) extends EstadoPokemon
 object Paralizado extends EstadoPokemon
 object Envenenado extends EstadoPokemon
 object Ko extends EstadoPokemon
