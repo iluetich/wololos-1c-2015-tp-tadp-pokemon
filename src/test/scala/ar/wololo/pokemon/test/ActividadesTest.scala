@@ -90,4 +90,22 @@ class ActividadesTest extends FunSuite {
     catch{case _ : EstaKo => tiroError = true}
     assert(tiroError)
   }
+  
+  test("pokemon come hierro y aumenta en 5 su fuerza"){
+    
+    val pokemon = fixture.pikachu
+    val pokemonConHierro = pokemon.realizarActividad(ComerHierro)
+    
+    assert(pokemon.fuerza == 100)
+    assert(pokemonConHierro.fuerza == 105)
+  }
+  
+  test("pokemon come calcio y aumenta en 5 su velocidad"){
+    
+    val pokemon = fixture.pikachu
+    val pokemonConCalcio = pokemon.realizarActividad(ComerCalcio)
+    
+    assert(pokemon.velocidad == 20)
+    assert(pokemonConCalcio.velocidad == 25)
+  }
 }
