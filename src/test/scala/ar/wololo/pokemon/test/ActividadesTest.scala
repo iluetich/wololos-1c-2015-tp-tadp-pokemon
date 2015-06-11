@@ -7,12 +7,13 @@ class ActividadesTest extends FunSuite {
   
   def fixture = new {
 	    val impactrueno = new Ataque("Impactrueno",(Pokemon => Pokemon),Electrico,1,20)
-      val embestida = new Ataque("Embestida",(Pokemon => Pokemon),Normal,7,10)
+      val embestida = new Ataque("Embestida",(Pokemon => Pokemon.copy(estado = Dormido(3))),Normal,7,10)
+      val llama = new Ataque("Llama",(Pokemon => Pokemon),Dragon,15,30)
       
       val pikachu = new Pokemon(Bueno, List(impactrueno , embestida), Electrico, Normal ,
       1, 0, Macho, 30, 1000, 5, 100, 20, SubirDeNivel)
       
-      val charmander = new Pokemon(Envenenado, List(embestida), Fuego, Tierra ,
+      val charmander = new Pokemon(Envenenado, List(embestida), Fuego, Normal ,
       1, 0, Hembra, 990, 1000, 5, 80, 50, SubirDeNivel)
       
       val scuartul = new Pokemon(Dormido(3), List[Ataque](), Agua, Normal ,
@@ -21,6 +22,8 @@ class ActividadesTest extends FunSuite {
       val bulvasor = new Pokemon(Ko, List[Ataque](), Planta, Bicho ,
       6, 0, Macho, 400, 1200, 9, 30, 20, SubirDeNivel)
       
+      val gyarados = new Pokemon(Envenenado, List(llama), Dragon, Bicho ,
+      5, 0, Macho, 400, 500, 9, 80, 60, UsarUnaPiedraLunar)
   }
   
   
@@ -157,5 +160,66 @@ class ActividadesTest extends FunSuite {
     impactrueno match {
       case Some(impactrueno) => assert(impactrueno.puntosAtaque == 0)
     }
+  }
+  
+  test("pokemon realiza ataque tipo secundario y es macho gana 20 puntos de experiencia"){
+    val pikachu = fixture.pikachu
+    
+    val ataque = new RealizarUnAtaque(fixture.embestida)
+    
+    val pikachu2 = pikachu.realizarActividad(ataque)
+    
+    assert(pikachu2.experiencia == 20)
+  }
+  
+  test("pokemon realiza ataque tipo secundario y es Hembra gana 40 puntos de experiencia y aparte se aplican los efectos secundarios"){
+    val charmander = fixture.charmander
+    
+    val ataque = new RealizarUnAtaque(fixture.embestida)
+    
+    val charmander2 = charmander.realizarActividad(ataque)
+    
+    assert(charmander2.experiencia == 40)
+    assert(charmander2.estado == Dormido(3))
+  }
+  
+  test("pokemon realiza ataque tipo dragon y gana 80 puntos"){
+    val gyarados = fixture.gyarados
+    
+    val ataque = new RealizarUnAtaque(fixture.llama)
+    
+    val gyarados2 = gyarados.realizarActividad(ataque)
+    
+    assert(gyarados2.experiencia == 80) 
+  }
+  
+  test("pokemon no tiene Pa suficiente entonces tira error"){
+    val pikachu = fixture.pikachu
+    
+    val actividad = new RealizarUnAtaque(fixture.impactrueno)
+    
+    val pikachu2 = pikachu.realizarActividad(actividad)
+    
+    var tiroError = false
+    
+    try{pikachu2.realizarActividad(actividad)}
+    
+    catch{case _: PokemonNoConoceMovONoTienePA => tiroError = true}
+    
+    assert(tiroError)
+  }
+  
+  test("pokemon no conoce ataque entonces tira error"){
+    val pikachu = fixture.pikachu
+    
+    val actividad = new RealizarUnAtaque(fixture.llama)
+    
+    var tiroError = false
+    
+    try{pikachu.realizarActividad(actividad)}
+    
+    catch{case _: PokemonNoConoceMovONoTienePA => tiroError = true}
+    
+    assert(tiroError)
   }
 }
