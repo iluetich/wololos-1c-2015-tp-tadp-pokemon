@@ -243,5 +243,6 @@ class ActividadesTest extends FunSuite {
     val charmander = fixture.charmander.realizarActividad(actividad)
     
     assert(charmander.estado == Ko)
+    assert(charmander.experiencia == 0)
   }
 }
