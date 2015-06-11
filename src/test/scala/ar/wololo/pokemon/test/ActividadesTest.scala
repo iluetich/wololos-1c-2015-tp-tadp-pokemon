@@ -19,6 +19,9 @@ class ActividadesTest extends FunSuite {
       val scuartul = new Pokemon(Dormido(3), List[Ataque](), Agua, Normal ,
       7, 80, Hembra, 500, 800, 8, 90, 40, SubirDeNivel)
       
+      val lapras = new Pokemon(Bueno, List[Ataque](), Agua, Dragon ,
+      7, 80, Macho, 500, 800, 8, 20, 50, Intercambiar)
+      
       val bulvasor = new Pokemon(Ko, List[Ataque](), Planta, Bicho ,
       6, 0, Macho, 400, 1200, 9, 30, 20, SubirDeNivel)
       
@@ -221,5 +224,24 @@ class ActividadesTest extends FunSuite {
     catch{case _: PokemonNoConoceMovONoTienePA => tiroError = true}
     
     assert(tiroError)
+  }
+  
+  test("pokemon realiza nadar y pierde 1 pt de energia por cada min,y por cada minuto gana 200 de exp, ademas los de agua ganan 1 de vel por cada min"){
+    val actividad = Nadar(2)
+    
+    val lapras = fixture.lapras.realizarActividad(actividad)
+    val gyarados = fixture.gyarados.realizarActividad(actividad)
+    
+    assert(gyarados.experiencia == 400)
+    assert(lapras.experiencia == 480)
+    
+  }
+  
+  test("pokemon realiza nada y tipo principal o secundario pierden contra agua, entonces queda Ko y no gana experiencia"){
+    val actividad = Nadar(2)
+    
+    val charmander = fixture.charmander.realizarActividad(actividad)
+    
+    assert(charmander.estado == Ko)
   }
 }
