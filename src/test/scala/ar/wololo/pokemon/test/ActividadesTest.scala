@@ -11,7 +11,7 @@ class ActividadesTest extends FunSuite {
       val llama = new Ataque("Llama",(Pokemon => Pokemon),Dragon,15,30)
       
       val pikachu = new Pokemon(Bueno, List(impactrueno , embestida), Electrico, Normal ,
-      1, 0, Macho, 30, 1000, 5, 100, 20, SubirDeNivel)
+      1, 0, Macho, 30, 1000, 5, 90, 20, SubirDeNivel)
       
       val charmander = new Pokemon(Envenenado, List(embestida), Fuego, Normal ,
       1, 0, Hembra, 990, 1000, 5, 80, 50, SubirDeNivel)
@@ -103,8 +103,8 @@ class ActividadesTest extends FunSuite {
     val pokemon = fixture.pikachu
     val pokemonConHierro = pokemon.realizarActividad(ComerHierro)
     
-    assert(pokemon.fuerza == 100)
-    assert(pokemonConHierro.fuerza == 105)
+    assert(pokemon.fuerza == 90)
+    assert(pokemonConHierro.fuerza == 95)
   }
   
   test("pokemon come calcio y aumenta en 5 su velocidad"){
