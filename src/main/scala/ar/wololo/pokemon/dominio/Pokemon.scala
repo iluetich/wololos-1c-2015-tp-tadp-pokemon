@@ -42,12 +42,13 @@ case class Pokemon ( val estado: EstadoPokemon,
   
   def realizarActividad(actividad : Actividad):Pokemon = this.estado match {
     case Ko => throw EstaKo(this)
-    case _: Dormido =>{
+    case _ :Dormido =>{
       val estado = this.estado.asInstanceOf[Dormido]
       if(estado.turnos > 0)
         this.copy(estado= Dormido(estado.turnos -1))
-      else
-        this.copy(estado = Bueno).realizarActividad(actividad)
+      else{               
+        this.copy(estado = Bueno).realizarActividad(actividad) 
+      }
     }
     case _ => actividad match{
       case UsarPocion => this.copy(energia = Math.min(this.energia + 50, this.energiaMax))
