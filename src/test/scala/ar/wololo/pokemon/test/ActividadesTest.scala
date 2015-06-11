@@ -6,10 +6,13 @@ import org.scalatest.FunSuite
 class ActividadesTest extends FunSuite {
   
   def fixture = new {
-      val pikachu = new Pokemon(Bueno, List[Ataque](), Electrico, Normal ,
+	    val impactrueno = new Ataque("Impactrueno",(Pokemon => Pokemon),Electrico,3,20)
+      val embestida = new Ataque("Embestida",(Pokemon => Pokemon),Normal,7,10)
+      
+      val pikachu = new Pokemon(Bueno, List(impactrueno , embestida), Electrico, Normal ,
       1, 0, Macho, 30, 1000, 5, 100, 20, SubirDeNivel)
       
-      val charmander = new Pokemon(Envenenado, List[Ataque](), Fuego, Tierra ,
+      val charmander = new Pokemon(Envenenado, List(embestida), Fuego, Tierra ,
       1, 0, Hembra, 990, 1000, 5, 80, 50, SubirDeNivel)
       
       val scuartul = new Pokemon(Dormido(3), List[Ataque](), Agua, Normal ,
@@ -17,6 +20,7 @@ class ActividadesTest extends FunSuite {
       
       val bulvasor = new Pokemon(Ko, List[Ataque](), Planta, Bicho ,
       6, 0, Macho, 400, 1200, 9, 30, 20, SubirDeNivel)
+      
   }
   
   
@@ -107,5 +111,22 @@ class ActividadesTest extends FunSuite {
     
     assert(pokemon.velocidad == 20)
     assert(pokemonConCalcio.velocidad == 25)
+  }
+  
+  test("pokemon al descansar recupera el maximo de PA de todos sus ataques"){
+    
+    val charmander = fixture.charmander
+    
+    val embestida = charmander.listaAtaques.find { ataque => ataque.nombre == "Embestida"}
+    embestida match {
+      case Some(embestida) => assert(embestida.puntosAtaque == 7)
+    }
+    
+    val charmanderDescansado = charmander.realizarActividad(Descansar)
+        
+    val embestida2 = charmander.listaAtaques.find { ataque => ataque.nombre == "Embestida"}
+    embestida2 match {
+      case Some(embestida2) => assert(embestida2.puntosAtaque == 10)
+    }
   }
 }
