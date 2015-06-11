@@ -6,7 +6,7 @@ import org.scalatest.FunSuite
 class ActividadesTest extends FunSuite {
   
   def fixture = new {
-	    val impactrueno = new Ataque("Impactrueno",(Pokemon => Pokemon),Electrico,3,20)
+	    val impactrueno = new Ataque("Impactrueno",(Pokemon => Pokemon),Electrico,1,20)
       val embestida = new Ataque("Embestida",(Pokemon => Pokemon),Normal,7,10)
       
       val pikachu = new Pokemon(Bueno, List(impactrueno , embestida), Electrico, Normal ,
@@ -136,5 +136,26 @@ class ActividadesTest extends FunSuite {
     val pikachuDescansado = pikachu.realizarActividad(Descansar)
     
     assert(pikachuDescansado.estado == Dormido(3))
+    
+    val embestida = pikachuDescansado.listaAtaques.find { ataque => ataque.nombre == "Embestida"}
+    embestida match {
+      case Some(embestida) => assert(embestida.puntosAtaque == 10)
+    }
+  }
+  
+  test("pokemon realiza un ataque de su tipo principal se baja en 1 el pa del ataque y gana 50 de exp"){
+    val pikachu = fixture.pikachu
+    
+    val actividad = new RealizarUnAtaque(fixture.impactrueno)
+    
+    val pikachu2 = pikachu.realizarActividad(actividad)
+    
+    assert(pikachu.experiencia == 0)
+    assert(pikachu2.experiencia == 50)
+    
+    val impactrueno = pikachu2.listaAtaques.find { ataque => ataque.nombre == "Impactrueno"}
+    impactrueno match {
+      case Some(impactrueno) => assert(impactrueno.puntosAtaque == 0)
+    }
   }
 }
