@@ -62,29 +62,32 @@ class ActividadesTest extends FunSuite {
   
   test("pokemon dormido ignora 3 actividades y desp se recupera"){
         
-    val scuartul1 = fixture.scuartul.realizarActividad(UsarPocion)//esta dormido
+    var scuartul = fixture.scuartul.realizarActividad(UsarPocion)//esta dormido
     
-    assert(scuartul1.energia == 500)
+    assert(scuartul.energia == 500)
            
-    val scuartul2 = scuartul1.realizarActividad(UsarPocion)//esta dormido
+    scuartul = scuartul.realizarActividad(UsarPocion)//esta dormido
     
-    assert(scuartul2.energia == 500)
+    assert(scuartul.energia == 500)
     
-    val scuartul3 = scuartul2.realizarActividad(UsarPocion)//esta dormido
+    scuartul = scuartul.realizarActividad(UsarPocion)//esta dormido
     
-    assert(scuartul3.energia == 500)
+    assert(scuartul.energia == 500)
     
-    val scuartul4 = scuartul3.realizarActividad(UsarPocion)//esta dormido
+    scuartul = scuartul.realizarActividad(UsarPocion)//esta despierto
     
-    assert(scuartul4.energia == 550)
-    assert(scuartul4.estado == Bueno)
+    assert(scuartul.energia == 550)
+    assert(scuartul.estado == Bueno)
        
   }
   
-    ignore("pokemon de estado KO hace cualquier actividad y tira error"){
+  test("pokemon de estado KO hace cualquier actividad y tira error"){
     
-    val bulvasor = fixture.bulvasor.realizarActividad(UsarEther)//esta ko
+    var tiroError = false
     
-    assert(bulvasor.estado == EstaKo)
+    try {val bulvasor = fixture.bulvasor.realizarActividad(UsarEther)}//esta ko
+    
+    catch{case _ : EstaKo => tiroError = true}
+    assert(tiroError)
   }
 }
