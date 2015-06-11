@@ -129,4 +129,12 @@ class ActividadesTest extends FunSuite {
       case Some(embestida2) => assert(embestida2.puntosAtaque == 10)
     }
   }
+  
+  test("pokemon si no tiene estado Bueno y tiene menos de la mitad de la vida al realiza la actividad descansar se duerme por 3 turnos"){
+    val pikachu = fixture.pikachu
+    
+    val pikachuDescansado = pikachu.realizarActividad(Descansar)
+    
+    assert(pikachuDescansado.estado == Dormido(3))
+  }
 }
