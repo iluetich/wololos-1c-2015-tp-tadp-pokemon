@@ -22,6 +22,7 @@ class RutinaTest extends FunSuite {
       
       val rutinaDeConsumo = new Rutina(List(UsarPocion,UsarAntidoto))
       val rutinaLarga = new Rutina(List(UsarEther,ComerZinc,ComerCalcio,ComerHierro,UsarPocion))
+      val rutinaConDescanso = new Rutina(List(ComerCalcio,UsarAntidoto,Descansar,ComerHierro,UsarPocion))
       
   }
   
@@ -31,7 +32,7 @@ class RutinaTest extends FunSuite {
     
     val charmanderConsumidor = fixture.charmander.realizarRutina(fixture.rutinaDeConsumo)
     
-    assert(charmanderConsumidor.map(_.energia) == Success(1000))
+    assert(charmanderConsumidor.map(_.energia) == Success(450))
     assert(charmanderConsumidor.map(_.estado) == Success(Bueno))
   }
   
@@ -52,14 +53,33 @@ class RutinaTest extends FunSuite {
 
   }
     
-    test("un pikachu se entrena mucho y hace toda la rutina como corresponde"){
+    test("un pikachu se entrena mucho y se excede en fuerza"){
     
     val pikachuOK = fixture.pikachu.realizarRutina(fixture.rutinaLarga)
     
-    assert(pikachuOK.map(_.velocidad) == Success(25))
-    assert(pikachuOK.map(_.fuerza) == Success(105))
-    assert(pikachuOK.map(_.estado) == Success(Bueno))
-    assert(pikachuOK.map(_.energia) == Success(80))
+    assert(pikachuOK.isFailure)
+  }
+    
+    test("pokemon descansa en medio de la rutina"){
+    
+    val charmander = fixture.charmander
+    
+    val embestida = charmander.listaAtaques.find { ataque => ataque.nombre == "Embestida"}
+    embestida match {
+      case Some(embestida) => assert(embestida.puntosAtaque == 7)
+      case _ =>
+    }
+    
+    val charmanderEntrenado = charmander.realizarRutina(fixture.rutinaConDescanso)
+        
+    val embestida2 = charmander.listaAtaques.find { ataque => ataque.nombre == "Embestida"}
+    embestida2 match {
+      case Some(embestida2) => assert(embestida2.puntosAtaque == 10)
+      case _ =>
+    }
+    
+    assert(charmanderEntrenado.map(_.estado)==Success(Dormido(1)))
+    assert(charmanderEntrenado.map(_.velocidad)==Success(55))
   }
 }
   
