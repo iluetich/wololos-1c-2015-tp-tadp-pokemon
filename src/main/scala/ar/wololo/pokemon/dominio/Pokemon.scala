@@ -1,6 +1,7 @@
 package ar.wololo.pokemon.dominio
 
-case class Pokemon ( val estado: EstadoPokemon,
+case class Pokemon ( 
+                val estado: EstadoPokemon,
                 val listaAtaques: List[Ataque],
                 val objetoPrincipal: Tipo,
                 val objetoSecundario: Tipo,
@@ -12,7 +13,60 @@ case class Pokemon ( val estado: EstadoPokemon,
                 val peso: Integer,
                 val fuerza: Integer,
                 val velocidad: Integer,
-                val condicionEvolutiva: CondicionEvolutiva) {
+                val condicionEvolutiva: CondicionEvolutiva,
+                val experienciaSaltoNivel: Integer,
+                val resistenciaEvolutiva: Integer
+                ){
+  
+  def ganarExperiencia(expGanada: Integer) = {
+     var experienciaSaltoNivelFutura = this.experienciaSaltoNivel
+     var experienciaFutura = this.experiencia + expGanada
+     new Pokemon(
+         experiencia = experienciaFutura,
+         nivel = if (experienciaFutura >= experienciaSaltoNivelFutura) {
+                        experienciaSaltoNivelFutura += resistenciaEvolutiva
+                        var saltoNivel:Integer = 1
+                        while (experienciaFutura >= experienciaSaltoNivelFutura) {
+                             experienciaSaltoNivelFutura += resistenciaEvolutiva
+                             saltoNivel += 1
+                             }
+                        this.nivel + saltoNivel
+                        }
+                 else this.nivel,
+           experienciaSaltoNivel = experienciaSaltoNivelFutura,
+           estado = this.estado,
+           listaAtaques = this.listaAtaques,
+           objetoPrincipal = this.objetoPrincipal,
+           objetoSecundario = this.objetoSecundario,
+           genero = this.genero,
+           energia = this.energia,
+           energiaMax = this.energiaMax,
+           peso = this.peso,
+           fuerza = this.fuerza,
+           velocidad = this.velocidad,
+           condicionEvolutiva = this.condicionEvolutiva,
+           resistenciaEvolutiva = this.resistenciaEvolutiva
+           )
+  }
+  
+  override def equals(unPokemon: Any): Boolean = {
+    var that: Pokemon = unPokemon.asInstanceOf[Pokemon]
+    return that.estado == this.estado &&
+           that.listaAtaques == this.listaAtaques &&
+           that.objetoPrincipal == this.objetoPrincipal &&
+           that.objetoSecundario == this.objetoSecundario  &&
+           that.nivel == this.nivel  &&
+           that.experiencia == this.experiencia  &&
+           that.genero == this.genero  &&
+           that.energia == this.energia  &&
+           that.energiaMax == this.energiaMax  &&
+           that.peso == this.peso  &&
+           that.fuerza == this.fuerza  &&
+           that.velocidad == this.velocidad &&
+           that.condicionEvolutiva == this.condicionEvolutiva &&
+           that.experienciaSaltoNivel == this.experienciaSaltoNivel &&
+           that.resistenciaEvolutiva == this.resistenciaEvolutiva
+  }
   
   def aumentaPAMaximo(cant :Int):Pokemon = {
     this.listaAtaques.foreach{ataque => ataque.aumentaPAMaximo(cant)}
