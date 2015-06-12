@@ -11,31 +11,31 @@ class ActividadesTest extends FunSuite {
       val llama = new Ataque("Llama",(Pokemon => Pokemon),Dragon,15,30)
       
       val pikachu = new Pokemon(Bueno, List(impactrueno , embestida), Electrico, Normal ,
-      1, 0, Macho, 30, 1000, 5, 90, 20, SubirDeNivel)
+      1, 0, Macho, 30, 1000, 5, 90, 20, SubirDeNivel, 0, 0)
       
       val charmander = new Pokemon(Bueno, List(embestida), Fuego, Normal ,
-      1, 0, Hembra, 990, 1000, 5, 80, 50, UsarUnaPiedra)
+      1, 0, Hembra, 990, 1000, 5, 80, 50, UsarUnaPiedra, 0, 0)
       
       val scuartul = new Pokemon(Dormido(3), List[Ataque](), Agua, Normal ,
-      7, 80, Hembra, 500, 800, 8, 90, 40, SubirDeNivel)
+      7, 80, Hembra, 500, 800, 8, 90, 40, SubirDeNivel, 0, 0)
       
       val lapras = new Pokemon(Bueno, List[Ataque](), Agua, Dragon ,
-      7, 80, Macho, 500, 800, 8, 20, 50, Intercambiar)
+      7, 80, Macho, 500, 800, 8, 20, 50, Intercambiar, 0, 0)
       
       val bulvasor = new Pokemon(Ko, List[Ataque](), Planta, Bicho ,
-      6, 0, Macho, 400, 1200, 9, 30, 20, SubirDeNivel)
+      6, 0, Macho, 400, 1200, 9, 30, 20, SubirDeNivel, 0, 0)
       
       val gyarados = new Pokemon(Envenenado, List(llama), Dragon, Bicho ,
-      5, 0, Macho, 400, 500, 9, 80, 60, UsarUnaPiedraLunar)
+      5, 0, Macho, 400, 500, 9, 80, 60, UsarUnaPiedraLunar, 0, 0)
       
       val hitmonchan = new Pokemon(Bueno, List[Ataque](), Pelea, Normal ,
-      1, 0, Macho, 450, 600, 9, 20, 80, Intercambiar)
+      1, 0, Macho, 450, 600, 9, 20, 80, Intercambiar, 0, 0)
       
       val hunter = new Pokemon(Bueno, List[Ataque](), Fantasma, Normal ,
-      1, 0, Hembra, 450, 600, 15, 20, 80, SubirDeNivel)
+      1, 0, Hembra, 450, 600, 15, 20, 80, SubirDeNivel, 0, 0)
       
       val voltod = new Pokemon(Bueno, List(), Electrico, Tierra ,
-      1, 0, Hembra, 60, 800, 5, 95, 40, SubirDeNivel)
+      1, 0, Hembra, 60, 800, 5, 95, 40, SubirDeNivel, 0 ,0)
   }
   
   

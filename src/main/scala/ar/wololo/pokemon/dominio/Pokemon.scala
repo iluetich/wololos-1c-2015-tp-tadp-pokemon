@@ -1,5 +1,7 @@
 package ar.wololo.pokemon.dominio
 
+import scala.util.Try
+
 case class Pokemon ( 
                 val estado: EstadoPokemon,
                 val listaAtaques: List[Ataque],
@@ -104,6 +106,10 @@ case class Pokemon (
   //
   def evolucionar():Pokemon ={
     this //ACA SE TIENE QUE HACER LA EVOLUCION POR PIEDRA Y RETORNAR LA EVOLUCION
+  }
+  
+  def realizarRutina(rutina:Rutina):Try[Pokemon] = {
+    rutina.esHechaPor(this)
   }
   
   def realizarActividad(actividad : Actividad):Pokemon = this.estado match {
