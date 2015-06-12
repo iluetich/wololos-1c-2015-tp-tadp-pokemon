@@ -7,8 +7,6 @@ object SuperSistemaDeAnalisis {
 
   /*
    * XXX Podría implementarse con fold.
-   * TODO Determinar con nacho la interfaz del pokemon, para saber si retorna un
-   * resultado de ejecución, o bien, un Try[]
    */
   
   case class NoHuboRutinaHacibleException(pokemon: Pokemon) extends Exception
