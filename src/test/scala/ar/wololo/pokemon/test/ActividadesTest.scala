@@ -33,6 +33,9 @@ class ActividadesTest extends FunSuite {
       
       val hunter = new Pokemon(Bueno, List[Ataque](), Fantasma, Normal ,
       1, 0, Hembra, 450, 600, 9, 20, 80, SubirDeNivel)
+      
+      val voltod = new Pokemon(Bueno, List(), Electrico, Tierra ,
+      1, 0, Hembra, 60, 800, 5, 95, 40, SubirDeNivel)
   }
   
   
@@ -252,7 +255,7 @@ class ActividadesTest extends FunSuite {
     assert(charmander.experiencia == 0)
   }
   
-  ignore("pokemon levanta pesas, si esta bueno gana 1 de exp por kilo levantado, si tipo principal o secundario es pelea gana 2 por kilo,si es de tipo fantasma tira error"){
+  test("pokemon levanta pesas, si esta bueno gana 1 de exp por kilo levantado, si tipo principal o secundario es pelea gana 2 por kilo,si es de tipo fantasma tira error"){
     val pikachu = fixture.pikachu
     val hitmonchan = fixture.hitmonchan
     val hunter = fixture.hunter
@@ -262,8 +265,8 @@ class ActividadesTest extends FunSuite {
     val pikachu2 = pikachu.realizarActividad(actividad)
     val hitmonchan2 = hitmonchan.realizarActividad(actividad)
     
-    assert(pikachu.experiencia == 2)
-    assert(hitmonchan.experiencia == 4)
+    assert(pikachu2.experiencia == 2)
+    assert(hitmonchan2.experiencia == 4)
     
     var tiroError = false
     
@@ -290,5 +293,38 @@ class ActividadesTest extends FunSuite {
     val pikachu2 = pikachu.realizarActividad(actividad)
     
     assert(pikachu2.estado == Paralizado)
+  }
+  
+  test("pokemon trata de aprender un ataque normal y uno afin a su especie"){
+    val voltod = fixture.voltod
+    val actividad = AprenderAtaque(fixture.impactrueno)
+    
+    assert(voltod.listaAtaques.size == 0)
+    
+    val voltod2 = voltod.realizarActividad(actividad)
+    
+    val contieneImpactrueno = voltod2.listaAtaques.find { ataque => ataque.nombre == "Impactrueno" }
+    
+    assert(voltod2.listaAtaques.size == 1)
+    assert(contieneImpactrueno != None)
+    
+    val actividad2 = AprenderAtaque(fixture.embestida)
+    val voltod3 = voltod2.realizarActividad(actividad2)
+    
+    val contieneEmbestida = voltod3.listaAtaques.find { ataque => ataque.nombre == "Embestida" }
+    
+    assert(voltod3.listaAtaques.size == 2)
+    assert(contieneEmbestida != None)
+  } 
+  
+  test("pokemon trata de aprender un ataque que no es de tipo afin, entonces no aprende nada y queda Ko"){
+    val voltod = fixture.voltod
+    val actividad = AprenderAtaque(fixture.llama)
+    
+    val voltod2 = voltod.realizarActividad(actividad)
+    
+    assert(voltod.estado == Bueno)
+    assert(voltod2.listaAtaques.size == 0)
+    assert(voltod2.estado == Ko)
   }
 }
