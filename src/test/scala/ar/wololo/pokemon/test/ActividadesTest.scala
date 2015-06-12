@@ -27,6 +27,12 @@ class ActividadesTest extends FunSuite {
       
       val gyarados = new Pokemon(Envenenado, List(llama), Dragon, Bicho ,
       5, 0, Macho, 400, 500, 9, 80, 60, UsarUnaPiedraLunar)
+      
+      val hitmonchan = new Pokemon(Bueno, List[Ataque](), Pelea, Normal ,
+      1, 0, Macho, 450, 600, 9, 20, 80, Intercambiar)
+      
+      val hunter = new Pokemon(Bueno, List[Ataque](), Fantasma, Normal ,
+      1, 0, Hembra, 450, 600, 9, 20, 80, SubirDeNivel)
   }
   
   
@@ -244,5 +250,45 @@ class ActividadesTest extends FunSuite {
     
     assert(charmander.estado == Ko)
     assert(charmander.experiencia == 0)
+  }
+  
+  ignore("pokemon levanta pesas, si esta bueno gana 1 de exp por kilo levantado, si tipo principal o secundario es pelea gana 2 por kilo,si es de tipo fantasma tira error"){
+    val pikachu = fixture.pikachu
+    val hitmonchan = fixture.hitmonchan
+    val hunter = fixture.hunter
+    
+    val actividad = LevantarPesas(2)
+    
+    val pikachu2 = pikachu.realizarActividad(actividad)
+    val hitmonchan2 = hitmonchan.realizarActividad(actividad)
+    
+    assert(pikachu.experiencia == 2)
+    assert(hitmonchan.experiencia == 4)
+    
+    var tiroError = false
+    
+    try{hunter.realizarActividad(actividad)}
+    
+    catch{case _: FantasmaNoPuedeLevantarPesas => tiroError = true}
+    
+    assert(tiroError)
+  }
+  
+  test("pokemon levanta pesas y esta paralizado entonces se va a Ko"){
+    val pikachu = fixture.pikachu.copy(estado = Paralizado)
+    
+    val actividad = LevantarPesas(2)
+    
+    val pikachu2 = pikachu.realizarActividad(actividad)
+    
+    assert(pikachu2.estado == Ko)
+  }
+  
+  test("pokemon levantar pesas levanta mas de 10kg por cada punto de fuerza entonces queda paralizado"){
+    val pikachu = fixture.pikachu
+    val actividad = LevantarPesas(1000)
+    val pikachu2 = pikachu.realizarActividad(actividad)
+    
+    assert(pikachu2.estado == Paralizado)
   }
 }

@@ -99,7 +99,7 @@ case class Pokemon ( val estado: EstadoPokemon,
       case _ : LevantarPesas => this.estado match {
            case Paralizado => this.copy(estado= Ko)
            case _ => {
-                 if(actividad.asInstanceOf[LevantarPesas].kg > 10 * this.fuerza)
+                 if(actividad.asInstanceOf[LevantarPesas].kg < (10 * this.fuerza + 1))
                        (this.objetoPrincipal , this.objetoSecundario) match {
                            case (Pelea ,_) | (_,Pelea) => this.copy(experiencia = this.experiencia + actividad.asInstanceOf[LevantarPesas].kg *2)
                            case (Fantasma,_)|(_,Fantasma) => throw FantasmaNoPuedeLevantarPesas(this)
