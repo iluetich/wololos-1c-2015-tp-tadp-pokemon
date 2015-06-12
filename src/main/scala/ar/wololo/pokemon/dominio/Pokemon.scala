@@ -19,33 +19,22 @@ case class Pokemon(
   val experienciaSaltoNivel: Integer,
   val resistenciaEvolutiva: Integer) {
 
-  def ganarExperiencia(expGanada: Integer) = {
+  def ganarExperiencia(expGanada: Integer): Pokemon = {
     var experienciaSaltoNivelFutura = this.experienciaSaltoNivel
     var experienciaFutura = this.experiencia + expGanada
-    new Pokemon(
-      experiencia = experienciaFutura,
-      nivel = if (experienciaFutura >= experienciaSaltoNivelFutura) {
+
+    var nuevoNivel: Integer = if (experienciaFutura >= experienciaSaltoNivelFutura) {
+      experienciaSaltoNivelFutura += resistenciaEvolutiva
+      var saltoNivel: Integer = 1
+      while (experienciaFutura >= experienciaSaltoNivelFutura) {
         experienciaSaltoNivelFutura += resistenciaEvolutiva
-        var saltoNivel: Integer = 1
-        while (experienciaFutura >= experienciaSaltoNivelFutura) {
-          experienciaSaltoNivelFutura += resistenciaEvolutiva
-          saltoNivel += 1
-        }
-        this.nivel + saltoNivel
-      } else this.nivel,
-      experienciaSaltoNivel = experienciaSaltoNivelFutura,
-      estado = this.estado,
-      listaAtaques = this.listaAtaques,
-      objetoPrincipal = this.objetoPrincipal,
-      objetoSecundario = this.objetoSecundario,
-      genero = this.genero,
-      energia = this.energia,
-      energiaMax = this.energiaMax,
-      peso = this.peso,
-      fuerza = this.fuerza,
-      velocidad = this.velocidad,
-      condicionEvolutiva = this.condicionEvolutiva,
-      resistenciaEvolutiva = this.resistenciaEvolutiva)
+        saltoNivel += 1
+      }
+      this.nivel + saltoNivel
+    } else {
+      this.nivel
+    }
+    copy(experiencia = experienciaFutura, experienciaSaltoNivel = experienciaSaltoNivelFutura, nivel = nuevoNivel)
   }
 
   override def equals(unPokemon: Any): Boolean = {
