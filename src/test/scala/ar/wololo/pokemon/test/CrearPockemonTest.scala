@@ -16,7 +16,7 @@ import ar.wololo.pokemon.dominio.Dormido
 class CrearPockemonTest extends FunSuite {
 
   test("Se crea un Pokemon") {
-    var picachu = new Pokemon(Dormido, List[Ataque](), Fuego, Agua,
+    var picachu = new Pokemon(Dormido(3), List[Ataque](), Fuego, Agua,
       20, 30, Macho, 30, 1000, 5, 100, 20, SubirDeNivel)
     assert(picachu.isInstanceOf[Pokemon] === true)
   }

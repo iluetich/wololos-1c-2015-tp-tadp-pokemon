@@ -19,6 +19,18 @@ case class Pokemon ( val estado: EstadoPokemon,
     this
   }
   
+  def verificarParams():Pokemon ={
+    if(this.energia < 0)
+      throw NoPuedeEnergiaMenorACero(this)
+    if(this.peso < 0)
+      throw NoPuedePesoInvalido(this)
+    if(this.fuerza < 0 || this.fuerza > 100)
+      throw NoPuedeFuerzaInvalida(this)
+    if(this.velocidad< 0 || this.velocidad > 100)
+      throw NoPuedeVelocidadInvalida(this)
+    this
+  }
+  
   def descansa():Pokemon = {
     this.listaAtaques.foreach{ataque => ataque.regenerate()}
     if(this.energia < this.energiaMax * 0.5)
@@ -42,12 +54,13 @@ case class Pokemon ( val estado: EstadoPokemon,
   
   def realizarActividad(actividad : Actividad):Pokemon = this.estado match {
     case Ko => throw EstaKo(this)
-    case _: Dormido =>{
+    case _ :Dormido =>{
       val estado = this.estado.asInstanceOf[Dormido]
       if(estado.turnos > 0)
         this.copy(estado= Dormido(estado.turnos -1))
-      else
-        this.copy(estado = Bueno).realizarActividad(actividad)
+      else{               
+        this.copy(estado = Bueno).realizarActividad(actividad) 
+      }
     }
     case _ => actividad match{
       case UsarPocion => this.copy(energia = Math.min(this.energia + 50, this.energiaMax))
@@ -56,15 +69,15 @@ case class Pokemon ( val estado: EstadoPokemon,
         case _ => this
       }
       case UsarEther => this.copy(estado = Bueno)
-      case ComerHierro => this.copy(fuerza = this.fuerza + 5)
-      case ComerCalcio => this.copy(velocidad = this.velocidad +5)
+      case ComerHierro => this.copy(fuerza = this.fuerza + 5).verificarParams()
+      case ComerCalcio => this.copy(velocidad = this.velocidad +5).verificarParams()
       case ComerZinc => this.aumentaPAMaximo(2)
       case Descansar => this.descansa
       case FingirIntercambio => this.condicionEvolutiva match {
         case Intercambiar => this.evolucionar(Intercambiar) //metodo de pablo, evoluciona mandandole intercambiar, el metodo debe devolver el pokemon evolucionado
         case _ => this.genero match{
-          case Macho => this.copy(peso = this.peso +1)
-          case Hembra => this.copy(peso = Math.max(0, this.peso - 10))
+          case Macho => this.copy(peso = this.peso +1).verificarParams()
+          case Hembra => this.copy(peso = this.peso - 10).verificarParams()
         }
       }
       case _ : UsarPiedra => this.condicionEvolutiva match{
@@ -86,7 +99,7 @@ case class Pokemon ( val estado: EstadoPokemon,
       case _ : LevantarPesas => this.estado match {
            case Paralizado => this.copy(estado= Ko)
            case _ => {
-                 if(actividad.asInstanceOf[LevantarPesas].kg > 10 * this.fuerza)
+                 if(actividad.asInstanceOf[LevantarPesas].kg < (10 * this.fuerza + 1))
                        (this.objetoPrincipal , this.objetoSecundario) match {
                            case (Pelea ,_) | (_,Pelea) => this.copy(experiencia = this.experiencia + actividad.asInstanceOf[LevantarPesas].kg *2)
                            case (Fantasma,_)|(_,Fantasma) => throw FantasmaNoPuedeLevantarPesas(this)
@@ -97,9 +110,9 @@ case class Pokemon ( val estado: EstadoPokemon,
            }
      }
      case _ : Nadar => (this.objetoPrincipal , this.objetoSecundario) match {
-           case (Agua ,_) => this.copy(experiencia = this.experiencia + actividad.asInstanceOf[Nadar].minutos *200 , energia= Math.max(0, this.energia - actividad.asInstanceOf[Nadar].minutos),velocidad = this.velocidad + Math.round(actividad.asInstanceOf[Nadar].minutos/60))
+           case (Agua ,_) => this.copy(experiencia = this.experiencia + actividad.asInstanceOf[Nadar].minutos *200 , energia= this.energia - actividad.asInstanceOf[Nadar].minutos ,velocidad = this.velocidad + Math.round(actividad.asInstanceOf[Nadar].minutos/60)).verificarParams()
            case (Fuego,_)|(_,Fuego)|(Tierra,_)|(_,Tierra)|(Roca,_)|(_,Roca) => this.copy(estado= Ko)
-           case _ => this.copy(experiencia = this.experiencia + actividad.asInstanceOf[Nadar].minutos *200 , energia= Math.max((0), this.energia - actividad.asInstanceOf[Nadar].minutos))
+           case _ => this.copy(experiencia = this.experiencia + actividad.asInstanceOf[Nadar].minutos *200 , energia= this.energia - actividad.asInstanceOf[Nadar].minutos).verificarParams()
      }
      case _ : RealizarUnAtaque => {
        val resultadoAtaque  = this.listaAtaques.find { ataque => (ataque.nombre == actividad.asInstanceOf[RealizarUnAtaque].ataqueARealizar.nombre && ataque.puntosAtaque > 0) }
@@ -107,7 +120,7 @@ case class Pokemon ( val estado: EstadoPokemon,
          case None => throw PokemonNoConoceMovONoTienePA(this)
          case Some(resultadoAtaque) => {
            resultadoAtaque.reduciPa
-           val pokemonAfectado = this.sufriEfectosSecundarios(resultadoAtaque)
+           val pokemonAfectado = this.sufriEfectosSecundarios(resultadoAtaque).verificarParams()
            resultadoAtaque.tipo match{
                case Dragon => pokemonAfectado.copy(experiencia = this.experiencia + 80) //el experiencia te tiene que hacer evolucionar si tu condEvolutiva es por exp, Aca Invocar Metodo Pablo 
                case pokemonAfectado.objetoPrincipal => pokemonAfectado.copy(experiencia = pokemonAfectado.experiencia +50) 
@@ -130,6 +143,10 @@ case class Pokemon ( val estado: EstadoPokemon,
 case class EstaKo(val pokemon:Pokemon) extends Exception
 case class FantasmaNoPuedeLevantarPesas(val pokemon:Pokemon) extends Exception
 case class PokemonNoConoceMovONoTienePA(val pokemon:Pokemon) extends Exception
+case class NoPuedeFuerzaInvalida(val pokemon:Pokemon) extends Exception
+case class NoPuedeVelocidadInvalida(val pokemon:Pokemon) extends Exception
+case class NoPuedePesoInvalido(val pokemon:Pokemon) extends Exception
+case class NoPuedeEnergiaMenorACero(val pokemon :Pokemon) extends Exception
 
 
 trait Tipo{
