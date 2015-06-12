@@ -5,8 +5,8 @@ import scala.util.Try
 case class Pokemon(
   val estado: EstadoPokemon,
   val listaAtaques: List[Ataque],
-  val objetoPrincipal: Tipo,
-  val objetoSecundario: Tipo,
+  val tipoPrincipal: Tipo,
+  val tipoSecundario: Tipo,
   val nivel: Integer,
   val experiencia: Integer,
   val genero: Genero,
@@ -41,8 +41,8 @@ case class Pokemon(
     var that: Pokemon = unPokemon.asInstanceOf[Pokemon]
     return that.estado == this.estado &&
       that.listaAtaques == this.listaAtaques &&
-      that.objetoPrincipal == this.objetoPrincipal &&
-      that.objetoSecundario == this.objetoSecundario &&
+      that.tipoPrincipal == this.tipoPrincipal &&
+      that.tipoSecundario == this.tipoSecundario &&
       that.nivel == this.nivel &&
       that.experiencia == this.experiencia &&
       that.genero == this.genero &&
@@ -100,10 +100,9 @@ case class Pokemon(
 
   def realizarActividad(actividad: Actividad): Pokemon = this.estado match {
     case Ko => throw EstaKo(this)
-    case _: Dormido => {
-      val estado = this.estado.asInstanceOf[Dormido]
-      if (estado.turnos > 0)
-        this.copy(estado = Dormido(estado.turnos - 1))
+    case e: Dormido => {
+      if (e.turnos > 0)
+        this.copy(estado = Dormido(e.turnos - 1))
       else {
         this.copy(estado = Bueno).realizarActividad(actividad)
       }
@@ -120,57 +119,60 @@ case class Pokemon(
       case ComerZinc => this.aumentaPAMaximo(2)
       case Descansar => this.descansa
       case FingirIntercambio => this.condicionEvolutiva match {
-        case Intercambiar => this.evolucionar(Intercambiar) //metodo de pablo, evoluciona mandandole intercambiar, el metodo debe devolver el pokemon evolucionado
+        case Intercambiar => this.evolucionar() //Como me intercambiaron, evoluciono porque mi condicion evolutiva es Intercambiar. [Requerimiento-TP]
         case _ => this.genero match {
           case Macho => this.copy(peso = this.peso + 1).verificarParams()
           case Hembra => this.copy(peso = this.peso - 10).verificarParams()
         }
       }
-      case _: UsarPiedra => this.condicionEvolutiva match {
-        case UsarUnaPiedraLunar => actividad.asInstanceOf[UsarPiedra].piedra match {
-          case PiedraLunar => this.evolucionar
+      case actividad: UsarPiedra => this.condicionEvolutiva match {
+        case UsarUnaPiedraLunar => actividad.piedra match {
+          case PiedraLunar => this.evolucionar()
           case _ => this
         }
-        case UsarUnaPiedra => actividad.asInstanceOf[UsarPiedra].piedra.asInstanceOf[PiedraEvolutiva].tipo match {
-          case this.objetoPrincipal => this.evolucionar()
-          case _ => {
-            val piedraDaniaPokemon = actividad.asInstanceOf[UsarPiedra].piedra.asInstanceOf[PiedraEvolutiva].tipo.leGanaA.count { tipo => tipo == this.objetoPrincipal | tipo == this.objetoSecundario }
-            if (piedraDaniaPokemon > 0)
-              this.copy(estado = Envenenado)
-            else
-              this
+        case UsarUnaPiedra => actividad.piedra match {
+          case p: PiedraEvolutiva => p.tipo match {
+            case this.tipoPrincipal => this.evolucionar()
+            case tipoDistinto => {
+              val piedraDaniaPokemon = tipoDistinto.leGanaA.count { tipo => tipo == this.tipoPrincipal | tipo == this.tipoSecundario }
+              if (piedraDaniaPokemon > 0)
+                this.copy(estado = Envenenado)
+              else
+                this
+            }
           }
+          case _ => throw new Exception("Me llego una piedra de tipo desconocida. BOOM!")
         }
       }
-      case _: LevantarPesas => this.estado match {
+      case actividad: LevantarPesas => this.estado match {
         case Paralizado => this.copy(estado = Ko)
         case _ => {
-          if (actividad.asInstanceOf[LevantarPesas].kg < (10 * this.fuerza + 1))
-            (this.objetoPrincipal, this.objetoSecundario) match {
-              case (Pelea, _) | (_, Pelea) => this.copy(experiencia = this.experiencia + actividad.asInstanceOf[LevantarPesas].kg * 2)
+          if (actividad.kg < (10 * this.fuerza + 1))
+            (this.tipoPrincipal, this.tipoSecundario) match {
+              case (Pelea, _) | (_, Pelea) => this.copy(experiencia = this.experiencia + actividad.kg * 2)
               case (Fantasma, _) | (_, Fantasma) => throw FantasmaNoPuedeLevantarPesas(this)
-              case _ => this.copy(experiencia = this.experiencia + actividad.asInstanceOf[LevantarPesas].kg)
+              case _ => this.copy(experiencia = this.experiencia + actividad.kg)
             }
           else
             this.copy(estado = Paralizado)
         }
       }
-      case _: Nadar => (this.objetoPrincipal, this.objetoSecundario) match {
-        case (Agua, _) => this.copy(experiencia = this.experiencia + actividad.asInstanceOf[Nadar].minutos * 200, energia = this.energia - actividad.asInstanceOf[Nadar].minutos, velocidad = this.velocidad + Math.round(actividad.asInstanceOf[Nadar].minutos / 60)).verificarParams()
+      case actividad: Nadar => (this.tipoPrincipal, this.tipoSecundario) match {
+        case (Agua, _) => this.copy(experiencia = this.experiencia + actividad.minutos * 200, energia = this.energia - actividad.minutos, velocidad = this.velocidad + Math.round(actividad.minutos / 60)).verificarParams()
         case (Fuego, _) | (_, Fuego) | (Tierra, _) | (_, Tierra) | (Roca, _) | (_, Roca) => this.copy(estado = Ko)
-        case _ => this.copy(experiencia = this.experiencia + actividad.asInstanceOf[Nadar].minutos * 200, energia = this.energia - actividad.asInstanceOf[Nadar].minutos).verificarParams()
+        case _ => this.copy(experiencia = this.experiencia + actividad.minutos * 200, energia = this.energia - actividad.minutos).verificarParams()
       }
-      case _: RealizarUnAtaque => {
-        val resultadoAtaque = this.listaAtaques.find { ataque => (ataque.nombre == actividad.asInstanceOf[RealizarUnAtaque].ataqueARealizar.nombre && ataque.puntosAtaque > 0) }
+      case actividad: RealizarUnAtaque => {
+        val resultadoAtaque = this.listaAtaques.find { ataque => (ataque.nombre == actividad.ataqueARealizar.nombre && ataque.puntosAtaque > 0) }
         resultadoAtaque match {
           case None => throw PokemonNoConoceMovONoTienePA(this)
           case Some(resultadoAtaque) => {
-            resultadoAtaque.reduciPa
+            resultadoAtaque.reduciPa //FIXME! Acá tenemos efecto y estamos en pattern-matching!!
             val pokemonAfectado = this.sufriEfectosSecundarios(resultadoAtaque).verificarParams()
-            resultadoAtaque.tipo match {
+            resultadoAtaque.tipo match { //FIXME! Acá habría que llamar el método 'ganarExperiencia'
               case Dragon => pokemonAfectado.copy(experiencia = this.experiencia + 80) //el experiencia te tiene que hacer evolucionar si tu condEvolutiva es por exp, Aca Invocar Metodo Pablo 
-              case pokemonAfectado.objetoPrincipal => pokemonAfectado.copy(experiencia = pokemonAfectado.experiencia + 50)
-              case pokemonAfectado.objetoSecundario => pokemonAfectado.genero match {
+              case pokemonAfectado.tipoPrincipal => pokemonAfectado.copy(experiencia = pokemonAfectado.experiencia + 50)
+              case pokemonAfectado.tipoSecundario => pokemonAfectado.genero match {
                 case Macho => pokemonAfectado.copy(experiencia = pokemonAfectado.experiencia + 20)
                 case Hembra => pokemonAfectado.copy(experiencia = pokemonAfectado.experiencia + 40)
               }
@@ -178,8 +180,8 @@ case class Pokemon(
           }
         }
       }
-      case _: AprenderAtaque => actividad.asInstanceOf[AprenderAtaque].ataqueAAprender.tipo match {
-        case Normal | this.objetoPrincipal | this.objetoSecundario => this.copy(listaAtaques = actividad.asInstanceOf[AprenderAtaque].ataqueAAprender :: this.listaAtaques)
+      case actividad: AprenderAtaque => actividad.ataqueAAprender.tipo match {
+        case Normal | this.tipoPrincipal | this.tipoSecundario => this.copy(listaAtaques = actividad.ataqueAAprender :: this.listaAtaques)
         case _ => this.copy(estado = Ko)
       }
     }

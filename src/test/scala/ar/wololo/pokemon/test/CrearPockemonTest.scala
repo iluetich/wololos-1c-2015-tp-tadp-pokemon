@@ -12,17 +12,17 @@ import org.scalatest.FlatSpec
 
 class SetSpec extends FlatSpec {
   "Un pichachu gue gana diferentes cantidades de experiencia" should "debe aumentar la experiencia, el nivel y la experienciaDeSaltoNivel" in {
-    val picachu = new Pokemon( estado = Dormido(3), listaAtaques = List[Ataque](), objetoPrincipal = Fuego,
-        objetoSecundario = Agua, nivel = 1, experiencia = 0, genero = Macho, energia = 30, energiaMax = 1000,
-        peso = 5, fuerza = 100, velocidad = 20, condicionEvolutiva = SubirDeNivel, experienciaSaltoNivel = 3,
+    val picachu = new Pokemon( estado = Dormido(3), listaAtaques = List[Ataque](), tipoPrincipal = Fuego,
+        tipoSecundario = Agua, nivel = 1, experiencia = 0, genero = Macho, energia = 30, energiaMax = 1000,
+        peso = 5, fuerza = 100, velocidad = 20, condicionEvolutiva = SubirDeNivel(100), experienciaSaltoNivel = 3,
         resistenciaEvolutiva = 3)
-    val picachuGana2Exp = new Pokemon( estado = Dormido(3), listaAtaques = List[Ataque](), objetoPrincipal = Fuego,
-        objetoSecundario = Agua, nivel = 1, experiencia = 0 + 2, genero = Macho, energia = 30,
-        energiaMax = 1000, peso = 5, fuerza = 100, velocidad = 20, condicionEvolutiva = SubirDeNivel,
+    val picachuGana2Exp = new Pokemon( estado = Dormido(3), listaAtaques = List[Ataque](), tipoPrincipal = Fuego,
+        tipoSecundario = Agua, nivel = 1, experiencia = 0 + 2, genero = Macho, energia = 30,
+        energiaMax = 1000, peso = 5, fuerza = 100, velocidad = 20, condicionEvolutiva = SubirDeNivel(100),
         experienciaSaltoNivel = 3, resistenciaEvolutiva = 3)
-    val picachuGana10Exp = new Pokemon( estado = Dormido(3), listaAtaques = List[Ataque](), objetoPrincipal = Fuego,
-        objetoSecundario = Agua, nivel = 4, experiencia = 0 + 10, genero = Macho, energia = 30,
-        energiaMax = 1000, peso = 5, fuerza = 100, velocidad = 20, condicionEvolutiva = SubirDeNivel,
+    val picachuGana10Exp = new Pokemon( estado = Dormido(3), listaAtaques = List[Ataque](), tipoPrincipal = Fuego,
+        tipoSecundario = Agua, nivel = 4, experiencia = 0 + 10, genero = Macho, energia = 30,
+        energiaMax = 1000, peso = 5, fuerza = 100, velocidad = 20, condicionEvolutiva = SubirDeNivel(100),
         experienciaSaltoNivel = 12, resistenciaEvolutiva = 3)
     assert( picachu.ganarExperiencia(2).equals(picachuGana2Exp) )
     System.out.println("nivel: " + picachu.ganarExperiencia(10).nivel)

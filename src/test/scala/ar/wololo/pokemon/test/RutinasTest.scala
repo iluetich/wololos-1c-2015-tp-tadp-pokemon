@@ -9,16 +9,16 @@ class RutinaTest extends FunSuite {
   
   def fixture = new {
       val pikachu = new Pokemon(Bueno, List[Ataque](), Electrico, Normal ,
-      1, 0, Macho, 30, 1000, 5, 100, 20, SubirDeNivel, 0, 0)
+      1, 0, Macho, 30, 1000, 5, 100, 20, SubirDeNivel(100), 0, 0)
       
       val charmander = new Pokemon(Envenenado, List[Ataque](), Fuego, Tierra ,
-      1, 0, Hembra, 990, 1000, 5, 80, 50, SubirDeNivel, 0, 0)
+      1, 0, Hembra, 990, 1000, 5, 80, 50, SubirDeNivel(100), 0, 0)
       
       val scuartul = new Pokemon(Dormido(3), List[Ataque](), Agua, Normal ,
-      7, 80, Hembra, 500, 800, 8, 90, 40, SubirDeNivel, 0, 0)
+      7, 80, Hembra, 500, 800, 8, 90, 40, SubirDeNivel(100), 0, 0)
       
       val bulvasor = new Pokemon(Ko, List[Ataque](), Planta, Bicho ,
-      6, 0, Macho, 400, 1200, 9, 30, 20, SubirDeNivel, 0, 0)
+      6, 0, Macho, 400, 1200, 9, 30, 20, SubirDeNivel(100), 0, 0)
       
       val rutinaDeConsumo = new Rutina(List(UsarPocion,UsarAntidoto))
       val rutinaLarga = new Rutina(List(UsarEther,ComerZinc,ComerCalcio,ComerHierro,UsarPocion))
