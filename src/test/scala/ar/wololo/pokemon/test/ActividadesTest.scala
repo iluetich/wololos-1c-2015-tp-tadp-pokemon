@@ -13,8 +13,8 @@ class ActividadesTest extends FunSuite {
       val pikachu = new Pokemon(Bueno, List(impactrueno , embestida), Electrico, Normal ,
       1, 0, Macho, 30, 1000, 5, 90, 20, SubirDeNivel)
       
-      val charmander = new Pokemon(Envenenado, List(embestida), Fuego, Normal ,
-      1, 0, Hembra, 990, 1000, 5, 80, 50, SubirDeNivel)
+      val charmander = new Pokemon(Bueno, List(embestida), Fuego, Normal ,
+      1, 0, Hembra, 990, 1000, 5, 80, 50, UsarUnaPiedra)
       
       val scuartul = new Pokemon(Dormido(3), List[Ataque](), Agua, Normal ,
       7, 80, Hembra, 500, 800, 8, 90, 40, SubirDeNivel)
@@ -32,7 +32,7 @@ class ActividadesTest extends FunSuite {
       1, 0, Macho, 450, 600, 9, 20, 80, Intercambiar)
       
       val hunter = new Pokemon(Bueno, List[Ataque](), Fantasma, Normal ,
-      1, 0, Hembra, 450, 600, 9, 20, 80, SubirDeNivel)
+      1, 0, Hembra, 450, 600, 15, 20, 80, SubirDeNivel)
       
       val voltod = new Pokemon(Bueno, List(), Electrico, Tierra ,
       1, 0, Hembra, 60, 800, 5, 95, 40, SubirDeNivel)
@@ -56,10 +56,10 @@ class ActividadesTest extends FunSuite {
     
   test("pokemon Envenenado realiza Actividad Usar Antidoto y se recupera"){
     
-    val charmanderCurado = fixture.charmander.realizarActividad(UsarAntidoto)
+    val gyaradosCurado = fixture.gyarados.realizarActividad(UsarAntidoto)
     
-    assert(fixture.charmander.estado == Envenenado)
-    assert(charmanderCurado.estado == Bueno)
+    assert(fixture.gyarados.estado == Envenenado)
+    assert(gyaradosCurado.estado == Bueno)
   }
   
   test("pokemon Bueno realiza Actividad Usar Antidoto y no Hace nada"){
@@ -326,5 +326,28 @@ class ActividadesTest extends FunSuite {
     assert(voltod.estado == Bueno)
     assert(voltod2.listaAtaques.size == 0)
     assert(voltod2.estado == Ko)
+  }
+  
+  test("pokemon realiza fingir Intercambia y no tiene condicion evolutiva Intercambiar, si es macho aumenta 1 de peso, si es hembra baja 10"){
+    val pikachu = fixture.pikachu
+    val hunter = fixture.hunter
+    
+    assert(pikachu.peso == 5)
+    assert(hunter.peso == 15)
+    
+    val pikachu2 = pikachu.realizarActividad(FingirIntercambio)
+    val hunter2 = hunter.realizarActividad(FingirIntercambio)
+    
+    assert(pikachu2.peso == 6)
+    assert(hunter2.peso == 5)
+  }
+  
+  test("pokemon tiene como condicion evolutiva usarUnaPiedra y realiza UsarPiedra pero la piedra le gana al tipo primario o secundario y el pokemon queda Envenenado"){
+    val actividad = UsarPiedra( PiedraEvolutiva(Agua))
+    val charmander = fixture.charmander
+    val charmander2 = charmander.realizarActividad(actividad)
+    
+    assert(charmander.estado == Bueno)
+    assert(charmander2.estado == Envenenado)
   }
 }
