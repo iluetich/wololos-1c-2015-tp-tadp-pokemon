@@ -170,4 +170,22 @@ case class Pokemon(
       }
     }
   }
+  
+  override def equals(unPokemon: Any): Boolean = {
+    var that: Pokemon = unPokemon.asInstanceOf[Pokemon]
+    return that.estado == this.estado &&
+      that.listaAtaques == this.listaAtaques &&
+      that.tipoPrincipal == this.tipoPrincipal &&
+      that.tipoSecundario == this.tipoSecundario &&
+      that.nivel == this.nivel &&
+      that.experiencia == this.experiencia &&
+      that.genero == this.genero &&
+      that.energia == this.energia &&
+      that.energiaMax == this.energiaMax &&
+      that.peso == this.peso &&
+      that.fuerza == this.fuerza &&
+      that.velocidad == this.velocidad &&
+      that.condicionEvolutiva == this.condicionEvolutiva &&
+      that.resistenciaEvolutiva == this.resistenciaEvolutiva
+  }
 }
