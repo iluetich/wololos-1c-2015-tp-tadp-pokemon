@@ -1,4 +1,4 @@
 /build/
 /scalatest_2.11-2.2.4.jar
 *.cache
-
+.cache
