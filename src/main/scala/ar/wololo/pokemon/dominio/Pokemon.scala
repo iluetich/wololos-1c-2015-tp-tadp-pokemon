@@ -149,32 +149,32 @@ case class Pokemon(
         case _ => {
           if (actividad.kg < (10 * this.fuerza + 1))
             (this.tipoPrincipal, this.tipoSecundario) match {
-              case (Pelea, _) | (_, Pelea) => this.copy(experiencia = this.experiencia + actividad.kg * 2)
+              case (Pelea, _) | (_, Pelea) => this.ganarExperiencia(actividad.kg * 2)
               case (Fantasma, _) | (_, Fantasma) => throw FantasmaNoPuedeLevantarPesas(this)
-              case _ => this.copy(experiencia = this.experiencia + actividad.kg)
+              case _ => this.ganarExperiencia(actividad.kg)
             }
           else
             this.copy(estado = Paralizado)
         }
       }
       case actividad: Nadar => (this.tipoPrincipal, this.tipoSecundario) match {
-        case (Agua, _) => this.copy(experiencia = this.experiencia + actividad.minutos * 200, energia = this.energia - actividad.minutos, velocidad = this.velocidad + Math.round(actividad.minutos / 60)).verificarParams()
+        case (Agua, _) => this.copy(energia = this.energia - actividad.minutos, velocidad = this.velocidad + Math.round(actividad.minutos / 60)).verificarParams().ganarExperiencia(actividad.minutos * 200)
         case (Fuego, _) | (_, Fuego) | (Tierra, _) | (_, Tierra) | (Roca, _) | (_, Roca) => this.copy(estado = Ko)
-        case _ => this.copy(experiencia = this.experiencia + actividad.minutos * 200, energia = this.energia - actividad.minutos).verificarParams()
+        case _ => this.copy(energia = this.energia - actividad.minutos).verificarParams().ganarExperiencia(actividad.minutos * 200)
       }
       case actividad: RealizarUnAtaque => {
         val resultadoAtaque = this.listaAtaques.find { ataque => (ataque.nombre == actividad.ataqueARealizar.nombre && ataque.puntosAtaque > 0) }
         resultadoAtaque match {
           case None => throw PokemonNoConoceMovONoTienePA(this)
           case Some(resultadoAtaque) => {
-            resultadoAtaque.reduciPa //FIXME! Acá tenemos efecto y estamos en pattern-matching!!
+            resultadoAtaque.reduciPa 
             val pokemonAfectado = this.sufriEfectosSecundarios(resultadoAtaque).verificarParams()
-            resultadoAtaque.tipo match { //FIXME! Acá habría que llamar el método 'ganarExperiencia'
-              case Dragon => pokemonAfectado.copy(experiencia = this.experiencia + 80) //el experiencia te tiene que hacer evolucionar si tu condEvolutiva es por exp, Aca Invocar Metodo Pablo 
-              case pokemonAfectado.tipoPrincipal => pokemonAfectado.copy(experiencia = pokemonAfectado.experiencia + 50)
+            resultadoAtaque.tipo match { 
+              case Dragon => pokemonAfectado.ganarExperiencia(80)  
+              case pokemonAfectado.tipoPrincipal => pokemonAfectado.ganarExperiencia(50)
               case pokemonAfectado.tipoSecundario => pokemonAfectado.genero match {
-                case Macho => pokemonAfectado.copy(experiencia = pokemonAfectado.experiencia + 20)
-                case Hembra => pokemonAfectado.copy(experiencia = pokemonAfectado.experiencia + 40)
+                case Macho => pokemonAfectado.ganarExperiencia(20)
+                case Hembra => pokemonAfectado.ganarExperiencia(40)
               }
             }
           }
