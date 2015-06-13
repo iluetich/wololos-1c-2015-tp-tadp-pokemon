@@ -12,7 +12,7 @@ class RutinaTest extends FunSuite {
       1, 0, Macho, 30, 1000, 5, 100, 20, SubirDeNivel(100), 0, 0)
       
       val charmander = new Pokemon(Envenenado, List[Ataque](), Fuego, Tierra ,
-      1, 0, Hembra, 990, 1000, 5, 80, 50, SubirDeNivel(100), 0, 0)
+      1, 0, Hembra, 400, 1000, 5, 80, 50, SubirDeNivel(100), 0, 0)
       
       val scuartul = new Pokemon(Dormido(3), List[Ataque](), Agua, Normal ,
       7, 80, Hembra, 500, 800, 8, 90, 40, SubirDeNivel(100), 0, 0)
