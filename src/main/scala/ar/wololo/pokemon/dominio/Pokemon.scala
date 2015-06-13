@@ -5,8 +5,6 @@ import scala.util.Try
 case class Pokemon(
   val estado: EstadoPokemon,
   val listaAtaques: List[Ataque],
-  val tipoPrincipal: Tipo,
-  val tipoSecundario: Tipo,
   val nivel: Int,
   val experiencia: Int,
   val genero: Genero,
@@ -15,39 +13,10 @@ case class Pokemon(
   val peso: Int,
   val fuerza: Int,
   val velocidad: Int,
-  val condicionEvolutiva: CondicionEvolutiva = null, // podría ya ser evolución definitiva
-  val resistenciaEvolutiva: Int,
-  val miEvolucion: Pokemon = null) { // podría ya ser evolución definitiva
-
-  private def subirDeNivel: Pokemon = {
-    var nivelNuevo = nivel + 1
-    condicionEvolutiva match {
-      case condicion: SubirDeNivel if (condicion.nivelParaEvolucionar == nivelNuevo) => evolucionar()
-      case _ => copy(nivel = nivelNuevo)
-    }
-  }
-
-  def experienciaParaNivel(nivel: Int): Integer = {
-    nivel match {
-      case 0 => resistenciaEvolutiva
-      case n => 2 * experienciaParaNivel(n - 1) + resistenciaEvolutiva
-    }
-  }
-
-  private def evolucionar(): Pokemon = miEvolucion
+  val especie: Especie) {
 
   def aumentaExperiencia(cantidad: Integer): Pokemon = {
-    cantidad match {
-      case n if n == 0 => this
-      case n if n > 0 =>
-        var expAcum: Integer = experiencia + n
-        var expSgteNivel: Integer = experienciaParaNivel(nivel + 1)
-        if (expAcum >= expSgteNivel) {
-          subirDeNivel.aumentaExperiencia(expAcum - expSgteNivel)
-        } else {
-          copy(experiencia = experiencia + expAcum)
-        }
-    }
+    especie.aumentaExperienciaDe(this, cantidad)
   }
 
   private def aumentaPAMaximo(cant: Int): Pokemon = {
@@ -99,23 +68,23 @@ case class Pokemon(
       case ComerCalcio => this.copy(velocidad = this.velocidad + 5).verificarParams()
       case ComerZinc => this.aumentaPAMaximo(2)
       case Descansar => this.descansa
-      case FingirIntercambio => this.condicionEvolutiva match {
-        case Intercambiar => this.evolucionar() //Como me intercambiaron, evoluciono porque mi condicion evolutiva es Intercambiar. [Requerimiento-TP]
+      case FingirIntercambio => especie.condicionEvolutiva match {
+        case Intercambiar => especie.evolucionarA(this) //Como me intercambiaron, evoluciono porque mi condicion evolutiva es Intercambiar. [Requerimiento-TP]
         case _ => this.genero match {
           case Macho => this.copy(peso = this.peso + 1).verificarParams()
           case Hembra => this.copy(peso = this.peso - 10).verificarParams()
         }
       }
-      case actividad: UsarPiedra => this.condicionEvolutiva match {
+      case actividad: UsarPiedra => especie.condicionEvolutiva match {
         case UsarUnaPiedraLunar => actividad.piedra match {
-          case PiedraLunar => this.evolucionar()
+          case PiedraLunar => especie.evolucionarA(this)
           case _ => this
         }
         case UsarUnaPiedra => actividad.piedra match {
           case p: PiedraEvolutiva => p.tipo match {
-            case this.tipoPrincipal => this.evolucionar()
+            case especie.tipoPrincipal => especie.evolucionarA(this)
             case tipoDistinto => {
-              val piedraDaniaPokemon = tipoDistinto.leGanaA.count { tipo => tipo == this.tipoPrincipal | tipo == this.tipoSecundario }
+              val piedraDaniaPokemon = tipoDistinto.leGanaA.count { tipo => tipo == especie.tipoPrincipal | tipo == especie.tipoSecundario }
               if (piedraDaniaPokemon > 0)
                 this.copy(estado = Envenenado)
               else
@@ -129,7 +98,7 @@ case class Pokemon(
         case Paralizado => this.copy(estado = Ko)
         case _ => {
           if (actividad.kg < (10 * this.fuerza + 1))
-            (this.tipoPrincipal, this.tipoSecundario) match {
+            (especie.tipoPrincipal, especie.tipoSecundario) match {
               case (Pelea, _) | (_, Pelea) => this.aumentaExperiencia(actividad.kg * 2)
               case (Fantasma, _) | (_, Fantasma) => throw FantasmaNoPuedeLevantarPesas(this)
               case _ => this.aumentaExperiencia(actividad.kg)
@@ -138,7 +107,7 @@ case class Pokemon(
             this.copy(estado = Paralizado)
         }
       }
-      case actividad: Nadar => (this.tipoPrincipal, this.tipoSecundario) match {
+      case actividad: Nadar => (especie.tipoPrincipal, especie.tipoSecundario) match {
         case (Agua, _) => this.copy(energia = this.energia - actividad.minutos, velocidad = this.velocidad + Math.round(actividad.minutos / 60)).verificarParams().aumentaExperiencia(actividad.minutos * 200)
         case (Fuego, _) | (_, Fuego) | (Tierra, _) | (_, Tierra) | (Roca, _) | (_, Roca) => this.copy(estado = Ko)
         case _ => this.copy(energia = this.energia - actividad.minutos).verificarParams().aumentaExperiencia(actividad.minutos * 200)
@@ -152,8 +121,8 @@ case class Pokemon(
             val pokemonAfectado = this.sufriEfectosSecundarios(resultadoAtaque).verificarParams()
             resultadoAtaque.tipo match {
               case Dragon => pokemonAfectado.aumentaExperiencia(80)
-              case pokemonAfectado.tipoPrincipal => pokemonAfectado.aumentaExperiencia(50)
-              case pokemonAfectado.tipoSecundario => pokemonAfectado.genero match {
+              case pokemonAfectado.especie.tipoPrincipal => pokemonAfectado.aumentaExperiencia(50)
+              case pokemonAfectado.especie.tipoSecundario => pokemonAfectado.genero match {
                 case Macho => pokemonAfectado.aumentaExperiencia(20)
                 case Hembra => pokemonAfectado.aumentaExperiencia(40)
               }
@@ -162,18 +131,19 @@ case class Pokemon(
         }
       }
       case actividad: AprenderAtaque => actividad.ataqueAAprender.tipo match {
-        case Normal | this.tipoPrincipal | this.tipoSecundario => this.copy(listaAtaques = actividad.ataqueAAprender :: this.listaAtaques)
+        case Normal | especie.tipoPrincipal | especie.tipoSecundario => this.copy(listaAtaques = actividad.ataqueAAprender :: this.listaAtaques)
         case _ => this.copy(estado = Ko)
       }
     }
   }
 
   override def equals(unPokemon: Any): Boolean = {
+    // XXX Revisar
     var that: Pokemon = unPokemon.asInstanceOf[Pokemon]
     return that.estado == this.estado &&
       that.listaAtaques == this.listaAtaques &&
-      that.tipoPrincipal == this.tipoPrincipal &&
-      that.tipoSecundario == this.tipoSecundario &&
+      that.especie.tipoPrincipal == especie.tipoPrincipal &&
+      that.especie.tipoSecundario == especie.tipoSecundario &&
       that.nivel == this.nivel &&
       that.experiencia == this.experiencia &&
       that.genero == this.genero &&
@@ -182,7 +152,7 @@ case class Pokemon(
       that.peso == this.peso &&
       that.fuerza == this.fuerza &&
       that.velocidad == this.velocidad &&
-      that.condicionEvolutiva == this.condicionEvolutiva &&
-      that.resistenciaEvolutiva == this.resistenciaEvolutiva
+      that.especie.condicionEvolutiva == especie.condicionEvolutiva &&
+      that.especie.resistenciaEvolutiva == especie.resistenciaEvolutiva
   }
 }
