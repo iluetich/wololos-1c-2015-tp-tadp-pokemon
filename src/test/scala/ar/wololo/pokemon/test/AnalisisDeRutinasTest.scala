@@ -23,13 +23,7 @@ import ar.wololo.pokemon.dominio.SuperSistemaDeAnalisis.NoHuboRutinaHacibleExcep
 
 class AnalisisDeRutinasTest extends FunSuite {
   
-  def fixture = new {
-    var pikachu = new Pokemon(Bueno, null, Electrico, null, 1, 100, Macho, 100, 100, 1000, 100, 100, SubirDeNivel(100), 10, null)
-    val rutinaNado = new Rutina(List[Actividad](Nadar(1), Nadar(1), Nadar(1), Nadar(1)))
-    val rutinaPhelps = new Rutina(List[Actividad](Nadar(100), Nadar(100), Nadar(100), Nadar(100)))
-    val rutinaPocionado = new Rutina(List[Actividad](UsarPocion, UsarPocion, UsarPocion, UsarPocion))
-    val rutinaIntercambio = new Rutina(List[Actividad](FingirIntercambio, FingirIntercambio, FingirIntercambio))
-  }
+  def fixture = Fixt
 
   test("Si a un pokemon sólo lo hago hacer una rutina, esa es la mejor, salvo que no pueda hacerla") {
     val pocionado = fixture.rutinaPocionado

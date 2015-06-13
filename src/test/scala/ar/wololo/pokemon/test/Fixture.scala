@@ -9,9 +9,9 @@ object Fixt {
   val llama = new Ataque("Llama", (Pokemon => Pokemon), Dragon, 15, 30)
 
   // Especie(tipoPrincipal, tipoSecundario, incFuerza, incVelocidad, incPeso, incEnergiaMax, pesoMaxSaludable, resistEvol, condicionEvol, especieEvol)
- 
+
   val especieRaychu = new Especie(Electrico, Normal, 3, 4, 6, 100, 70, 300)
-  val especieCharizard = new Especie(Fuego, Volador, 10,5, 9, 200, 90, 600)
+  val especieCharizard = new Especie(Fuego, Volador, 10, 5, 9, 200, 90, 600)
   val especieCharmeleon = new Especie(Fuego, Normal, 5, 2, 7, 100, 50, 300, Intercambiar, especieCharizard)
   val especiePikachu = new Especie(Electrico, Normal, 2, 3, 5, 80, 40, 200, SubirDeNivel(100), especieRaychu)
   val especieCharmander = new Especie(Fuego, Normal, 4, 1, 6, 80, 30, 250, UsarUnaPiedra, especieCharmeleon)
@@ -22,8 +22,6 @@ object Fixt {
   val especieHitmonchan = new Especie(Pelea, Normal, 5, 3, 10, 80, 95, 450)
   val especieHunter = new Especie(Fantasma, Normal, 2, 15, 12, 80, 65, 550)
   val especieVoltorb = new Especie(Electrico, Tierra, 5, 6, 7, 80, 15, 83)
-
-  
 
   val pikachu = new Pokemon(Bueno, List(impactrueno, embestida), 1, 0, Macho, 30, 1000, 5, 90, 20,
     especiePikachu)
@@ -51,4 +49,14 @@ object Fixt {
 
   val voltod = new Pokemon(Bueno, List(), 1, 0, Hembra, 60, 800, 5, 95, 40,
     especieVoltorb)
+
+  /*
+   * Algunas rutinas
+   * Rutina(actividades)
+   */
+
+  val rutinaNado = new Rutina(List[Actividad](Nadar(1), Nadar(1), Nadar(1), Nadar(1)))
+  val rutinaPhelps = new Rutina(List[Actividad](Nadar(100), Nadar(100), Nadar(100), Nadar(100)))
+  val rutinaPocionado = new Rutina(List[Actividad](UsarPocion, UsarPocion, UsarPocion, UsarPocion))
+  val rutinaIntercambio = new Rutina(List[Actividad](FingirIntercambio, FingirIntercambio, FingirIntercambio))
 }
