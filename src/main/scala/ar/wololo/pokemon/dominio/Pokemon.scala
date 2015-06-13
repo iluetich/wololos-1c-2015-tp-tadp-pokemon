@@ -7,19 +7,18 @@ case class Pokemon(
   val listaAtaques: List[Ataque],
   val tipoPrincipal: Tipo,
   val tipoSecundario: Tipo,
-  val nivel: Integer,
-  val experiencia: Integer,
+  val nivel: Int,
+  val experiencia: Int,
   val genero: Genero,
-  val energia: Integer,
-  val energiaMax: Integer,
-  val peso: Integer,
-  val fuerza: Integer,
-  val velocidad: Integer,
+  val energia: Int,
+  val energiaMax: Int,
+  val peso: Int,
+  val fuerza: Int,
+  val velocidad: Int,
   val condicionEvolutiva: CondicionEvolutiva = null, // podría ya ser evolución definitiva
-  val resistenciaEvolutiva: Integer,
-  val miEvolucion: Pokemon = null ) { // podría ya ser evolución definitiva
+  val resistenciaEvolutiva: Int,
+  val miEvolucion: Pokemon = null) { // podría ya ser evolución definitiva
 
-  
   private def subirDeNivel: Pokemon = {
     var nivelNuevo = nivel + 1
     condicionEvolutiva match {
@@ -27,25 +26,29 @@ case class Pokemon(
       case _ => copy(nivel = nivelNuevo)
     }
   }
-  
-  private def experienciaParaNivel(nivel: Int): Integer = {
+
+  def experienciaParaNivel(nivel: Int): Integer = {
     nivel match {
       case 0 => resistenciaEvolutiva
       case n => 2 * experienciaParaNivel(n - 1) + resistenciaEvolutiva
     }
   }
-  
+
   private def evolucionar(): Pokemon = {
     miEvolucion
   }
-  
+
   def aumentaExperiencia(cantidad: Integer): Pokemon = {
-    var expAcum = experiencia + cantidad
-    var expSgteNivel = experienciaParaNivel(nivel + 1)
-    if(expAcum >= expSgteNivel) {
-      subirDeNivel.aumentaExperiencia(expAcum - expSgteNivel)
-    } else {
-      copy(experiencia = experiencia + expAcum)
+    cantidad match {
+      case n if n == 0 => this
+      case n if n > 0 =>
+        var expAcum: Integer = experiencia + n
+        var expSgteNivel: Integer = experienciaParaNivel(nivel + 1)
+        if (expAcum >= expSgteNivel) {
+          subirDeNivel.aumentaExperiencia(expAcum - expSgteNivel)
+        } else {
+          copy(experiencia = experiencia + expAcum)
+        }
     }
   }
 
@@ -151,10 +154,10 @@ case class Pokemon(
         resultadoAtaque match {
           case None => throw PokemonNoConoceMovONoTienePA(this)
           case Some(resultadoAtaque) => {
-            resultadoAtaque.reduciPa 
+            resultadoAtaque.reduciPa
             val pokemonAfectado = this.sufriEfectosSecundarios(resultadoAtaque).verificarParams()
-            resultadoAtaque.tipo match { 
-              case Dragon => pokemonAfectado.aumentaExperiencia(80)  
+            resultadoAtaque.tipo match {
+              case Dragon => pokemonAfectado.aumentaExperiencia(80)
               case pokemonAfectado.tipoPrincipal => pokemonAfectado.aumentaExperiencia(50)
               case pokemonAfectado.tipoSecundario => pokemonAfectado.genero match {
                 case Macho => pokemonAfectado.aumentaExperiencia(20)
@@ -170,7 +173,7 @@ case class Pokemon(
       }
     }
   }
-  
+
   override def equals(unPokemon: Any): Boolean = {
     var that: Pokemon = unPokemon.asInstanceOf[Pokemon]
     return that.estado == this.estado &&

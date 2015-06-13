@@ -31,6 +31,17 @@ class SetSpec extends FlatSpec {
     
   }
   
+  "Un picachu que le falte un nivel para evolucionar gana suficiente exp para evolucionar" should "debe evolucionar en raychu" in {
+    val raychu = new Pokemon (null, null, null, null, 1, 0, null, 100, 100, 100, 100, 100, null, 100)
+    val picachu = new Pokemon( estado = Dormido(3), listaAtaques = List[Ataque](), tipoPrincipal = Fuego,
+        tipoSecundario = Agua, nivel = 5, experiencia = 0, genero = Macho, energia = 30, energiaMax = 1000,
+        peso = 5, fuerza = 100, velocidad = 20, condicionEvolutiva = SubirDeNivel(6), resistenciaEvolutiva = 10, raychu)
+    
+    val posibleRaychu = picachu.aumentaExperiencia(1270) // i did the math... =D
+    assert(picachu.experienciaParaNivel(6) == 1270)
+    assert(posibleRaychu == raychu)
+  }
+  
   
   
 }
