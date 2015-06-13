@@ -1,6 +1,6 @@
 package ar.wololo.pokemon.dominio
 
-abstract class Especie(val tipoPrincipal: Tipo,
+case class Especie(val tipoPrincipal: Tipo,
   val tipoSecundario: Tipo,
   val incrementoFuerza: Int,
   val incrementoVelocidad: Int,

@@ -1,42 +1,12 @@
 
 package ar.wololo.pokemon.test
 import ar.wololo.pokemon.dominio._
+import ar.wololo.pokemon.test.Fixt
 import org.scalatest.FunSuite
 
 class ActividadesTest extends FunSuite {
   
-  def fixture = new {
-	    val impactrueno = new Ataque("Impactrueno",(Pokemon => Pokemon),Electrico,1,20)
-      val embestida = new Ataque("Embestida",(Pokemon => Pokemon.copy(estado = Dormido(3))),Normal,7,10)
-      val llama = new Ataque("Llama",(Pokemon => Pokemon),Dragon,15,30)
-      
-      val pikachu = new Pokemon(Bueno, List(impactrueno , embestida), Electrico, Normal ,
-      1, 0, Macho, 30, 1000, 5, 90, 20, SubirDeNivel(100), 100, null)
-      
-      val charmander = new Pokemon(Bueno, List(embestida), Fuego, Normal ,
-      1, 0, Hembra, 990, 1000, 5, 80, 50, UsarUnaPiedra, 100, null)
-      
-      val scuartul = new Pokemon(Dormido(3), List[Ataque](), Agua, Normal ,
-      7, 80, Hembra, 500, 800, 8, 90, 40, SubirDeNivel(100), 100, null)
-      
-      val lapras = new Pokemon(Bueno, List[Ataque](), Agua, Dragon ,
-      7, 0, Macho, 500, 800, 8, 20, 50, Intercambiar, 100, null)
-      
-      val bulvasor = new Pokemon(Ko, List[Ataque](), Planta, Bicho ,
-      6, 0, Macho, 400, 1200, 9, 30, 20, SubirDeNivel(100), 100, null)
-      
-      val gyarados = new Pokemon(Envenenado, List(llama), Dragon, Bicho ,
-      5, 0, Macho, 400, 500, 9, 80, 60, UsarUnaPiedraLunar, 100, null)
-      
-      val hitmonchan = new Pokemon(Bueno, List[Ataque](), Pelea, Normal ,
-      1, 0, Macho, 450, 600, 9, 20, 80, Intercambiar, 100, null)
-      
-      val hunter = new Pokemon(Bueno, List[Ataque](), Fantasma, Normal ,
-      1, 0, Hembra, 450, 600, 15, 20, 80, SubirDeNivel(100), 100, null)
-      
-      val voltod = new Pokemon(Bueno, List(), Electrico, Tierra ,
-      1, 0, Hembra, 60, 800, 5, 95, 40, SubirDeNivel(100), 100, null)
-  }
+  def fixture = Fixt
   
   
   test("un pokemon realiza actividad Usar Pocion y se recarga 50 de vida"){
