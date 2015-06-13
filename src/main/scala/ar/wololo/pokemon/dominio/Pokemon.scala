@@ -34,9 +34,7 @@ case class Pokemon(
     }
   }
 
-  private def evolucionar(): Pokemon = {
-    miEvolucion
-  }
+  private def evolucionar(): Pokemon = miEvolucion
 
   def aumentaExperiencia(cantidad: Integer): Pokemon = {
     cantidad match {
@@ -77,13 +75,9 @@ case class Pokemon(
       this
   }
 
-  private def sufriEfectosSecundarios(ataque: Ataque): Pokemon = {
-    ataque.efecto(this)
-  }
+  private def sufriEfectosSecundarios(ataque: Ataque): Pokemon = ataque.efecto(this)
 
-  def realizarRutina(rutina: Rutina): Try[Pokemon] = {
-    rutina.esHechaPor(this)
-  }
+  def realizarRutina(rutina: Rutina): Try[Pokemon] = rutina.esHechaPor(this)
 
   def realizarActividad(actividad: Actividad): Pokemon = this.estado match {
     case Ko => throw EstaKo(this)
