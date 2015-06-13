@@ -1,7 +1,8 @@
 package ar.wololo.pokemon.dominio
+import ar.wololo.pokemon.dominio._
 
 case class Especie(val tipoPrincipal: Tipo,
-  val tipoSecundario: Tipo = null,
+  val tipoSecundario: Tipo,
   val incrementoFuerza: Int,
   val incrementoVelocidad: Int,
   val incrementoPeso: Int,
