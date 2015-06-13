@@ -22,7 +22,7 @@ import ar.wololo.pokemon.dominio.UsarPocion
 class AnalisisDeRutinasTest extends FunSuite {
   
   def fixture = new {
-    var pikachu = new Pokemon(Bueno, null, Electrico, null, 1, 100, Macho, 100, 100, 1000, 100, 100, SubirDeNivel(100), 0, 0)
+    var pikachu = new Pokemon(Bueno, null, Electrico, null, 1, 100, Macho, 100, 100, 1000, 100, 100, SubirDeNivel(100), 0, null)
     val rutinaNado = new Rutina(List[Actividad](Nadar(1), Nadar(1), Nadar(1), Nadar(1)))
     val rutinaPocionado = new Rutina(List[Actividad](UsarPocion, UsarPocion, UsarPocion, UsarPocion))
     val rutinaIntercambio = new Rutina(List[Actividad](FingirIntercambio, FingirIntercambio, FingirIntercambio))
