@@ -20,7 +20,7 @@ class ActividadesTest extends FunSuite {
       7, 80, Hembra, 500, 800, 8, 90, 40, SubirDeNivel(100), 100, null)
       
       val lapras = new Pokemon(Bueno, List[Ataque](), Agua, Dragon ,
-      7, 80, Macho, 500, 800, 8, 20, 50, Intercambiar, 100, null)
+      7, 0, Macho, 500, 800, 8, 20, 50, Intercambiar, 100, null)
       
       val bulvasor = new Pokemon(Ko, List[Ataque](), Planta, Bicho ,
       6, 0, Macho, 400, 1200, 9, 30, 20, SubirDeNivel(100), 100, null)
@@ -242,7 +242,7 @@ class ActividadesTest extends FunSuite {
     val gyarados = fixture.gyarados.realizarActividad(actividad)
     
     assert(gyarados.experiencia == 400)
-    assert(lapras.experiencia == 480)
+    assert(lapras.experiencia == 400)
     
   }
   
