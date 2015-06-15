@@ -28,7 +28,7 @@ class AnalisisDeRutinasTest extends FunSuite {
   test("Si a un pokemon sólo lo hago hacer una rutina, esa es la mejor, salvo que no pueda hacerla") {
     val pocionado = fixture.rutinaPocionado
     val mejorRutina = SuperSistemaDeAnalisis.obtenerMejorRutinaSegun(fixture.pikachu, List(pocionado), MaxEnergia)
-    assert(mejorRutina.get === pocionado)
+    assert(mejorRutina === pocionado.nombre)
     
     val pokeKo = fixture.pikachu.copy(estado = Ko)
     intercept[NoHuboRutinaHacibleException](SuperSistemaDeAnalisis.obtenerMejorRutinaSegun(pokeKo, List[Rutina](fixture.rutinaPocionado), MaxEnergia))
@@ -38,7 +38,7 @@ class AnalisisDeRutinasTest extends FunSuite {
     val pocionado = fixture.rutinaPocionado
     val intercambiado = fixture.rutinaIntercambio
     val mejorRutina = SuperSistemaDeAnalisis.obtenerMejorRutinaSegun(fixture.pikachu, List(pocionado, intercambiado), MinPeso)
-    assert(mejorRutina.get == pocionado)
+    assert(mejorRutina === pocionado.nombre)
   }
   
   test("Si no paso rutinas el análisis arroja excepción para cualquier criterio") {
@@ -56,7 +56,7 @@ class AnalisisDeRutinasTest extends FunSuite {
     val pocionado = fixture.rutinaPocionado
     val nado = fixture.rutinaNado
     val mejorRutina = SuperSistemaDeAnalisis.obtenerMejorRutinaSegun(fixture.pikachu, List(pocionado, nado), MaxNivel)
-    assert(mejorRutina.get === nado)
+    assert(mejorRutina === nado.nombre)
   }
   
   test("Que el pokemon no pueda realizar una rutina no impide que realice otras") {
@@ -66,7 +66,7 @@ class AnalisisDeRutinasTest extends FunSuite {
     intercept[NoHuboRutinaHacibleException](SuperSistemaDeAnalisis.obtenerMejorRutinaSegun(fixture.pikachu, List(nadoQueNoPuedeHacer), MaxNivel))
    
     val mejorRutina = SuperSistemaDeAnalisis.obtenerMejorRutinaSegun(fixture.pikachu, List(nadoQueNoPuedeHacer, pocionado, nado), MaxNivel)
-    assert(mejorRutina.get === nado)
+    assert(mejorRutina === nado.nombre)
   }
   
 

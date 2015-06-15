@@ -13,9 +13,9 @@ object SuperSistemaDeAnalisis {
 
   def obtenerMejorRutinaSegun(pokemon: Pokemon,
     rutinas: Seq[Rutina],
-    criterio: CriterioRutina): Try[Rutina] = {
+    criterio: CriterioRutina): String = {
 
-    var estadosYRutinas = rutinas.map { rutina => (rutina, pokemon.realizarRutina(rutina)) }.filter { case (_, e) => e.isSuccess }
+    var estadosYRutinas = rutinas.map { rutina => (rutina.nombre, pokemon.realizarRutina(rutina)) }.filter { case (_, e) => e.isSuccess }
 
     if (estadosYRutinas.isEmpty) throw NoHuboRutinaHacibleException(pokemon)
 
@@ -32,6 +32,6 @@ object SuperSistemaDeAnalisis {
         }
       }
     }
-    Success(mejorResultado._1)
+    mejorResultado._1
   }
 }

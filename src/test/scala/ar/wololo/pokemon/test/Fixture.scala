@@ -151,8 +151,8 @@ print("voltorb")
    * Rutina(actividades)
    */
 
-  val rutinaNado = new Rutina(List[Actividad](Nadar(1), Nadar(1), Nadar(1), Nadar(1)))
-  val rutinaPhelps = new Rutina(List[Actividad](Nadar(100), Nadar(100), Nadar(100), Nadar(100)))
-  val rutinaPocionado = new Rutina(List[Actividad](UsarPocion, UsarPocion, UsarPocion, UsarPocion))
-  val rutinaIntercambio = new Rutina(List[Actividad](FingirIntercambio, FingirIntercambio, FingirIntercambio))
+  val rutinaNado = new Rutina("natación_tranca", List[Actividad](Nadar(1), Nadar(1), Nadar(1), Nadar(1)))
+  val rutinaPhelps = new Rutina("natación_pro", List[Actividad](Nadar(100), Nadar(100), Nadar(100), Nadar(100)))
+  val rutinaPocionado = new Rutina("pocionado", List[Actividad](UsarPocion, UsarPocion, UsarPocion, UsarPocion))
+  val rutinaIntercambio = new Rutina("intercambiado", List[Actividad](FingirIntercambio, FingirIntercambio, FingirIntercambio))
 }
