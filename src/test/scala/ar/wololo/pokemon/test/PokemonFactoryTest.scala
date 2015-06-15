@@ -23,6 +23,11 @@ class PokemonFactoryTest extends FunSuite {
     val fabricaDePokes = new PokemonFactory
     intercept[Exception](fabricaDePokes.setEnergiaMax(100).setEnergia(100).setNivel(1).setExperiencia(1000))
   }
+  test("No puedo armar un pokemón con experiencia ínfima y nivel alto") {
+    val fabricaDePokes = new PokemonFactory
+    val especiePoke = new Especie(Fuego, Veneno, 1, 1, 1, 1, 100, 25, null, null)
+    intercept[Exception](fabricaDePokes.setEspecie(especiePoke).setNivel(10).setExperiencia(0).isInstanceOf[PokemonFactory])
+  }
   test("No puedo armar un pokemón con ataques que no pueda aprender") {
     val fabricaDePokes = new PokemonFactory
     val especiePoke = new Especie(Fuego, Veneno, 1, 1, 1, 1, 100, 200, null, null)

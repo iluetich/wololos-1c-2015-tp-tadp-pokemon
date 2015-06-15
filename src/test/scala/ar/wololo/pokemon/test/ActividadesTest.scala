@@ -51,7 +51,7 @@ class ActividadesTest extends FunSuite {
   
   test("pokemon dormido ignora 3 actividades y desp se recupera"){
         
-    var scuartul = fixture.scuartul.realizarActividad(UsarPocion)//esta dormido
+    var scuartul = fixture.squirtle.realizarActividad(UsarPocion)//esta dormido
     
     assert(scuartul.energia == 500)
            
@@ -74,7 +74,7 @@ class ActividadesTest extends FunSuite {
     
     var tiroError = false
     
-    try {val bulvasor = fixture.bulvasor.realizarActividad(UsarEther)}//esta ko
+    try {val bulvasor = fixture.bulbasaur.realizarActividad(UsarEther)}//esta ko
     
     catch{case _ : EstaKo => tiroError = true}
     assert(tiroError)
@@ -266,7 +266,7 @@ class ActividadesTest extends FunSuite {
   }
   
   test("pokemon trata de aprender un ataque normal y uno afin a su especie"){
-    val voltod = fixture.voltod
+    val voltod = fixture.voltorb
     val actividad = AprenderAtaque(fixture.impactrueno)
     
     assert(voltod.listaAtaques.size == 0)
@@ -288,7 +288,7 @@ class ActividadesTest extends FunSuite {
   } 
   
   test("pokemon trata de aprender un ataque que no es de tipo afin, entonces no aprende nada y queda Ko"){
-    val voltod = fixture.voltod
+    val voltod = fixture.voltorb
     val actividad = AprenderAtaque(fixture.llama)
     
     val voltod2 = voltod.realizarActividad(actividad)

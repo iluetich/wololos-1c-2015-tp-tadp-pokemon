@@ -14,9 +14,9 @@ case class Especie(val tipoPrincipal: Tipo,
 
   def evolucionarA(pokemon: Pokemon): Pokemon = pokemon.copy(especie = especieEvolucion)
 
-  def experienciaParaNivel(nivel: Int): Integer = {
+  def experienciaParaNivel(nivel: Integer): Long = {
     nivel match {
-      case 1 => resistenciaEvolutiva
+      case n if n == 0 || n == 1 => 0
       case n => 2 * experienciaParaNivel(n - 1) + resistenciaEvolutiva
     }
   }
@@ -34,7 +34,7 @@ case class Especie(val tipoPrincipal: Tipo,
     }
   }
 
-  def aumentaExperienciaDe(pokemon: Pokemon, cantidad: Integer): Pokemon = {
+  def aumentaExperienciaDe(pokemon: Pokemon, cantidad: Long): Pokemon = {
     cantidad match {
       case n if n == 0 => pokemon
       case n if n > 0 =>

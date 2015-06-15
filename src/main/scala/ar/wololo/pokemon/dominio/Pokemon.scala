@@ -6,7 +6,7 @@ case class Pokemon(
   val estado: EstadoPokemon,
   val listaAtaques: List[Ataque],
   val nivel: Int,
-  val experiencia: Int,
+  val experiencia: Long,
   val genero: Genero,
   val energia: Int,
   val energiaMax: Int,
@@ -22,7 +22,7 @@ case class Pokemon(
   val pesoMaximoSaludable: Int = especie.pesoMaximoSaludable
   val condicionEvolutiva: CondicionEvolutiva = especie.condicionEvolutiva
 
-  def aumentaExperiencia(cantidad: Integer): Pokemon = especie.aumentaExperienciaDe(this, cantidad)
+  def aumentaExperiencia(cantidad: Long): Pokemon = especie.aumentaExperienciaDe(this, cantidad)
   def evolucionar: Pokemon = especie.evolucionarA(this)
   def realizarRutina(rutina: Rutina): Try[Pokemon] = rutina.esHechaPor(this)
   private def sufriEfectosSecundarios(ataque: Ataque): Pokemon = ataque.efecto(this)

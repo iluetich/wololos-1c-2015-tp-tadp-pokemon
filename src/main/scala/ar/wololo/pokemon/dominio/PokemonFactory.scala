@@ -7,7 +7,7 @@ package ar.wololo.pokemon.dominio
 case class PokemonFactory(var estado: EstadoPokemon = null,
     var ataques: List[Ataque] = List(),
     var nivel: Int = 0,
-    var experiencia: Int = 0,
+    var experiencia: Long = 0,
     var genero: Genero = null,
     var energia: Int = 0,
     var energiaMax: Int = 0,
@@ -80,16 +80,19 @@ case class PokemonFactory(var estado: EstadoPokemon = null,
       throw new Exception("Nivel menor o igual a 0")
   }
 
-  def setExperiencia(ptsDeExperiencia: Int): PokemonFactory = {
-    if (nivel > 0)
-      if (ptsDeExperiencia >= especie.experienciaParaNivel(nivel + 1))
-        throw new Exception("Experiencia mayor al nivel. Debería ser menor a " + especie.experienciaParaNivel(nivel + 1))
-      else if (ptsDeExperiencia >= 0)
-        copy(experiencia = ptsDeExperiencia)
-      else
-        throw new Exception("Experiencia menor a 0")
-    else
-      throw new Exception("Primero debe definirse un nivel para el pokemón")
+  def setExperiencia(ptsDeExperiencia: Long): PokemonFactory = {
+    nivel match {
+      case n if n == 0 => throw new Exception("Nivel aún no asignado")
+      case n if n > 0 => {
+        val expSgteNivel = especie.experienciaParaNivel(nivel + 1)
+        val expNivelAct = especie.experienciaParaNivel(nivel)
+        ptsDeExperiencia match {
+          case exp if exp >= expSgteNivel => throw new Exception("Experiencia mayor a nivel asignado. Debe ser menor a " + expSgteNivel)
+          case exp if exp >= expNivelAct => copy(experiencia = exp)
+          case _ => throw new Exception("Experiencia menor a nivel asignado. Debe ser mayor a " + expNivelAct)
+        }
+      }
+    }
   }
 
   def setAtaques(unosAtaques: List[Ataque]): PokemonFactory = {
@@ -102,7 +105,8 @@ case class PokemonFactory(var estado: EstadoPokemon = null,
   def build: Pokemon = {
     if (!estado.eq(null) &&
       nivel > 0 &&
-      experiencia >= 0 &&
+      experiencia >= especie.experienciaParaNivel(nivel) &&
+      experiencia < especie.experienciaParaNivel(nivel + 1) &&
       !genero.eq(null) &&
       energia > 0 &&
       energiaMax > 0 &&
