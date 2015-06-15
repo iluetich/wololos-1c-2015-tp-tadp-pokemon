@@ -48,7 +48,7 @@ class AnalisisDeRutinasTest extends FunSuite {
   }
 
   test("Si pikachu está knockout el análisis arroja una excepcion") {
-    var pokeKo = fixture.pikachu.copy(estado = Ko)
+    val pokeKo = fixture.pikachu.copy(estado = Ko)
     intercept[NoHuboRutinaHacibleException](SuperSistemaDeAnalisis.obtenerMejorRutinaSegun(pokeKo, List[Rutina](fixture.rutinaNado, fixture.rutinaIntercambio, fixture.rutinaPocionado), MinPeso))
   }
   
