@@ -15,29 +15,26 @@ case class Pokemon(
   val velocidad: Int,
   val especie: Especie) {
 
+  val velocidadMax = 100 //constante de enunciado
+  val fuerzaMax = 100 //constante de enunciado
   val tipoPrincipal: Tipo = especie.tipoPrincipal
   val tipoSecundario: Tipo = especie.tipoSecundario
+  val pesoMaximoSaludable: Int = especie.pesoMaximoSaludable
   val condicionEvolutiva: CondicionEvolutiva = especie.condicionEvolutiva
 
-  def aumentaExperiencia(cantidad: Integer): Pokemon = {
-    especie.aumentaExperienciaDe(this, cantidad)
-  }
-
+  def aumentaExperiencia(cantidad: Integer): Pokemon = especie.aumentaExperienciaDe(this, cantidad)
   def evolucionar: Pokemon = especie.evolucionarA(this)
-
-  private def aumentaPAMaximo(cant: Int): Pokemon = {
-    listaAtaques.foreach { ataque => ataque.aumentaPAMaximo(cant) }
-    this
-  }
+  def realizarRutina(rutina: Rutina): Try[Pokemon] = rutina.esHechaPor(this)
+  private def sufriEfectosSecundarios(ataque: Ataque): Pokemon = ataque.efecto(this)
 
   def verificarParams(): Pokemon = {
     if (energia < 0)
       throw NoPuedeEnergiaMenorACero(this)
-    if (peso < 0 || peso > especie.pesoMaximoSaludable)
+    if (peso < 0 || peso > pesoMaximoSaludable)
       throw NoPuedePesoInvalido(this)
-    if (fuerza < 0 || fuerza > 100)
+    if (fuerza < 0)
       throw NoPuedeFuerzaInvalida(this)
-    if (velocidad < 0 || velocidad > 100)
+    if (velocidad < 0)
       throw NoPuedeVelocidadInvalida(this)
     this
   }
@@ -50,34 +47,30 @@ case class Pokemon(
       this
   }
 
-  private def sufriEfectosSecundarios(ataque: Ataque): Pokemon = ataque.efecto(this)
-
-  def realizarRutina(rutina: Rutina): Try[Pokemon] = rutina.esHechaPor(this)
+  private def aumentaPAMaximo(cant: Int): Pokemon = {
+    listaAtaques.foreach { ataque => ataque.aumentaPAMaximo(cant) }
+    this
+  }
 
   def realizarActividad(actividad: Actividad): Pokemon = {
     val futuroPokemon = this.estado match {
       case Ko => throw EstaKo(this)
-      case e: Dormido => {
-        if (e.turnos > 0)
-          this.copy(estado = Dormido(e.turnos - 1))
-        else {
-          this.copy(estado = Bueno).realizarActividad(actividad)
-        }
-      }
-      case _ => actividad match {
+      case e: Dormido if e.turnos > 0 => this.copy(estado = Dormido(e.turnos - 1))
+      case e: Dormido => this.copy(estado = Bueno).realizarActividad(actividad)
+      case _: EstadoPokemon => actividad match {
         case UsarPocion => this.copy(energia = Math.min(this.energia + 50, this.energiaMax))
-        case UsarAntidoto => this.estado match {
-          case Envenenado => this.copy(estado = Bueno)
-          case _ => this
-        }
         case UsarEther => this.copy(estado = Bueno)
-        case ComerHierro => this.copy(fuerza = this.fuerza + 5)
-        case ComerCalcio => this.copy(velocidad = this.velocidad + 5)
+        case ComerHierro => this.copy(fuerza = Math.min(this.fuerza + 5, this.fuerzaMax))
+        case ComerCalcio => this.copy(velocidad = Math.min(this.velocidad + 5, this.velocidadMax))
         case ComerZinc => this.aumentaPAMaximo(2)
         case Descansar => this.descansar
+        case UsarAntidoto => this.estado match {
+          case Envenenado => this.copy(estado = Bueno)
+          case _: EstadoPokemon => this
+        }
         case FingirIntercambio => this.condicionEvolutiva match {
           case Intercambiar => this.evolucionar //Como me intercambiaron, evoluciono porque mi condicion evolutiva es Intercambiar. [Requerimiento-TP]
-          case _ => this.genero match {
+          case _: CondicionEvolutiva => this.genero match {
             case Macho => this.copy(peso = peso + 1)
             case Hembra => this.copy(peso = peso - 10)
           }
@@ -85,25 +78,24 @@ case class Pokemon(
         case actividad: UsarPiedra => this.condicionEvolutiva match {
           case UsarUnaPiedraLunar => actividad.piedra match {
             case PiedraLunar => this.evolucionar
-            case _ => this
+            case _: Piedra => this
           }
           case UsarUnaPiedra => actividad.piedra match {
             case p: PiedraEvolutiva => p.tipo match {
               case this.tipoPrincipal => this.evolucionar
               case tipoDistinto => {
-                val piedraDaniaPokemon = tipoDistinto.leGanaA.count { tipo => tipo == especie.tipoPrincipal | tipo == especie.tipoSecundario }
-                if (piedraDaniaPokemon > 0)
+                if (tipoDistinto.aQuienesLeGanas.exists { t => t == tipoPrincipal || t == tipoSecundario })
                   this.copy(estado = Envenenado)
                 else
                   this
               }
             }
-            case _ => throw new Exception("Me llego una piedra de tipo desconocida. BOOM!")
+            case _: Piedra => throw new Exception("Me llego una piedra de tipo desconocida. BOOM!")
           }
         }
         case actividad: LevantarPesas => this.estado match {
           case Paralizado => this.copy(estado = Ko)
-          case _ => {
+          case _: EstadoPokemon => {
             if (actividad.kg < (10 * this.fuerza + 1))
               (this.tipoPrincipal, this.tipoSecundario) match {
                 case (Pelea, _) | (_, Pelea) => this.aumentaExperiencia(actividad.kg * 2)
@@ -115,7 +107,7 @@ case class Pokemon(
           }
         }
         case actividad: Nadar => (this.tipoPrincipal, this.tipoSecundario) match {
-          case (Agua, _) => this.copy(energia = this.energia - actividad.minutos, velocidad = this.velocidad + Math.round(actividad.minutos / 60)).aumentaExperiencia(actividad.minutos * 200)
+          case (Agua, _) => this.copy(energia = this.energia - actividad.minutos, velocidad = Math.min(this.velocidad + Math.round(actividad.minutos / 60), 100)).aumentaExperiencia(actividad.minutos * 200)
           case (Fuego, _) | (_, Fuego) | (Tierra, _) | (_, Tierra) | (Roca, _) | (_, Roca) => this.copy(estado = Ko)
           case _ => this.copy(energia = this.energia - actividad.minutos).aumentaExperiencia(actividad.minutos * 200)
         }
@@ -143,7 +135,7 @@ case class Pokemon(
         }
       }
     }
-    futuroPokemon.verificarParams()
+    futuroPokemon.verificarParams() // retorno el posible pokemon habiendo realizado la actividad
   }
 
   override def equals(unPokemon: Any): Boolean = {

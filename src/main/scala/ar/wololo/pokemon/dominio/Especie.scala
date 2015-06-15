@@ -12,17 +12,15 @@ case class Especie(val tipoPrincipal: Tipo,
   val condicionEvolutiva: CondicionEvolutiva = null,
   val especieEvolucion: Especie = null) {
 
+  def evolucionarA(pokemon: Pokemon): Pokemon = pokemon.copy(especie = especieEvolucion)
+
   def experienciaParaNivel(nivel: Int): Integer = {
-			nivel match {
-			case 0 => resistenciaEvolutiva
-			case n => 2 * experienciaParaNivel(n - 1) + resistenciaEvolutiva
-			}
-	}
-	
-	def evolucionarA(pokemon: Pokemon): Pokemon = {
-			pokemon.copy(especie = especieEvolucion)
-	}
-  
+    nivel match {
+      case 1 => resistenciaEvolutiva
+      case n => 2 * experienciaParaNivel(n - 1) + resistenciaEvolutiva
+    }
+  }
+
   def subirDeNivelA(pokemon: Pokemon): Pokemon = {
     val nivelNuevo = pokemon.nivel + 1
     val fuerzaNueva = Math.min(pokemon.fuerza + incrementoFuerza, 100)
