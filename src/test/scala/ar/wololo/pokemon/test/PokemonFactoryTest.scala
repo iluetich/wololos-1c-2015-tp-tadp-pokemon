@@ -26,7 +26,7 @@ class PokemonFactoryTest extends FunSuite {
   test("No puedo armar un pokemón con ataques que no pueda aprender") {
     val fabricaDePokes = new PokemonFactory
     val especiePoke = new Especie(Fuego, Veneno, 1, 1, 1, 1, 100, 200, null, null)
-    intercept[Exception](fabricaDePokes.setAtaques(List(Fixt.embestida, Fixt.impactrueno)))
+    intercept[Exception](fabricaDePokes.setEspecie(especiePoke).setAtaques(List(Fixt.embestida, Fixt.impactrueno)))
   }
   test("Si armo un poke con criterio, la fábrica me lo da") {
     val fabricaDePokes = new PokemonFactory
