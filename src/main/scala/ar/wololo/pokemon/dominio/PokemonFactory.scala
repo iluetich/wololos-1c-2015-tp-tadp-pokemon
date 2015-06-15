@@ -14,6 +14,11 @@ case class AtaqueFactoryException(mensaje: String) extends Exception(mensaje)
 case class EspecieFactoryException(mensaje: String) extends Exception(mensaje)
 case class BuildFactoryException(mensaje: String) extends Exception(mensaje)
 
+/*
+ * Hice que los métodos retornen copias de PokemonFactory para
+ * la concatenación de mensajes y que sea fácil armar pokemones
+ */
+
 case class PokemonFactory(var estado: EstadoPokemon = null,
     var ataques: List[Ataque] = List(),
     var nivel: Int = 0,

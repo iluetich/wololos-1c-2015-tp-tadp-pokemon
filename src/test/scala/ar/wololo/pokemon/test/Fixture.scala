@@ -14,9 +14,11 @@ object Fixt {
 
   val especieRaychu = new Especie(Electrico, Normal, 3, 4, 6, 100, 70, 300)
   val especieCharizard = new Especie(Fuego, Volador, 10, 5, 9, 200, 90, 600)
-  val especieCharmeleon = new Especie(Fuego, Normal, 5, 2, 7, 100, 50, 300, Intercambiar, especieCharizard)
+  val especieBlastoise = new Especie(Agua, Agua, 10, 10, 10, 300, 500, 550)
   val especiePikachu = new Especie(Electrico, Normal, 2, 3, 5, 80, 40, 200, SubirDeNivel(100), especieRaychu)
+  val especieCharmeleon = new Especie(Fuego, Normal, 5, 2, 7, 100, 50, 300, Intercambiar, especieCharizard)
   val especieCharmander = new Especie(Fuego, Normal, 4, 1, 6, 80, 30, 250, UsarUnaPiedra, especieCharmeleon)
+  val especieWarturtle = new Especie(Agua, Agua, 6, 5, 4, 80, 100, 400, SubirDeNivel(30), especieBlastoise)
   val especieSquirtle = new Especie(Agua, Normal, 1, 2, 4, 80, 45, 230)
   val especieLapras = new Especie(Agua, Dragon, 10, 9, 8, 80, 100, 350)
   val especieBulbasaur = new Especie(Planta, Bicho, 6, 1, 3, 80, 80, 140)
@@ -28,7 +30,7 @@ object Fixt {
   /*
    * Pokemones
    */
-  print("pkachu")
+
   val pikachu = fabricaDePokes.setEstado(Bueno)
     .setEspecie(especiePikachu)
     .setAtaques(List(impactrueno, embestida))
@@ -41,7 +43,7 @@ object Fixt {
     .setFuerza(90)
     .setVelocidad(20)
     .build
-print("charmander")
+
   val charmander = fabricaDePokes.setEstado(Bueno)
     .setEspecie(especieCharmander)
     .setAtaques(List(embestida))
@@ -54,7 +56,7 @@ print("charmander")
     .setFuerza(80)
     .setVelocidad(50)
     .build
-print("squirtle")
+
   val squirtle = fabricaDePokes.setEstado(Dormido(3))
     .setEspecie(especieSquirtle)
     .setAtaques(List())
@@ -67,7 +69,7 @@ print("squirtle")
     .setFuerza(90)
     .setVelocidad(40)
     .build
-    print("lapras")
+
   val lapras = fabricaDePokes.setEstado(Bueno)
     .setEspecie(especieLapras)
     .setAtaques(List())
@@ -80,7 +82,7 @@ print("squirtle")
     .setFuerza(20)
     .setVelocidad(50)
     .build
-    print("bulbasor")
+
   val bulbasaur = fabricaDePokes.setEstado(Ko)
     .setEspecie(especieBulbasaur)
     .setAtaques(List())
@@ -93,7 +95,7 @@ print("squirtle")
     .setFuerza(30)
     .setVelocidad(20)
     .build
-print("gyaados")
+
   val gyarados = fabricaDePokes.setEstado(Envenenado)
     .setEspecie(especieGyarados)
     .setAtaques(List(llama))
@@ -106,7 +108,7 @@ print("gyaados")
     .setFuerza(80)
     .setVelocidad(60)
     .build
-print("hitmonhcan")
+
   val hitmonchan = fabricaDePokes.setEstado(Bueno)
     .setEspecie(especieHitmonchan)
     .setAtaques(List())
@@ -119,7 +121,7 @@ print("hitmonhcan")
     .setFuerza(20)
     .setVelocidad(80)
     .build
-print("hunter")
+
   val hunter = fabricaDePokes.setEstado(Bueno)
     .setEspecie(especieHunter)
     .setAtaques(List())
@@ -132,7 +134,7 @@ print("hunter")
     .setFuerza(20)
     .setVelocidad(80)
     .build
-print("voltorb")
+
   val voltorb = fabricaDePokes.setEstado(Bueno)
     .setEspecie(especieVoltorb)
     .setAtaques(List())
@@ -148,7 +150,7 @@ print("voltorb")
 
   /*
    * Algunas rutinas
-   * Rutina(actividades)
+   * Rutina(nombre, actividades)
    */
 
   val rutinaNado = new Rutina("natación_tranca", List[Actividad](Nadar(1), Nadar(1), Nadar(1), Nadar(1)))

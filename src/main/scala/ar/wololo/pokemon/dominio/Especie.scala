@@ -2,21 +2,21 @@ package ar.wololo.pokemon.dominio
 import ar.wololo.pokemon.dominio._
 
 case class Especie(val tipoPrincipal: Tipo,
-  val tipoSecundario: Tipo,
-  val incrementoFuerza: Int,
-  val incrementoVelocidad: Int,
-  val incrementoPeso: Int,
-  val incrementoEnergiaMax: Int,
-  val pesoMaximoSaludable: Int,
-  val resistenciaEvolutiva: Int,
-  val condicionEvolutiva: CondicionEvolutiva = null,
-  val especieEvolucion: Especie = null) {
+    val tipoSecundario: Tipo,
+    val incrementoFuerza: Int,
+    val incrementoVelocidad: Int,
+    val incrementoPeso: Int,
+    val incrementoEnergiaMax: Int,
+    val pesoMaximoSaludable: Int,
+    val resistenciaEvolutiva: Int,
+    val condicionEvolutiva: CondicionEvolutiva = null,
+    val especieEvolucion: Especie = null) {
 
   def evolucionarA(pokemon: Pokemon): Pokemon = pokemon.copy(especie = especieEvolucion)
 
   def experienciaParaNivel(nivel: Integer): Long = {
     nivel match {
-      case n if n == 0 || n == 1 => 0
+      case n if n == 0 || n == 1 => resistenciaEvolutiva
       case n => 2 * experienciaParaNivel(n - 1) + resistenciaEvolutiva
     }
   }
