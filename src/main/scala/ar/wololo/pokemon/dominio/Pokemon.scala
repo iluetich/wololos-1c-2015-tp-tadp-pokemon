@@ -41,10 +41,11 @@ case class Pokemon(
 
   private def descansar(): Pokemon = {
     this.listaAtaques.foreach { ataque => ataque.regenerate() }
-    if (energia < energiaMax * 0.5)
-      this.copy(estado = Dormido(3))
-    else
-      this
+    
+    energia match {
+      case energia if energia < energiaMax * 0.5 => copy(estado = Dormido(3))
+      case _ => this
+    }
   }
 
   private def aumentaPAMaximo(cant: Int): Pokemon = {
