@@ -23,7 +23,7 @@ case class Especie(val tipoPrincipal: Tipo,
 
   def subirDeNivelA(pokemon: Pokemon): Pokemon = {
     val nivelNuevo = pokemon.nivel + 1
-    val fuerzaNueva = Math.min(pokemon.fuerza + incrementoFuerza, 100)
+    val fuerzaNueva = Math.min(pokemon.fuerza + incrementoFuerza, pokemon.fuerzaMax)
     val energiaMaxNueva = pokemon.energiaMax + incrementoEnergiaMax
     val pesoNuevo = Math.min(pokemon.peso + incrementoPeso, pesoMaximoSaludable)
     val pokemonMejorado = pokemon.copy(nivel = nivelNuevo, fuerza = fuerzaNueva, energiaMax = energiaMaxNueva)
