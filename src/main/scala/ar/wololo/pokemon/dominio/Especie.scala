@@ -16,7 +16,7 @@ case class Especie(val tipoPrincipal: Tipo,
 
   def experienciaParaNivel(nivel: Integer): Long = {
     nivel match {
-      case n if n == 0 || n == 1 => resistenciaEvolutiva
+      case n if n == 0 || n == 1 => 0
       case n => 2 * experienciaParaNivel(n - 1) + resistenciaEvolutiva
     }
   }
