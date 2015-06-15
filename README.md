@@ -1,2 +1,4 @@
 # wololos-1c-2015-tp-tadp-pokemon
-Repositorio de código para el trabajo práctico sobre el paradigma híbrido objeto-funcional
+## Decisiones de diseño
+  > Se optó por un polimorfismo paramétrico en la lógica de actividades apoyándonos en la consideración de que la estructura capaz de realizar actividades, en este caso Pokemon, no variará con el correr del tiempo. El polimorfismo paramétrico nos provee de gran flexibilidad para agregar nuevas actividades, agregando un caso más en el pattern-matching. En contraste, la implementación de un polimorfismo ad-hoc, mediante, por ejemplo, la utilización del patrón **visitor**, hace más compleja la adición de nuevas actividades, la cual creemos más probable, y simplifica el agregado de nuevas estructuras capaces de realizar actividades, donde, actualmente, sólo identificamos al Pokemon como entidad capaz de realizar actividades, y ninguna más.
+  
