@@ -3,6 +3,8 @@ import ar.wololo.pokemon.dominio._
 
 object Fixt {
 
+  val fabricaDePokes = new PokemonFactory
+
   // Ataque(nombre, efecto, tipo, puntosDeAtaque, puntosDeAtaqueMax)
   val impactrueno = new Ataque("Impactrueno", (Pokemon => Pokemon), Electrico, 1, 20)
   val embestida = new Ataque("Embestida", (Pokemon => Pokemon.copy(estado = Dormido(3))), Normal, 7, 10)
@@ -23,11 +25,40 @@ object Fixt {
   val especieHunter = new Especie(Fantasma, Normal, 2, 15, 12, 80, 65, 550)
   val especieVoltorb = new Especie(Electrico, Tierra, 5, 6, 7, 80, 15, 83)
 
-  val pikachu = new Pokemon(Bueno, List(impactrueno, embestida), 1, 0, Macho, 30, 1000, 5, 90, 20,
-    especiePikachu)
+  /*
+   * Pokemones
+   */
+  val pikachu = fabricaDePokes.setEstado(Bueno)
+    .setEspecie(especiePikachu)
+    .setAtaques(List(impactrueno, embestida))
+    .setNivel(1)
+    .setExperiencia(0)
+    .setGenero(Macho)
+    .setEnergiaMax(1000)
+    .setEnergia(30)
+    .setPeso(5)
+    .setFuerza(90)
+    .setVelocidad(20)
+    .build
 
-  val charmander = new Pokemon(Bueno, List(embestida), 1, 0, Hembra, 990, 1000, 5, 80, 50,
-    especieCharmander)
+  val charmander = fabricaDePokes.setEstado(Bueno)
+    .setEspecie(especieCharmander)
+    .setAtaques(List(embestida))
+    .setNivel(1)
+    .setExperiencia(0)
+    .setGenero(Hembra)
+    .setEnergiaMax(1000)
+    .setEnergia(990)
+    .setPeso(5)
+    .setFuerza(80)
+    .setVelocidad(50)
+    .build
+
+//  val pikachu = new Pokemon(Bueno, List(impactrueno, embestida), 1, 0, Macho, 30, 1000, 5, 90, 20,
+//    especiePikachu)
+//
+//  val charmander = new Pokemon(Bueno, List(embestida), 1, 0, Hembra, 990, 1000, 5, 80, 50,
+//    especieCharmander)
 
   val scuartul = new Pokemon(Dormido(3), List[Ataque](), 7, 80, Hembra, 500, 800, 8, 90, 40,
     especieSquirtle)
