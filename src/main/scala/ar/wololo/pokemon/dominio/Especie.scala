@@ -22,12 +22,13 @@ case class Especie(val tipoPrincipal: Tipo,
 	def evolucionarA(pokemon: Pokemon): Pokemon = {
 			pokemon.copy(especie = especieEvolucion)
 	}
-	
+  
   def subirDeNivelA(pokemon: Pokemon): Pokemon = {
     val nivelNuevo = pokemon.nivel + 1
-    val fuerzaNueva = pokemon.fuerza + incrementoFuerza
+    val fuerzaNueva = Math.min(pokemon.fuerza + incrementoFuerza, 100)
     val energiaMaxNueva = pokemon.energiaMax + incrementoEnergiaMax
-    val pokemonMejorado = pokemon.copy(nivel = nivelNuevo, fuerza = fuerzaNueva, energiaMax = energiaMaxNueva).aumentaPeso(incrementoPeso)
+    val pesoNuevo = Math.min(pokemon.peso + incrementoPeso, pesoMaximoSaludable)
+    val pokemonMejorado = pokemon.copy(nivel = nivelNuevo, fuerza = fuerzaNueva, energiaMax = energiaMaxNueva)
 
     condicionEvolutiva match {
       case c: SubirDeNivel if (c.nivelParaEvolucionar == nivelNuevo) => evolucionarA(pokemonMejorado)
@@ -49,20 +50,5 @@ case class Especie(val tipoPrincipal: Tipo,
           pokemon.copy(experiencia = pokemon.experiencia + expAcum)
         }
     }
-  }
-
-  /*
-   * [..] También cada especie determina un Peso Máximo, que indica qué tanto Peso
-   * pueden ganar sus miembros antes de que afecte su salud [...] -> Página 3 del TP
-   */
-  
-  def aumentaPesoDe(pokemon: Pokemon, cantidad: Integer): Pokemon = {
-    val pesoFuturo = pokemon.peso + cantidad
-    if (pesoFuturo > pesoMaximoSaludable)
-      //Afecta su salud, pero el requerimiento no especifica cómo.
-      //Duplico código porque no sé si hay que hacer algo distinto o no.
-      pokemon.copy(peso = pesoFuturo)
-    else
-      pokemon.copy(peso = pesoFuturo)
   }
 }
