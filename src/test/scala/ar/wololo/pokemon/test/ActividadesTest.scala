@@ -8,7 +8,6 @@ class ActividadesTest extends FunSuite {
   
   def fixture = Fixt
   
-  
   test("un pokemon realiza actividad Usar Pocion y se recarga 50 de vida"){
     
     val pikachuCurado = fixture.pikachu.realizarActividad(UsarPocion)
