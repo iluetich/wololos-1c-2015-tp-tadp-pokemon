@@ -4,9 +4,6 @@ package ar.wololo.pokemon.dominio
  * @author ivan
  */
 
-case class PesoFactoryException(mensaje: String) extends Exception(mensaje)
-case class VelocidadFactoryException(mensaje: String) extends Exception(mensaje)
-case class FuerzaFactoryException(mensaje: String) extends Exception(mensaje)
 case class EnergiaFactoryException(mensaje: String) extends Exception(mensaje)
 case class NivelFactoryException(mensaje: String) extends Exception(mensaje)
 case class ExperienciaFactoryException(mensaje: String) extends Exception(mensaje)
@@ -25,56 +22,28 @@ case class PokemonFactory(var estado: EstadoPokemon = null,
     var experiencia: Long = 0,
     var genero: Genero = null,
     var energia: Int = 0,
-    var energiaMax: Int = 0,
-    var peso: Int = 0,
-    var fuerza: Int = 0,
-    var velocidad: Int = 0,
     var especie: Especie = null) {
 
-  def setEnergiaMax(joulesMax: Int): PokemonFactory = {
-    if (joulesMax > 0)
-      copy(energiaMax = joulesMax)
-    else
-      throw new EnergiaFactoryException("Energía máxima igual o menor a 0")
-  }
-
-  def setEnergia(joules: Int): PokemonFactory = {
-    if (energiaMax > 0)
-      if (joules > 0 && joules <= energiaMax)
-        copy(energia = joules)
-      else
-        throw new EnergiaFactoryException("Energía no válida")
-    else
-      throw new EnergiaFactoryException("Primero debe definirse la energía máxima.")
-  }
-
-  def setPeso(kilos: Int): PokemonFactory = {
-    if (especie.pesoMaximoSaludable > 0)
-      if (kilos > 0 && kilos <= especie.pesoMaximoSaludable)
-        copy(peso = kilos)
-      else {
-        throw new PesoFactoryException("Peso no válido")
-      }
-    else
-      throw new PesoFactoryException("Primero debe definirse el peso máximo en la especie")
-  }
-
-  def setVelocidad(velocity: Int): PokemonFactory = {
-    if (velocity >= 0 && velocity <= 100)
-      copy(velocidad = velocity)
-    else
-      throw new VelocidadFactoryException("Velocidad no válida")
-  }
-
-  def setFuerza(newtons: Int): PokemonFactory = {
-    if (newtons >= 0 && newtons <= 100)
-      copy(fuerza = newtons)
-    else
-      throw new FuerzaFactoryException("Fuerza no válida")
-  }
+  def getFuerza: Int = if (nivel > 0) nivel * especie.incrementoFuerza else throw NivelFactoryException("Definir nivel mayor a 0 antes de asignar fuerza.")
+  def getPeso: Int = if (nivel > 0) Math.min(nivel * especie.incrementoPeso, especie.pesoMaximoSaludable) else throw NivelFactoryException("Definir nivel mayor a 0 antes de asignar peso.")
+  def getEnergiaMax: Int = if (nivel > 0) nivel * especie.incrementoEnergiaMax else throw NivelFactoryException("Definir nivel mayor a 0 antes de asignar energia.")
+  def getVelocidad: Int = if (nivel > 0) nivel * especie.incrementoVelocidad else throw NivelFactoryException("Definir nivel mayor a 0 antes de asignar velocidad.")
 
   def setGenero(identidad: Genero): PokemonFactory = copy(genero = identidad)
   def setEstado(unEstado: EstadoPokemon): PokemonFactory = copy(estado = unEstado)
+
+  def setEnergia(joules: Int): PokemonFactory = {
+    if (getEnergiaMax > 0)
+      if (joules > 0 && joules <= getEnergiaMax)
+        copy(energia = joules)
+      else {
+        print("Energia max es: " + getEnergiaMax)
+        print("Incremento energia max es: " + especie.incrementoEnergiaMax)
+        throw new EnergiaFactoryException("Energía no válida => " + joules + " . Debe estar entre 0 y " + getEnergiaMax)
+      }
+    else
+      throw new EnergiaFactoryException("La energía máxima es igual o menor a 0. Revisar especie.")
+  }
 
   def setEspecie(unaEspecie: Especie): PokemonFactory = {
     if (unaEspecie.pesoMaximoSaludable > 0 &&
@@ -89,10 +58,19 @@ case class PokemonFactory(var estado: EstadoPokemon = null,
   }
 
   def setNivel(unNivel: Int): PokemonFactory = {
-    if (unNivel > 0)
-      copy(nivel = unNivel)
-    else
-      throw new NivelFactoryException("Nivel menor o igual a 0")
+    especie.condicionEvolutiva match {
+      case c: SubirDeNivel =>
+        if (unNivel < c.nivelParaEvolucionar)
+          copy(nivel = unNivel)
+        else
+          throw NivelFactoryException("El nivel debe ser menor al nivel especificado para evolucionar.")
+      case _ =>
+        if (unNivel > 0)
+          copy(nivel = unNivel)
+        else
+          throw NivelFactoryException("El nivel debe ser mayor a 0")
+    }
+
   }
 
   def setExperiencia(ptsDeExperiencia: Long): PokemonFactory = {
@@ -124,14 +102,21 @@ case class PokemonFactory(var estado: EstadoPokemon = null,
       experiencia < especie.experienciaParaNivel(nivel + 1) &&
       !genero.eq(null) &&
       energia > 0 &&
-      energiaMax > 0 &&
-      peso > 0 &&
-      fuerza > 0 &&
-      velocidad > 0 &&
       !especie.eq(null) &&
       (ataques.isEmpty ||
         ataques.forall { atk => atk.tipo == especie.tipoPrincipal || atk.tipo == especie.tipoSecundario || atk.tipo == Normal }))
-      new Pokemon(estado, ataques, nivel, experiencia, genero, energia, energiaMax, peso, fuerza, velocidad, especie)
+
+      new Pokemon(estado,
+        ataques,
+        nivel,
+        experiencia,
+        genero,
+        energia,
+        energiaMax = getEnergiaMax,
+        peso = getPeso,
+        fuerza = getFuerza,
+        velocidad = getVelocidad,
+        especie)
     else
       throw new BuildFactoryException("Faltan parámetros para la creación del pokemón")
   }
