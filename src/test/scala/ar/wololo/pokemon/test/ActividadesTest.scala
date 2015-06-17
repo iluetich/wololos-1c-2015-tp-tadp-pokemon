@@ -2,51 +2,11 @@
 package ar.wololo.pokemon.test
 import ar.wololo.pokemon.dominio._
 import org.scalatest.FunSuite
+import org.scalatest.BeforeAndAfter
 
-class ActividadesTest extends FunSuite {
+class ActividadesTest extends FunSuite with BeforeAndAfter{
   
-  def fixture = new {
-    val impactrueno = Fixt.impactrueno
-    val embestida = Fixt.embestida
-    val llama = Fixt.llama
-
-  val especieRaychu = Fixt.especieRaychu
-  val especieCharizard = Fixt.especieCharizard
-  val especieBlastoise = Fixt.especieBlastoise
-  val especiePikachu = Fixt.especiePikachu
-  val especieCharmeleon = Fixt.especieCharmeleon
-  val especieCharmander = Fixt.especieCharmander
-  val especieWarturtle = Fixt.especieWarturtle
-  val especieSquirtle = Fixt.especieSquirtle
-  val especieLapras = Fixt.especieLapras
-  val especieBulbasaur = Fixt.especieBulbasaur
-  val especieGyarados = Fixt.especieGyarados
-  val especieHitmonchan = Fixt.especieHitmonchan
-  val especieHunter = Fixt.especieHunter
-  val especieVoltorb = Fixt.especieVoltorb
-
-  /*
-   * Pokemones
-   */
-
-  val pikachu = Fixt.pikachu
-
-  val charmander = Fixt.charmander
-
-  val squirtle = Fixt.squirtle
-
-  val lapras = Fixt.lapras
-
-  val bulbasaur = Fixt.bulbasaur
-
-  val gyarados = Fixt.gyarados
-
-  val hitmonchan = Fixt.hitmonchan
-
-  val hunter = Fixt.hunter
-
-  val voltorb = Fixt.voltorb
-  }
+  def fixture = Fixt
   
   
   test("un pokemon realiza actividad Usar Pocion y se recarga 50 de vida"){
