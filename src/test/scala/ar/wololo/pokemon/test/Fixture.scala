@@ -12,19 +12,19 @@ object Fixt {
 
   // Especie(tipoPrincipal, tipoSecundario, incFuerza, incVelocidad, incPeso, incEnergiaMax, pesoMaxSaludable, resistEvol, condicionEvol, especieEvol)
 
-  val especieRaychu = new Especie(Electrico, Normal, 3, 4, 6, 100, 70, 300,SubirDeNivel(45))
-  val especieCharizard = new Especie(Fuego, Volador, 10, 5, 9, 200, 90, 600,SubirDeNivel(400))
-  val especieBlastoise = new Especie(Agua, Agua, 10, 10, 10, 300, 500, 550,SubirDeNivel(300))
+  val especieRaychu = new Especie(Electrico, Normal, 3, 4, 6, 100, 70, 300,NoEvoluciona)
+  val especieCharizard = new Especie(Fuego, Volador, 10, 5, 9, 200, 90, 600,NoEvoluciona)
+  val especieBlastoise = new Especie(Agua, Agua, 10, 10, 10, 300, 500, 550,NoEvoluciona)
   val especiePikachu = new Especie(Electrico, Normal, 2, 3, 5, 80, 40, 200, SubirDeNivel(100), especieRaychu)
   val especieCharmeleon = new Especie(Fuego, Normal, 5, 2, 7, 100, 50, 300, Intercambiar, especieCharizard)
   val especieCharmander = new Especie(Fuego, Normal, 4, 1, 6, 80, 30, 250, UsarUnaPiedra, especieCharmeleon)
   val especieWarturtle = new Especie(Agua, Agua, 6, 5, 4, 80, 100, 400, SubirDeNivel(30), especieBlastoise)
   val especieSquirtle = new Especie(Agua, Normal, 1, 2, 4, 80, 45, 230,SubirDeNivel(200))
-  val especieLapras = new Especie(Agua, Dragon, 10, 9, 8, 80, 100, 350,UsarUnaPiedraLunar)
+  val especieLapras = new Especie(Agua, Dragon, 10, 9, 8, 80, 100, 350,UsarUnaPiedraLunar)//necesito testear que un pok utilice una piedra
   val especieBulbasaur = new Especie(Planta, Bicho, 6, 1, 3, 80, 80, 140,SubirDeNivel(150))
   val especieGyarados = new Especie(Dragon, Bicho, 5, 8, 9, 80, 75, 280,UsarUnaPiedra) //LOCO GYARADOS ESTABA BIEN ESCRITO
   val especieHitmonchan = new Especie(Pelea, Normal, 5, 3, 10, 80, 95, 450,Intercambiar)
-  val especieHunter = new Especie(Fantasma, Normal, 2, 15, 12, 80, 65, 550,SubirDeNivel(200))
+  val especieHunter = new Especie(Fantasma, Normal, 2, 15, 12, 80, 65, 550,NoEvoluciona)
   val especieVoltorb = new Especie(Electrico, Tierra, 5, 6, 7, 80, 15, 83,UsarUnaPiedra)
 
   /*

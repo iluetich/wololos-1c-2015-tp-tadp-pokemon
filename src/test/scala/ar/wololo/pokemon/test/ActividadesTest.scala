@@ -168,7 +168,7 @@ class ActividadesTest extends FunSuite {
     }
   }
   
-  ignore("pokemon realiza un ataque de su tipo principal se baja en 1 el pa del ataque y gana 50 de exp"){
+  test("pokemon realiza un ataque de su tipo principal se baja en 1 el pa del ataque y gana 50 de exp"){
     assert(fixture.impactrueno.puntosAtaque == 1)
     
     val pikachu = fixture.pikachu

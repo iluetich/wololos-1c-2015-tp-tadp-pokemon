@@ -12,3 +12,4 @@ case class SubirDeNivel(val nivelParaEvolucionar: Integer) extends CondicionEvol
 object Intercambiar extends CondicionEvolutiva { def evaluaCondicion(unPokemon: Pokemon): Boolean = true }
 object UsarUnaPiedra extends CondicionEvolutiva { def evaluaCondicion(unPokemon: Pokemon) = true }
 object UsarUnaPiedraLunar extends CondicionEvolutiva { def evaluaCondicion(unPokemon: Pokemon) = true }
+object NoEvoluciona extends CondicionEvolutiva { def evaluaCondicion(unPokemon: Pokemon) = true }
