@@ -96,13 +96,13 @@ case class PokemonFactory(var estado: EstadoPokemon = null,
   }
 
   def build: Pokemon = {
-    if (!estado.eq(null) &&
+    if (!(estado == null) &&
       nivel > 0 &&
       experiencia >= especie.experienciaParaNivel(nivel) &&
       experiencia < especie.experienciaParaNivel(nivel + 1) &&
       !genero.eq(null) &&
       energia > 0 &&
-      !especie.eq(null) &&
+      !(especie == null) &&
       (ataques.isEmpty ||
         ataques.forall { atk => atk.tipo == especie.tipoPrincipal || atk.tipo == especie.tipoSecundario || atk.tipo == Normal }))
 
