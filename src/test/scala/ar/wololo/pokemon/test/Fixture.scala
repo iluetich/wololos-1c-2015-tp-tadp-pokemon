@@ -6,9 +6,9 @@ object Fixt {
   val fabricaDePokes = new PokemonFactory
 
   // Ataque(nombre, efecto, tipo, puntosDeAtaque, puntosDeAtaqueMax)
-  val impactrueno = new Ataque("Impactrueno", (Pokemon => Pokemon), Electrico, 1, 20)
-  val embestida = new Ataque("Embestida", (Pokemon => Pokemon.copy(estado = Dormido(3))), Normal, 7, 10)
-  val llama = new Ataque("Llama", (Pokemon => Pokemon), Dragon, 15, 30)
+  val impactrueno = Ataque("Impactrueno", (Pokemon => Pokemon), Electrico, 1, 20)
+  val embestida = Ataque("Embestida", (Pokemon => Pokemon.copy(estado = Dormido(3))), Normal, 7, 10)
+  val llama = Ataque("Llama", (Pokemon => Pokemon), Dragon, 15, 30)
 
   // Especie(tipoPrincipal, tipoSecundario, incFuerza, incVelocidad, incPeso, incEnergiaMax, pesoMaxSaludable, resistEvol, condicionEvol, especieEvol)
 
@@ -31,7 +31,7 @@ object Fixt {
    * Pokemones
    */
 
-  var pikachu = fabricaDePokes.setEstado(Bueno)
+  val pikachu = fabricaDePokes.setEstado(Bueno)
     .setEspecie(especiePikachu)
     .setAtaques(List(impactrueno, embestida))
     .setNivel(1)

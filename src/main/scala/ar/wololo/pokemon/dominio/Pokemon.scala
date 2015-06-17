@@ -3,17 +3,17 @@ package ar.wololo.pokemon.dominio
 import scala.util.Try
 
 case class Pokemon(
-  val estado: EstadoPokemon,
-  val listaAtaques: List[Ataque],
-  val nivel: Int,
-  val experiencia: Long,
-  val genero: Genero,
-  val energia: Int,
-  val energiaMax: Int,
-  val peso: Int,
-  val fuerza: Int,
-  val velocidad: Int,
-  val especie: Especie) {
+    val estado: EstadoPokemon,
+    val listaAtaques: List[Ataque],
+    val nivel: Int,
+    val experiencia: Long,
+    val genero: Genero,
+    val energia: Int,
+    val energiaMax: Int,
+    val peso: Int,
+    val fuerza: Int,
+    val velocidad: Int,
+    val especie: Especie) {
 
   val velocidadMax = 100 //constante de enunciado
   val fuerzaMax = 100 //constante de enunciado
@@ -25,7 +25,7 @@ case class Pokemon(
   def aumentaExperiencia(cantidad: Long): Pokemon = especie.aumentaExperienciaDe(this, cantidad)
   def evolucionar: Pokemon = especie.evolucionarA(this)
   def realizarRutina(rutina: Rutina): Try[Pokemon] = rutina.esHechaPor(this)
-  private def sufriEfectosSecundarios(ataque: Ataque): Pokemon = ataque.efecto(this)
+  private def usar(ataque: Ataque): Pokemon = ataque.teUsa(this)
 
   def verificarParams(): Pokemon = {
     if (energia < 0)
@@ -39,19 +39,15 @@ case class Pokemon(
     this
   }
 
-  private def descansar(): Pokemon = {
-    this.listaAtaques.foreach { ataque => ataque.regenerate() }
-    
+  private def descansar: Pokemon = {
+    val pokeRegenerado = copy(listaAtaques = listaAtaques.map { _.regenerar })
     energia match {
-      case energia if energia < energiaMax * 0.5 => copy(estado = Dormido(3))
-      case _ => this
+      case n if n < energiaMax * 0.5 => pokeRegenerado.copy(estado = Dormido(3))
+      case _ => pokeRegenerado
     }
   }
 
-  private def aumentaPAMaximo(cant: Int): Pokemon = {
-    listaAtaques.foreach { ataque => ataque.aumentaPAMaximo(cant) }
-    this
-  }
+  private def aumentaPAMaximo(cant: Int): Pokemon = copy(listaAtaques = listaAtaques.map { _.aumentaPaMax(cant) })
 
   def realizarActividad(actividad: Actividad): Pokemon = {
     val futuroPokemon = this.estado match {
@@ -64,6 +60,7 @@ case class Pokemon(
         case ComerHierro => this.copy(fuerza = Math.min(this.fuerza + 5, this.fuerzaMax))
         case ComerCalcio => this.copy(velocidad = Math.min(this.velocidad + 5, this.velocidadMax))
         case ComerZinc => this.aumentaPAMaximo(2)
+        //        case Descansar => this.descansar
         case Descansar => this.descansar
         case UsarAntidoto => this.estado match {
           case Envenenado => this.copy(estado = Bueno)
@@ -108,7 +105,7 @@ case class Pokemon(
           }
         }
         case actividad: Nadar => (this.tipoPrincipal, this.tipoSecundario) match {
-          case (Agua, _)|(_,Agua) => this.copy(energia = this.energia - actividad.minutos, velocidad = this.velocidad + actividad.minutos).verificarParams().aumentaExperiencia(actividad.minutos * 200)
+          case (Agua, _) | (_, Agua) => this.copy(energia = this.energia - actividad.minutos, velocidad = this.velocidad + actividad.minutos).verificarParams().aumentaExperiencia(actividad.minutos * 200)
           case (Fuego, _) | (_, Fuego) | (Tierra, _) | (_, Tierra) | (Roca, _) | (_, Roca) => this.copy(estado = Ko)
           case _ => this.copy(energia = this.energia - actividad.minutos).verificarParams().aumentaExperiencia(actividad.minutos * 200)
         }
@@ -116,10 +113,9 @@ case class Pokemon(
           val resultadoAtaque = this.listaAtaques.find { ataque => (ataque.nombre == actividad.ataqueARealizar.nombre && ataque.puntosAtaque > 0) }
           resultadoAtaque match {
             case None => throw PokemonNoConoceMovONoTienePA(this)
-            case Some(resultadoAtaque) => {
-              resultadoAtaque.reduciPa
-              val pokemonAfectado = this.sufriEfectosSecundarios(resultadoAtaque)
-              resultadoAtaque.tipo match {
+            case Some(ataque) => {
+              val pokemonAfectado = this.usar(ataque)
+              ataque.tipo match {
                 case Dragon => pokemonAfectado.aumentaExperiencia(80)
                 case pokemonAfectado.tipoPrincipal => pokemonAfectado.aumentaExperiencia(50)
                 case pokemonAfectado.tipoSecundario => pokemonAfectado.genero match {

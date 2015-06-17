@@ -8,27 +8,6 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
   
   val fixture = Fixt
   
-  before{
-	  val impactrueno = new Ataque("Impactrueno", (Pokemon => Pokemon), Electrico, 1, 20)
-    val embestida = new Ataque("Embestida", (Pokemon => Pokemon.copy(estado = Dormido(3))), Normal, 7, 10)
-    val llama = new Ataque("Llama", (Pokemon => Pokemon), Dragon, 15, 30)
-    
-    val fabricaDePokes = new PokemonFactory
-    
-    Fixt.pikachu = fabricaDePokes.setEstado(Bueno)
-    .setEspecie(Fixt.especiePikachu)
-    .setAtaques(List(impactrueno,embestida))
-    .setNivel(1)
-    .setExperiencia(0)
-    .setGenero(Macho)
-    .setEnergiaMax(1000)
-    .setEnergia(30)
-    .setPeso(5)
-    .setFuerza(90)
-    .setVelocidad(20)
-    .build
-  }
-  
   test("un pokemon realiza actividad Usar Pocion y se recarga 50 de vida"){
     
     val pikachuCurado = fixture.pikachu.realizarActividad(UsarPocion)
@@ -129,7 +108,7 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
     
     val charmanderDescansado = charmander.realizarActividad(Descansar)
         
-    val embestida2 = charmander.listaAtaques.find { ataque => ataque.nombre == "Embestida"}
+    val embestida2 = charmanderDescansado.listaAtaques.find { ataque => ataque.nombre == "Embestida"}
     embestida2 match {
       case Some(embestida2) => assert(embestida2.puntosAtaque == 10)
     }
@@ -209,6 +188,8 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
     val pikachu = fixture.pikachu
     
     val actividad = new RealizarUnAtaque(fixture.impactrueno)
+    print("Imprimo pa de impactrueno de pikachu de fixture antes de realizar actividad\n")
+    print(pikachu.listaAtaques.find {a => a.nombre == "Impactrueno"}.get.puntosAtaque+ "\n")
     
     val pikachu2 = pikachu.realizarActividad(actividad)
     
