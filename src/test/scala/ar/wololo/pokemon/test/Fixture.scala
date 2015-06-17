@@ -31,7 +31,7 @@ object Fixt {
    * Pokemones
    */
 
-  val pikachu = fabricaDePokes.setEstado(Bueno)
+  var pikachu = fabricaDePokes.setEstado(Bueno)
     .setEspecie(especiePikachu)
     .setAtaques(List(impactrueno, embestida))
     .setNivel(1)

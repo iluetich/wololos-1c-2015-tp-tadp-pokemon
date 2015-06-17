@@ -4,10 +4,30 @@ import ar.wololo.pokemon.dominio._
 import org.scalatest.FunSuite
 import org.scalatest.BeforeAndAfter
 
-class ActividadesTest extends FunSuite with BeforeAndAfter{
+class ActividadesTest extends FunSuite with BeforeAndAfter{ 
   
-  def fixture = Fixt
+  val fixture = Fixt
   
+  before{
+	  val impactrueno = new Ataque("Impactrueno", (Pokemon => Pokemon), Electrico, 1, 20)
+    val embestida = new Ataque("Embestida", (Pokemon => Pokemon.copy(estado = Dormido(3))), Normal, 7, 10)
+    val llama = new Ataque("Llama", (Pokemon => Pokemon), Dragon, 15, 30)
+    
+    val fabricaDePokes = new PokemonFactory
+    
+    Fixt.pikachu = fabricaDePokes.setEstado(Bueno)
+    .setEspecie(Fixt.especiePikachu)
+    .setAtaques(List(impactrueno,embestida))
+    .setNivel(1)
+    .setExperiencia(0)
+    .setGenero(Macho)
+    .setEnergiaMax(1000)
+    .setEnergia(30)
+    .setPeso(5)
+    .setFuerza(90)
+    .setVelocidad(20)
+    .build
+  }
   
   test("un pokemon realiza actividad Usar Pocion y se recarga 50 de vida"){
     
@@ -185,7 +205,7 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
     assert(gyarados2.experiencia == 80) 
   }
   
-  ignore("pokemon no tiene Pa suficiente entonces tira error"){
+  test("pokemon no tiene Pa suficiente entonces tira error"){
     val pikachu = fixture.pikachu
     
     val actividad = new RealizarUnAtaque(fixture.impactrueno)
