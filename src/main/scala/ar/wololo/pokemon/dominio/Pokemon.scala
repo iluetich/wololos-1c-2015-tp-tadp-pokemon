@@ -114,8 +114,9 @@ case class Pokemon(
           resultadoAtaque match {
             case None => throw PokemonNoConoceMovONoTienePA(this)
             case Some(ataque) => {
+              val tipoAtaque = ataque.tipo
               val pokemonAfectado = this.usar(ataque)
-              ataque.tipo match {
+              tipoAtaque match {
                 case Dragon => pokemonAfectado.aumentaExperiencia(80)
                 case pokemonAfectado.tipoPrincipal => pokemonAfectado.aumentaExperiencia(50)
                 case pokemonAfectado.tipoSecundario => pokemonAfectado.genero match {
