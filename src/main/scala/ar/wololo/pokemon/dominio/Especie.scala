@@ -9,7 +9,7 @@ case class Especie(val tipoPrincipal: Tipo,
     val incrementoEnergiaMax: Int,
     val pesoMaximoSaludable: Int,
     val resistenciaEvolutiva: Int,
-    val condicionEvolutiva: CondicionEvolutiva = null,
+    val condicionEvolutiva: CondicionEvolutiva,
     val especieEvolucion: Especie = null) {
 
   def evolucionarA(pokemon: Pokemon): Pokemon = pokemon.copy(especie = especieEvolucion)
