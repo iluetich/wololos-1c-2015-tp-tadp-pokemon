@@ -108,9 +108,9 @@ case class Pokemon(
           }
         }
         case actividad: Nadar => (this.tipoPrincipal, this.tipoSecundario) match {
-          case (Agua, _) => this.copy(energia = this.energia - actividad.minutos, velocidad = Math.min(this.velocidad + Math.round(actividad.minutos / 60), 100)).aumentaExperiencia(actividad.minutos * 200)
+          case (Agua, _)|(_,Agua) => this.copy(energia = this.energia - actividad.minutos, velocidad = this.velocidad + actividad.minutos).verificarParams().aumentaExperiencia(actividad.minutos * 200)
           case (Fuego, _) | (_, Fuego) | (Tierra, _) | (_, Tierra) | (Roca, _) | (_, Roca) => this.copy(estado = Ko)
-          case _ => this.copy(energia = this.energia - actividad.minutos).aumentaExperiencia(actividad.minutos * 200)
+          case _ => this.copy(energia = this.energia - actividad.minutos).verificarParams().aumentaExperiencia(actividad.minutos * 200)
         }
         case actividad: RealizarUnAtaque => {
           val resultadoAtaque = this.listaAtaques.find { ataque => (ataque.nombre == actividad.ataqueARealizar.nombre && ataque.puntosAtaque > 0) }
