@@ -83,7 +83,10 @@ case class PokemonFactory(var estado: EstadoPokemon = null,
       unaEspecie.incrementoPeso > 0 &&
       unaEspecie.incrementoVelocidad > 0 &&
       unaEspecie.resistenciaEvolutiva > 0)
-      copy(especie = unaEspecie)
+      if(unaEspecie.condicionEvolutiva == null)
+        copy(especie = unaEspecie.copy(condicionEvolutiva = NoEvoluciona))
+      else  
+        copy(especie = unaEspecie)
     else
       throw new EspecieFactoryException("Especie con parámetros inválidos")
   }
