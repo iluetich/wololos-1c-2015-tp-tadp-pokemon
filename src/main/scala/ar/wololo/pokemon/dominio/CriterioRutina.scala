@@ -11,14 +11,14 @@ import scala.util.Try
  */
 
 abstract class CriterioRutina {
-  def obtenerMejorRutina(rutinasYPokemones: Seq[(String, Try[Pokemon])]): String
+  def obtenerMejorRutina(rutinasYPokemones: Seq[(Rutina, Try[Pokemon])]): Option[Rutina]
 }
 case object MaxNivel extends CriterioRutina {
-  def obtenerMejorRutina(rutinasYPokemones: Seq[(String, Try[Pokemon])]): String = rutinasYPokemones.maxBy { _._2.get.nivel }._1
+  def obtenerMejorRutina(rutinasYPokemones: Seq[(Rutina, Try[Pokemon])]): Option[Rutina] = Some(rutinasYPokemones.maxBy { _._2.get.nivel }._1)
 }
 case object MaxEnergia extends CriterioRutina {
-  def obtenerMejorRutina(rutinasYPokemones: Seq[(String, Try[Pokemon])]): String = rutinasYPokemones.maxBy { _._2.get.energia }._1
+  def obtenerMejorRutina(rutinasYPokemones: Seq[(Rutina, Try[Pokemon])]): Option[Rutina] = Some(rutinasYPokemones.maxBy { _._2.get.energia }._1)
 }
 case object MinPeso extends CriterioRutina {
-  def obtenerMejorRutina(rutinasYPokemones: Seq[(String, Try[Pokemon])]): String = rutinasYPokemones.minBy { _._2.get.peso }._1
+  def obtenerMejorRutina(rutinasYPokemones: Seq[(Rutina, Try[Pokemon])]): Option[Rutina] = Some(rutinasYPokemones.minBy { _._2.get.peso }._1)
 }
