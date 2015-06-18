@@ -1,25 +1,7 @@
 package ar.wololo.pokemon.test
 
 import org.scalatest.FunSuite
-import ar.wololo.pokemon.dominio.Pokemon
-import ar.wololo.pokemon.dominio.Macho
-import ar.wololo.pokemon.dominio.Electrico
-import ar.wololo.pokemon.dominio.SubirDeNivel
-import ar.wololo.pokemon.dominio.Rutina
-import ar.wololo.pokemon.dominio.Nadar
-import ar.wololo.pokemon.dominio.Actividad
-import ar.wololo.pokemon.dominio.SuperSistemaDeAnalisis
-import ar.wololo.pokemon.dominio.FingirIntercambio
-import ar.wololo.pokemon.dominio.Ko
-import ar.wololo.pokemon.dominio.SuperSistemaDeAnalisis.NoHuboRutinaHacibleException
-import ar.wololo.pokemon.dominio.MinPeso
-import ar.wololo.pokemon.dominio.SuperSistemaDeAnalisis.NoHuboRutinaHacibleException
-import ar.wololo.pokemon.dominio.MaxEnergia
-import ar.wololo.pokemon.dominio.Bueno
-import ar.wololo.pokemon.dominio.SuperSistemaDeAnalisis.NoHuboRutinaHacibleException
-import ar.wololo.pokemon.dominio.UsarPocion
-import ar.wololo.pokemon.dominio.MaxNivel
-import ar.wololo.pokemon.dominio.SuperSistemaDeAnalisis.NoHuboRutinaHacibleException
+import ar.wololo.pokemon.dominio._
 
 class AnalisisDeRutinasTest extends FunSuite {
   
