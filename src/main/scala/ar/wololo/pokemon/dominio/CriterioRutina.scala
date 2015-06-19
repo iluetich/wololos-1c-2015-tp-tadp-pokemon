@@ -1,5 +1,7 @@
 package ar.wololo.pokemon.dominio
 
+import scala.util.Try
+
 /*
  * Modelo como singletons dado que los criterios son state-less, y lo 
  * usarán los pokemon para tener en cuenta si una rutina es mejor que otra.
@@ -8,9 +10,15 @@ package ar.wololo.pokemon.dominio
  * como estructura, no variará en el tiempo y es inmutable.
  */
 
-abstract class CriterioRutina { }
-abstract class MayorAtributo extends CriterioRutina
-abstract class MenorAtributo extends CriterioRutina
-case object MaxNivel extends MayorAtributo
-case object MaxEnergia extends MayorAtributo
-case object MinPeso extends MenorAtributo
+abstract class CriterioRutina {
+  def obtenerMejorRutina(rutinasYPokemones: Seq[(Rutina, Try[Pokemon])]): Rutina
+}
+case object MaxNivel extends CriterioRutina {
+  def obtenerMejorRutina(rutinasYPokemones: Seq[(Rutina, Try[Pokemon])]) = rutinasYPokemones.maxBy { _._2.get.nivel }._1
+}
+case object MaxEnergia extends CriterioRutina {
+  def obtenerMejorRutina(rutinasYPokemones: Seq[(Rutina, Try[Pokemon])]) = rutinasYPokemones.maxBy { _._2.get.energia }._1
+}
+case object MinPeso extends CriterioRutina {
+  def obtenerMejorRutina(rutinasYPokemones: Seq[(Rutina, Try[Pokemon])]) = rutinasYPokemones.minBy { _._2.get.peso }._1
+}

@@ -4,34 +4,28 @@ import scala.util.Try
 import scala.util.Success
 
 object SuperSistemaDeAnalisis {
-
-  /*
-   * XXX Podría implementarse con fold.
-   */
-
-  case class NoHuboRutinaHacibleException(pokemon: Pokemon) extends Exception
-
-  def obtenerMejorRutinaSegun(pokemon: Pokemon,
-    rutinas: Seq[Rutina],
-    criterio: CriterioRutina): Try[Rutina] = {
-
-    var estadosYRutinas = rutinas.map { rutina => (rutina, pokemon.realizarRutina(rutina)) }.filter { case (_, e) => e.isSuccess }
-
-    if (estadosYRutinas.isEmpty) throw NoHuboRutinaHacibleException(pokemon)
-
-    val mejorResultado = criterio match {
-      case c: MayorAtributo => estadosYRutinas.maxBy {
-        case (_, estadoPokemon) => c match {
-          case MaxNivel => estadoPokemon.get.nivel
-          case MaxEnergia => estadoPokemon.get.energia
-        }
-      }
-      case c: MenorAtributo => estadosYRutinas.minBy {
-        case (_, estadoPokemon) => c match {
-          case MinPeso => estadoPokemon.get.peso
-        }
-      }
+/*
+ * Criterios como objetos
+ */
+  def obtenerMejorRutinaSegun(pokemon: Pokemon)(rutinas: Seq[Rutina])(criterio: CriterioRutina): Option[String] = {
+    val rutinasYPokemones = rutinas.map { rutina => (rutina, pokemon.realizarRutina(rutina)) }.filter { case (_, e) => e.isSuccess }
+    rutinasYPokemones.size match {
+      case 0 => None
+      case _ => Some(criterio.obtenerMejorRutina(rutinasYPokemones).nombre)
     }
-    Success(mejorResultado._1)
   }
+/*
+ * Criterios como funciones
+ */
+//  def obtenerMejorRutinaSegun(pokemon: Pokemon) (rutinas: Seq[Rutina], mejorRutina: Seq[(Rutina, Pokemon)] => Rutina): Option[String] = {
+//    val rutinasYPokemones = aplicarA(pokemon, rutinas)
+//    rutinasYPokemones.size match {
+//      case 0 => None
+//      case _ => Some(mejorRutina(rutinasYPokemones).nombre)
+//    }
+//  }
+//
+//  private def aplicarA(pokemon: Pokemon, rutinas: Seq[Rutina]): Seq[(Rutina, Pokemon)] = rutinas.map { rutina => (rutina, pokemon.realizarRutina(rutina)) }
+//    .filter { case (_, e) => e.isSuccess }
+//    .map { case (r, e) => (r, e.get) }
 }
