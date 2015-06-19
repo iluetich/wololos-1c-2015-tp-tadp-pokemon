@@ -65,7 +65,27 @@ case class Pokemon(
     this
   }
   
-
+  def levantaSiPodes(kg:Int):Pokemon ={
+    if(this.podesLevantar(kg)){
+      (this.tipoPrincipal, this.tipoSecundario) match {
+         case (Pelea, _) | (_, Pelea) => this.aumentaExperiencia(kg * 2)
+         case (Fantasma, _) | (_, Fantasma) => throw FantasmaNoPuedeLevantarPesas(this)
+         case _ => this.aumentaExperiencia(kg)
+      }
+    }
+    else{
+      this.cambiaAEstado(Paralizado)
+    }                 
+  }
+  
+  def nada(minutos :Int):Pokemon = (this.tipoPrincipal, this.tipoSecundario) match {
+        case (Agua, _)|(_,Agua) => this.modificaEnergia(minutos * -1).modificaVelocidad(minutos).aumentaExperiencia(minutos * 200)
+        case (Fuego, _) | (_, Fuego) | (Tierra, _) | (_, Tierra) | (Roca, _) | (_, Roca) => this.cambiaAEstado(Ko)
+        case _ => this.modificaEnergia(minutos * -1).aumentaExperiencia(minutos * 200)
+  }
+  
+  def podesLevantar(kg: Int):Boolean = kg < (10 * this.fuerza + 1)
+  
   def realizarActividad(actividad: Actividad): Pokemon = {
     val futuroPokemon = this.estado match {
       case Ko => throw EstaKo(this)
@@ -89,22 +109,9 @@ case class Pokemon(
         case actividad: UsarPiedra => this.evaluarEfectos(actividad.piedra)
         case actividad: LevantarPesas => this.estado match {
           case Paralizado => this.cambiaAEstado(Ko)
-          case _: EstadoPokemon => {
-            if (actividad.kg < (10 * this.fuerza + 1))
-              (this.tipoPrincipal, this.tipoSecundario) match {
-                case (Pelea, _) | (_, Pelea) => this.aumentaExperiencia(actividad.kg * 2)
-                case (Fantasma, _) | (_, Fantasma) => throw FantasmaNoPuedeLevantarPesas(this)
-                case _ => this.aumentaExperiencia(actividad.kg)
-              }
-            else
-              this.cambiaAEstado(Paralizado)
-          }
+          case _: EstadoPokemon => this.levantaSiPodes(actividad.kg)
         }
-        case actividad: Nadar => (this.tipoPrincipal, this.tipoSecundario) match {
-          case (Agua, _)|(_,Agua) => this.modificaEnergia(actividad.minutos * -1).modificaVelocidad(actividad.minutos).aumentaExperiencia(actividad.minutos * 200)
-          case (Fuego, _) | (_, Fuego) | (Tierra, _) | (_, Tierra) | (Roca, _) | (_, Roca) => this.cambiaAEstado(Ko)
-          case _ => this.modificaEnergia(actividad.minutos * -1).aumentaExperiencia(actividad.minutos * 200)
-        }
+        case actividad: Nadar => this.nada(actividad.minutos)
         case actividad: RealizarUnAtaque => {
           val resultadoAtaque = this.listaAtaques.find { ataque => (ataque.nombre == actividad.ataqueARealizar.nombre && ataque.puntosAtaque > 0) }
           resultadoAtaque match {
