@@ -11,7 +11,7 @@ object SuperSistemaDeAnalisis {
     val rutinasYPokemones = rutinas.map { rutina => (rutina, pokemon.realizarRutina(rutina)) }.filter { case (_, e) => e.isSuccess }
     rutinasYPokemones.size match {
       case 0 => None
-      case _ => Some(criterio.obtenerMejorRutina(rutinasYPokemones).fold { "No hubo mejor rutina" } { rutina => rutina.nombre })
+      case _ => Some(criterio.obtenerMejorRutina(rutinasYPokemones).nombre)
     }
   }
 /*
