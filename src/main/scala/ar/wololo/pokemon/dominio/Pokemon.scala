@@ -89,8 +89,8 @@ case class Pokemon(
   
   def podesLevantar(kg: Int):Boolean = kg < (10 * this.fuerza + 1)
   
-  def aprendeAtaqueSiPodes(ataqueAAprender:Ataque):Pokemon =ataqueAAprender.tipo match {
-          case Normal | this.tipoPrincipal | this.tipoSecundario => this.modificaListaAtaque((ataqueAAprender,ataqueAAprender.puntosAtaqueInciales,ataqueAAprender.puntosAtaqueInciales) :: this.listaAtaques)
+  def aprendeAtaqueSiPodes(ataqueAAprender :(Ataque,Int,Int)):Pokemon = ataqueAAprender._1.tipo match {
+          case Normal | this.tipoPrincipal | this.tipoSecundario => this.modificaListaAtaque(ataqueAAprender :: this.listaAtaques)
           case _ => this.cambiaAEstado(Ko)
   }
   

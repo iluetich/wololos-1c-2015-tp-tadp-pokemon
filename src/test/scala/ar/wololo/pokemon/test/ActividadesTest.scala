@@ -283,7 +283,7 @@ class ActividadesTest extends FunSuite {
 
   test("pokemon trata de aprender un ataque normal y uno afin a su especie") {
     val voltod = fixture.voltorb
-    val actividad = AprenderAtaque(fixture.impactrueno._1)
+    val actividad = AprenderAtaque(fixture.impactrueno)
 
     assert(voltod.listaAtaques.size == 0)
 
@@ -294,7 +294,7 @@ class ActividadesTest extends FunSuite {
     assert(voltod2.listaAtaques.size == 1)
     assert(contieneImpactrueno != None)
 
-    val actividad2 = AprenderAtaque(fixture.embestida._1)
+    val actividad2 = AprenderAtaque(fixture.embestida)
     val voltod3 = voltod2.realizarActividad(actividad2)
 
     val contieneEmbestida = voltod3.listaAtaques.find { ataque => ataque._1 == Fixt.embestida._1 }
@@ -305,7 +305,7 @@ class ActividadesTest extends FunSuite {
 
   test("pokemon trata de aprender un ataque que no es de tipo afin, entonces no aprende nada y queda Ko") {
     val voltod = fixture.voltorb
-    val actividad = AprenderAtaque(fixture.llama._1)
+    val actividad = AprenderAtaque(fixture.llama)
 
     val voltod2 = voltod.realizarActividad(actividad)
 
