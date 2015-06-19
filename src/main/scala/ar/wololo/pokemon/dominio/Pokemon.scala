@@ -52,6 +52,8 @@ case class Pokemon(
     listaAtaques.foreach { ataque => ataque.aumentaPAMaximo(cant) }
     this
   }
+  
+  def evaluarEfectos(piedra : Piedra):Pokemon = condicionEvolutiva.evaluarEfectosPiedra(this, piedra)
 
   def realizarActividad(actividad: Actividad): Pokemon = {
     val futuroPokemon = this.estado match {
@@ -76,24 +78,7 @@ case class Pokemon(
             case Hembra => this.copy(peso = peso - 10)
           }
         }
-        case actividad: UsarPiedra => this.condicionEvolutiva match {
-          case UsarUnaPiedraLunar => actividad.piedra match {
-            case PiedraLunar => this.evolucionar
-            case _: Piedra => this
-          }
-          case UsarUnaPiedra => actividad.piedra match {
-            case p: PiedraEvolutiva => p.tipo match {
-              case this.tipoPrincipal => this.evolucionar
-              case tipoDistinto => {
-                if (tipoDistinto.aQuienesLeGanas.exists { t => t == tipoPrincipal || t == tipoSecundario })
-                  this.copy(estado = Envenenado)
-                else
-                  this
-              }
-            }
-            case _: Piedra => throw new Exception("Me llego una piedra de tipo desconocida. BOOM!")
-          }
-        }
+        case actividad: UsarPiedra => this.evaluarEfectos(actividad.piedra)
         case actividad: LevantarPesas => this.estado match {
           case Paralizado => this.copy(estado = Ko)
           case _: EstadoPokemon => {

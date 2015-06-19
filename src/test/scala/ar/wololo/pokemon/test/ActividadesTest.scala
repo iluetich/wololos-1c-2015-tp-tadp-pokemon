@@ -2,9 +2,8 @@
 package ar.wololo.pokemon.test
 import ar.wololo.pokemon.dominio._
 import org.scalatest.FunSuite
-import org.scalatest.BeforeAndAfter
 
-class ActividadesTest extends FunSuite with BeforeAndAfter {
+class ActividadesTest extends FunSuite {
 
   val fixture = Fixt
 
