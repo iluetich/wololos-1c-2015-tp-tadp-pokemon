@@ -86,6 +86,31 @@ case class Pokemon(
   
   def podesLevantar(kg: Int):Boolean = kg < (10 * this.fuerza + 1)
   
+  def aprendeAtaqueSiPodes(ataqueAAprender:Ataque):Pokemon =ataqueAAprender.tipo match {
+          case Normal | this.tipoPrincipal | this.tipoSecundario => this.copy(listaAtaques = ataqueAAprender :: this.listaAtaques)
+          case _ => this.cambiaAEstado(Ko)
+  }
+  
+  def realizaAtaqueSiPodes(ataqueARealizar :Ataque):Pokemon = {
+          val resultadoAtaque = this.listaAtaques.find { ataque => (ataque.nombre == ataqueARealizar.nombre && ataque.puntosAtaque > 0) }
+          resultadoAtaque match {
+            case None => throw PokemonNoConoceMovONoTienePA(this)
+            case Some(resultadoAtaque) => this.realizaAtaque(ataqueARealizar)
+          }
+  }
+  
+  def realizaAtaque(ataqueARealizar :Ataque):Pokemon = {
+         ataqueARealizar.reduciPa
+         val pokemonAfectado = this.sufriEfectosSecundarios(ataqueARealizar)
+         ataqueARealizar.tipo match {
+                case Dragon => pokemonAfectado.aumentaExperiencia(80)
+                case pokemonAfectado.tipoPrincipal => pokemonAfectado.aumentaExperiencia(50)
+                case pokemonAfectado.tipoSecundario => pokemonAfectado.aumentaExpEnBaseAGenero()
+         }       
+  }
+          
+          
+  
   def realizarActividad(actividad: Actividad): Pokemon = {
     val futuroPokemon = this.estado match {
       case Ko => throw EstaKo(this)
@@ -112,28 +137,11 @@ case class Pokemon(
           case _: EstadoPokemon => this.levantaSiPodes(actividad.kg)
         }
         case actividad: Nadar => this.nada(actividad.minutos)
-        case actividad: RealizarUnAtaque => {
-          val resultadoAtaque = this.listaAtaques.find { ataque => (ataque.nombre == actividad.ataqueARealizar.nombre && ataque.puntosAtaque > 0) }
-          resultadoAtaque match {
-            case None => throw PokemonNoConoceMovONoTienePA(this)
-            case Some(resultadoAtaque) => {
-              resultadoAtaque.reduciPa
-              val pokemonAfectado = this.sufriEfectosSecundarios(resultadoAtaque)
-              resultadoAtaque.tipo match {
-                case Dragon => pokemonAfectado.aumentaExperiencia(80)
-                case pokemonAfectado.tipoPrincipal => pokemonAfectado.aumentaExperiencia(50)
-                case pokemonAfectado.tipoSecundario => pokemonAfectado.aumentaExpEnBaseAGenero()
-              }
-            }
-          }
-        }
-        case actividad: AprenderAtaque => actividad.ataqueAAprender.tipo match {
-          case Normal | this.tipoPrincipal | this.tipoSecundario => this.copy(listaAtaques = actividad.ataqueAAprender :: this.listaAtaques)
-          case _ => this.cambiaAEstado(Ko)
-        }
+        case actividad: RealizarUnAtaque => this.realizaAtaqueSiPodes(actividad.ataqueARealizar)
+        case actividad: AprenderAtaque => this.aprendeAtaqueSiPodes(actividad.ataqueAAprender)
       }
     }
-    futuroPokemon.verificarParams() // retorno el posible pokemon habiendo realizado la actividad
+    futuroPokemon // retorno el posible pokemon habiendo realizado la actividad
   }
 
   override def equals(unPokemon: Any): Boolean = {
