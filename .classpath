@@ -8,6 +8,6 @@
 	</classpathentry>
 	<classpathentry kind="src" path="src/main/scala"/>
 	<classpathentry kind="src" path="src/test/scala"/>
-	<classpathentry kind="lib" path="/home/nachomf/wololos-1c-2015-tp-tadp-pokemon/scalatest_2.11-2.2.4.jar"/>
+	<classpathentry kind="lib" path="scalatest_2.11-2.2.4.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
