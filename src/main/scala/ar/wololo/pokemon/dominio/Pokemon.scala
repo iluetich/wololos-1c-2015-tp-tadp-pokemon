@@ -4,7 +4,7 @@ import scala.util.Try
 
 case class Pokemon(
   val estado: EstadoPokemon,
-  val listaAtaques: List[Ataque],
+  val listaAtaques: List[(Ataque,Int,Int)],//Ataque, puntos de ataque actual, puntos de ataque maximos
   val nivel: Int,
   val experiencia: Long,
   val genero: Genero,
@@ -34,6 +34,7 @@ case class Pokemon(
   def modificaVelocidad(cantidad :Int):Pokemon = this.copy(velocidad = Math.min(this.velocidad + cantidad,this.velocidadMax)).verificarParams()
   def modificaEnergia(cantidad :Int):Pokemon = this.copy(energia = Math.min(this.energia + cantidad, this.energiaMax)).verificarParams()
   def modificaFuerza(cantidad :Int):Pokemon = this.copy(fuerza = Math.min(this.fuerza + cantidad, this.fuerzaMax)).verificarParams()
+  def modificaListaAtaque(listaNueva : List[(Ataque,Int,Int)]):Pokemon = this.copy(listaAtaques = listaNueva)
   
   def cambiaAEstado(nuevoEstado :EstadoPokemon):Pokemon =  this.copy(estado = nuevoEstado)
 
@@ -52,17 +53,17 @@ case class Pokemon(
   }
 
   private def descansar(): Pokemon = {
-    this.listaAtaques.foreach { ataque => ataque.regenerate() }
+    val nuevaListaAtaque = this.listaAtaques.map{case (ataque : Ataque,pa :Int,paMax :Int) => (ataque,paMax,paMax)}
     
     energia match {
-      case energia if energia < energiaMax * 0.5 => copy(estado = Dormido(3))
-      case _ => this
+      case energia if energia < energiaMax * 0.5 => this.cambiaAEstado(Dormido(3)).modificaListaAtaque(nuevaListaAtaque)
+      case _ => this.modificaListaAtaque(nuevaListaAtaque)
     }
   }
 
   private def aumentaPAMaximo(cant: Int): Pokemon = {
-    listaAtaques.foreach { ataque => ataque.aumentaPAMaximo(cant) }
-    this
+    val nuevaListaAtaque = this.listaAtaques.map{case (ataque : Ataque,pa :Int,paMax :Int) => (ataque,pa,paMax + cant)}
+    this.modificaListaAtaque(nuevaListaAtaque)
   }
   
   def levantaSiPodes(kg:Int):Pokemon ={
@@ -78,21 +79,23 @@ case class Pokemon(
     }                 
   }
   
-  def nada(minutos :Int):Pokemon = (this.tipoPrincipal, this.tipoSecundario) match {
+  def nada(minutos :Int):Pokemon ={
+    (this.tipoPrincipal, this.tipoSecundario) match {
         case (Agua, _)|(_,Agua) => this.modificaEnergia(minutos * -1).modificaVelocidad(minutos).aumentaExperiencia(minutos * 200)
         case (Fuego, _) | (_, Fuego) | (Tierra, _) | (_, Tierra) | (Roca, _) | (_, Roca) => this.cambiaAEstado(Ko)
         case _ => this.modificaEnergia(minutos * -1).aumentaExperiencia(minutos * 200)
-  }
+    }
+  }  
   
   def podesLevantar(kg: Int):Boolean = kg < (10 * this.fuerza + 1)
   
   def aprendeAtaqueSiPodes(ataqueAAprender:Ataque):Pokemon =ataqueAAprender.tipo match {
-          case Normal | this.tipoPrincipal | this.tipoSecundario => this.copy(listaAtaques = ataqueAAprender :: this.listaAtaques)
+          case Normal | this.tipoPrincipal | this.tipoSecundario => this.modificaListaAtaque((ataqueAAprender,ataqueAAprender.puntosAtaqueInciales,ataqueAAprender.puntosAtaqueInciales) :: this.listaAtaques)
           case _ => this.cambiaAEstado(Ko)
   }
   
   def realizaAtaqueSiPodes(ataqueARealizar :Ataque):Pokemon = {
-          val resultadoAtaque = this.listaAtaques.find { ataque => (ataque.nombre == ataqueARealizar.nombre && ataque.puntosAtaque > 0) }
+          val resultadoAtaque = this.listaAtaques.find{case (ataque,pa,_) => ataque == ataqueARealizar && pa > 1}
           resultadoAtaque match {
             case None => throw PokemonNoConoceMovONoTienePA(this)
             case Some(resultadoAtaque) => this.realizaAtaque(ataqueARealizar)
@@ -100,8 +103,7 @@ case class Pokemon(
   }
   
   def realizaAtaque(ataqueARealizar :Ataque):Pokemon = {
-         ataqueARealizar.reduciPa
-         val pokemonAfectado = this.sufriEfectosSecundarios(ataqueARealizar)
+         val pokemonAfectado = this.utilizaAtaque(ataqueARealizar)//this.sufriEfectosSecundarios(ataqueARealizar)
          ataqueARealizar.tipo match {
                 case Dragon => pokemonAfectado.aumentaExperiencia(80)
                 case pokemonAfectado.tipoPrincipal => pokemonAfectado.aumentaExperiencia(50)
@@ -109,7 +111,21 @@ case class Pokemon(
          }       
   }
           
-          
+  def utilizaAtaque(ataque: Ataque):Pokemon = {
+    val nuevaListaAtaques = this.reducirPa(ataque)
+    this.modificaListaAtaque(nuevaListaAtaques).sufriEfectosSecundarios(ataque)
+  } 
+  
+  //reduce el pa del ataque que se realiza
+  //ES HORRIBLE SE PUEDE HACER MEJOR LA LOGICA FIXME
+  def reducirPa(ataque:Ataque):List[(Ataque,Int,Int)] ={   
+    this.listaAtaques.map{case (a :Ataque,pa:Int,paMax:Int) => 
+      if(a == ataque)
+        (a,pa-1,paMax)
+      else
+        (a,pa,paMax)       
+    }
+  }
   
   def realizarActividad(actividad: Actividad): Pokemon = {
     val futuroPokemon = this.estado match {
