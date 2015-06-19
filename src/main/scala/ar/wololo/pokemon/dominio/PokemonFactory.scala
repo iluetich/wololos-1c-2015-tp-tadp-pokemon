@@ -17,7 +17,7 @@ case class BuildFactoryException(mensaje: String) extends Exception(mensaje)
  */
 
 case class PokemonFactory(var estado: EstadoPokemon = null,
-    var ataques: List[Ataque] = List(),
+    var ataques: List[(Ataque,Int,Int)] = List(),
     var nivel: Int = 0,
     var experiencia: Long = 0,
     var genero: Genero = null,
@@ -91,8 +91,8 @@ case class PokemonFactory(var estado: EstadoPokemon = null,
     }
   }
 
-  def setAtaques(unosAtaques: List[Ataque]): PokemonFactory = {
-    if (unosAtaques.forall { atk => atk.tipo == especie.tipoPrincipal || atk.tipo == especie.tipoSecundario || atk.tipo == Normal })
+  def setAtaques(unosAtaques: List[(Ataque,Int,Int)]): PokemonFactory = {
+    if (unosAtaques.forall {case (atk :Ataque,_,_) => atk.tipo == especie.tipoPrincipal || atk.tipo == especie.tipoSecundario || atk.tipo == Normal })
       copy(ataques = unosAtaques)
     else
       throw new AtaqueFactoryException("Hay ataques que no puede aprender el pokemón")
@@ -107,7 +107,7 @@ case class PokemonFactory(var estado: EstadoPokemon = null,
       energia > 0 &&
       !(especie == null) &&
       (ataques.isEmpty ||
-        ataques.forall { atk => atk.tipo == especie.tipoPrincipal || atk.tipo == especie.tipoSecundario || atk.tipo == Normal }))
+        ataques.forall {case (atk : Ataque,_,_) => atk.tipo == especie.tipoPrincipal || atk.tipo == especie.tipoSecundario || atk.tipo == Normal }))
 
       new Pokemon(estado,
         ataques,
