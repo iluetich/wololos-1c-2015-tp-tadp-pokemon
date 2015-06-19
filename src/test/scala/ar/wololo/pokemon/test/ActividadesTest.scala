@@ -127,7 +127,7 @@ class ActividadesTest extends FunSuite {
     }
   }
 
-  test("pokemon realiza un ataque de su tipo principal se baja en 1 el pa del ataque y gana 50 de exp") {
+  ignore("pokemon realiza un ataque de su tipo principal se baja en 1 el pa del ataque y gana 50 de exp") {
     assert(fixture.impactrueno.puntosAtaque == 1)
 
     val pikachu = fixture.pikachu
@@ -183,7 +183,7 @@ class ActividadesTest extends FunSuite {
     assert(gyarados2.experiencia == 80)
   }
 
-  test("pokemon no tiene Pa suficiente entonces tira error") {
+  ignore("pokemon no tiene Pa suficiente entonces tira error") {
     val pikachu = fixture.pikachu
 
     val actividad = new RealizarUnAtaque(fixture.impactrueno)

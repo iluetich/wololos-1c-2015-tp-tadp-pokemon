@@ -31,6 +31,13 @@ case class Pokemon(
   def fingiIntercambio():Pokemon = genero.fingiIntercambio(this)
   
   def modificaPeso(cantidad :Int):Pokemon = this.copy(peso = this.peso + cantidad).verificarParams()
+  def modificaVelocidad(cantidad :Int):Pokemon = this.copy(velocidad = Math.min(this.velocidad + cantidad,this.velocidadMax)).verificarParams()
+  def modificaEnergia(cantidad :Int):Pokemon = this.copy(energia = Math.min(this.energia + cantidad, this.energiaMax)).verificarParams()
+  def modificaFuerza(cantidad :Int):Pokemon = this.copy(fuerza = Math.min(this.fuerza + cantidad, this.fuerzaMax)).verificarParams()
+  
+  def cambiaAEstado(nuevoEstado :EstadoPokemon):Pokemon =  this.copy(estado = nuevoEstado)
+
+  def evaluarEfectos(piedra : Piedra):Pokemon = condicionEvolutiva.evaluarEfectosPiedra(this, piedra)
 
   def verificarParams(): Pokemon = {
     if (energia < 0)
@@ -58,22 +65,21 @@ case class Pokemon(
     this
   }
   
-  def evaluarEfectos(piedra : Piedra):Pokemon = condicionEvolutiva.evaluarEfectosPiedra(this, piedra)
 
   def realizarActividad(actividad: Actividad): Pokemon = {
     val futuroPokemon = this.estado match {
       case Ko => throw EstaKo(this)
-      case e: Dormido if e.turnos > 0 => this.copy(estado = Dormido(e.turnos - 1))
-      case e: Dormido => this.copy(estado = Bueno).realizarActividad(actividad)
+      case e: Dormido if e.turnos > 0 => this.cambiaAEstado(Dormido(e.turnos - 1))
+      case e: Dormido => this.cambiaAEstado(Bueno).realizarActividad(actividad)
       case _: EstadoPokemon => actividad match {
-        case UsarPocion => this.copy(energia = Math.min(this.energia + 50, this.energiaMax))
-        case UsarEther => this.copy(estado = Bueno)
-        case ComerHierro => this.copy(fuerza = Math.min(this.fuerza + 5, this.fuerzaMax))
-        case ComerCalcio => this.copy(velocidad = Math.min(this.velocidad + 5, this.velocidadMax))
+        case UsarPocion => this.modificaEnergia(50)
+        case UsarEther => this.cambiaAEstado(Bueno)
+        case ComerHierro => this.modificaFuerza(5)
+        case ComerCalcio => this.modificaVelocidad(5)
         case ComerZinc => this.aumentaPAMaximo(2)
         case Descansar => this.descansar
         case UsarAntidoto => this.estado match {
-          case Envenenado => this.copy(estado = Bueno)
+          case Envenenado => this.cambiaAEstado(Bueno)
           case _: EstadoPokemon => this
         }
         case FingirIntercambio => this.condicionEvolutiva match {
@@ -82,7 +88,7 @@ case class Pokemon(
         }
         case actividad: UsarPiedra => this.evaluarEfectos(actividad.piedra)
         case actividad: LevantarPesas => this.estado match {
-          case Paralizado => this.copy(estado = Ko)
+          case Paralizado => this.cambiaAEstado(Ko)
           case _: EstadoPokemon => {
             if (actividad.kg < (10 * this.fuerza + 1))
               (this.tipoPrincipal, this.tipoSecundario) match {
@@ -91,13 +97,13 @@ case class Pokemon(
                 case _ => this.aumentaExperiencia(actividad.kg)
               }
             else
-              this.copy(estado = Paralizado)
+              this.cambiaAEstado(Paralizado)
           }
         }
         case actividad: Nadar => (this.tipoPrincipal, this.tipoSecundario) match {
-          case (Agua, _)|(_,Agua) => this.copy(energia = this.energia - actividad.minutos, velocidad = this.velocidad + actividad.minutos).verificarParams().aumentaExperiencia(actividad.minutos * 200)
-          case (Fuego, _) | (_, Fuego) | (Tierra, _) | (_, Tierra) | (Roca, _) | (_, Roca) => this.copy(estado = Ko)
-          case _ => this.copy(energia = this.energia - actividad.minutos).verificarParams().aumentaExperiencia(actividad.minutos * 200)
+          case (Agua, _)|(_,Agua) => this.modificaEnergia(actividad.minutos * -1).modificaVelocidad(actividad.minutos).aumentaExperiencia(actividad.minutos * 200)
+          case (Fuego, _) | (_, Fuego) | (Tierra, _) | (_, Tierra) | (Roca, _) | (_, Roca) => this.cambiaAEstado(Ko)
+          case _ => this.modificaEnergia(actividad.minutos * -1).aumentaExperiencia(actividad.minutos * 200)
         }
         case actividad: RealizarUnAtaque => {
           val resultadoAtaque = this.listaAtaques.find { ataque => (ataque.nombre == actividad.ataqueARealizar.nombre && ataque.puntosAtaque > 0) }
@@ -116,7 +122,7 @@ case class Pokemon(
         }
         case actividad: AprenderAtaque => actividad.ataqueAAprender.tipo match {
           case Normal | this.tipoPrincipal | this.tipoSecundario => this.copy(listaAtaques = actividad.ataqueAAprender :: this.listaAtaques)
-          case _ => this.copy(estado = Ko)
+          case _ => this.cambiaAEstado(Ko)
         }
       }
     }
