@@ -53,8 +53,8 @@ case class Pokemon(
   }
 
   private def descansar(): Pokemon = {
-    val nuevaListaAtaque = this.listaAtaques.map{case (ataque : Ataque,pa :Int,paMax :Int) => (ataque,paMax,paMax)}
-    
+    val nuevaListaAtaque = this.listaAtaques.map{case (ataque : Ataque,_,paMax :Int) => new Tuple3(ataque,paMax,paMax)}
+
     energia match {
       case energia if energia < energiaMax * 0.5 => this.cambiaAEstado(Dormido(3)).modificaListaAtaque(nuevaListaAtaque)
       case _ => this.modificaListaAtaque(nuevaListaAtaque)

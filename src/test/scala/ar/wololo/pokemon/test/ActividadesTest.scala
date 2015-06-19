@@ -101,16 +101,20 @@ class ActividadesTest extends FunSuite {
 
     val charmander = fixture.charmander
 
-    val embestida = charmander.listaAtaques.find { ataque => ataque.nombre == "Embestida" }
+    val embestida = charmander.listaAtaques.find {ataque => ataque._1 == Fixt.embestida._1}
+    
     embestida match {
-      case Some(embestida) => assert(embestida.puntosAtaque == 7)
+      case Some(embestida) => assert(embestida._2 == 7)
+      case None => assert(false)
     }
 
     val charmanderDescansado = charmander.realizarActividad(Descansar)
 
-    val embestida2 = charmander.listaAtaques.find { ataque => ataque.nombre == "Embestida" }
+    val embestida2 = charmanderDescansado.listaAtaques.find { ataque => ataque._1 == Fixt.embestida._1 }
+    
     embestida2 match {
-      case Some(embestida2) => assert(embestida2.puntosAtaque == 10)
+      case Some(embestida2) => assert(embestida2._2 == 10)
+      case None => assert(false)
     }
   }
 
@@ -121,22 +125,22 @@ class ActividadesTest extends FunSuite {
 
     assert(pikachuDescansado.estado == Dormido(3))
 
-    val embestida = pikachuDescansado.listaAtaques.find { ataque => ataque.nombre == "Embestida" }
+    val embestida = pikachuDescansado.listaAtaques.find { ataque => ataque._1 == Fixt.embestida._1 }
     embestida match {
-      case Some(embestida) => assert(embestida.puntosAtaque == 10)
+      case Some(embestida) => assert(embestida._2 == 10)
     }
   }
 
   ignore("pokemon realiza un ataque de su tipo principal se baja en 1 el pa del ataque y gana 50 de exp") {
-    assert(fixture.impactrueno.puntosAtaque == 1)
+    assert(fixture.impactrueno._2 == 1)
 
     val pikachu = fixture.pikachu
 
-    val actividad = new RealizarUnAtaque(fixture.impactrueno)
+    val actividad = new RealizarUnAtaque(fixture.impactrueno._1)
 
-    val impactrueno2 = pikachu.listaAtaques.find { ataque => ataque.nombre == "Impactrueno" }
+    val impactrueno2 = pikachu.listaAtaques.find { ataque => ataque == fixture.impactrueno }
     impactrueno2 match {
-      case Some(impactrueno2) => assert(impactrueno2.puntosAtaque == 1)
+      case Some(impactrueno2) => assert(impactrueno2._2 == 1)
       case None => assert(false)
     }
 
@@ -145,9 +149,9 @@ class ActividadesTest extends FunSuite {
     assert(pikachu.experiencia == 0)
     assert(pikachu2.experiencia == 50)
 
-    val impactrueno = pikachu2.listaAtaques.find { ataque => ataque.nombre == "Impactrueno" }
+    val impactrueno = pikachu2.listaAtaques.find { ataque => ataque == Fixt.impactrueno }
     impactrueno match {
-      case Some(impactrueno) => assert(impactrueno.puntosAtaque == 0)
+      case Some(impactrueno) => assert(impactrueno._2 == 0)
       case None => assert(false)
     }
   }
@@ -155,7 +159,7 @@ class ActividadesTest extends FunSuite {
   test("pokemon realiza ataque tipo secundario y es macho gana 20 puntos de experiencia") {
     val pikachu = fixture.pikachu
 
-    val ataque = new RealizarUnAtaque(fixture.embestida)
+    val ataque = new RealizarUnAtaque(fixture.embestida._1)
 
     val pikachu2 = pikachu.realizarActividad(ataque)
 
@@ -165,7 +169,7 @@ class ActividadesTest extends FunSuite {
   test("pokemon realiza ataque tipo secundario y es Hembra gana 40 puntos de experiencia y aparte se aplican los efectos secundarios") {
     val charmander = fixture.charmander
 
-    val ataque = new RealizarUnAtaque(fixture.embestida)
+    val ataque = new RealizarUnAtaque(fixture.embestida._1)
 
     val charmander2 = charmander.realizarActividad(ataque)
 
@@ -176,7 +180,7 @@ class ActividadesTest extends FunSuite {
   test("pokemon realiza ataque tipo dragon y gana 80 puntos") {
     val gyarados = fixture.gyarados
 
-    val ataque = new RealizarUnAtaque(fixture.llama)
+    val ataque = new RealizarUnAtaque(fixture.llama._1)
 
     val gyarados2 = gyarados.realizarActividad(ataque)
 
@@ -186,7 +190,7 @@ class ActividadesTest extends FunSuite {
   ignore("pokemon no tiene Pa suficiente entonces tira error") {
     val pikachu = fixture.pikachu
 
-    val actividad = new RealizarUnAtaque(fixture.impactrueno)
+    val actividad = new RealizarUnAtaque(fixture.impactrueno._1)
 
     val pikachu2 = pikachu.realizarActividad(actividad)
 
@@ -202,7 +206,7 @@ class ActividadesTest extends FunSuite {
   test("pokemon no conoce ataque entonces tira error") {
     val pikachu = fixture.pikachu
 
-    val actividad = new RealizarUnAtaque(fixture.llama)
+    val actividad = new RealizarUnAtaque(fixture.llama._1)
 
     var tiroError = false
 
@@ -279,21 +283,21 @@ class ActividadesTest extends FunSuite {
 
   test("pokemon trata de aprender un ataque normal y uno afin a su especie") {
     val voltod = fixture.voltorb
-    val actividad = AprenderAtaque(fixture.impactrueno)
+    val actividad = AprenderAtaque(fixture.impactrueno._1)
 
     assert(voltod.listaAtaques.size == 0)
 
     val voltod2 = voltod.realizarActividad(actividad)
 
-    val contieneImpactrueno = voltod2.listaAtaques.find { ataque => ataque.nombre == "Impactrueno" }
+    val contieneImpactrueno = voltod2.listaAtaques.find { ataque => ataque._1 == Fixt.impactrueno._1 }
 
     assert(voltod2.listaAtaques.size == 1)
     assert(contieneImpactrueno != None)
 
-    val actividad2 = AprenderAtaque(fixture.embestida)
+    val actividad2 = AprenderAtaque(fixture.embestida._1)
     val voltod3 = voltod2.realizarActividad(actividad2)
 
-    val contieneEmbestida = voltod3.listaAtaques.find { ataque => ataque.nombre == "Embestida" }
+    val contieneEmbestida = voltod3.listaAtaques.find { ataque => ataque._1 == Fixt.embestida._1 }
 
     assert(voltod3.listaAtaques.size == 2)
     assert(contieneEmbestida != None)
@@ -301,7 +305,7 @@ class ActividadesTest extends FunSuite {
 
   test("pokemon trata de aprender un ataque que no es de tipo afin, entonces no aprende nada y queda Ko") {
     val voltod = fixture.voltorb
-    val actividad = AprenderAtaque(fixture.llama)
+    val actividad = AprenderAtaque(fixture.llama._1)
 
     val voltod2 = voltod.realizarActividad(actividad)
 

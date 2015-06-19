@@ -30,7 +30,7 @@ class PokemonFactoryTest extends FunSuite {
     assert(pokeBien.isInstanceOf[Pokemon])
   }
   test("armo un pokemon con ataque impactrueno y tiene que tener los mismo pa que el impactrueno del fixture"){
-    assert(Fixt.impactrueno.puntosAtaque == 1)
+    assert(Fixt.impactrueno._2 == 1)
     
     val fabricaDePokes = new PokemonFactory
     val especiePokemon = Fixt.especiePikachu
@@ -44,9 +44,9 @@ class PokemonFactoryTest extends FunSuite {
     .setEnergia(30)
     .build
    
-   val impactrueno = pikachu.listaAtaques.find { ataque => ataque.nombre == "Impactrueno"}
+   val impactrueno = pikachu.listaAtaques.find { ataque => ataque._1 == Fixt.impactrueno._1}
     impactrueno match {
-      case Some(impactrueno) => assert(impactrueno.puntosAtaque == 1)
+      case Some(impactrueno) => assert(impactrueno._2 == 1)
       case None => assert(false)
     }      
   }
