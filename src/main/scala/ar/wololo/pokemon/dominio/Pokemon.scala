@@ -27,6 +27,11 @@ case class Pokemon(
   def realizarRutina(rutina: Rutina): Try[Pokemon] = rutina.esHechaPor(this)
   private def sufriEfectosSecundarios(ataque: Ataque): Pokemon = ataque.efecto(this)
 
+  def aumentaExpEnBaseAGenero():Pokemon = genero.aumentaExperiencia(this)
+  def fingiIntercambio():Pokemon = genero.fingiIntercambio(this)
+  
+  def modificaPeso(cantidad :Int):Pokemon = this.copy(peso = this.peso + cantidad).verificarParams()
+
   def verificarParams(): Pokemon = {
     if (energia < 0)
       throw NoPuedeEnergiaMenorACero(this)
@@ -73,10 +78,7 @@ case class Pokemon(
         }
         case FingirIntercambio => this.condicionEvolutiva match {
           case Intercambiar => this.evolucionar //Como me intercambiaron, evoluciono porque mi condicion evolutiva es Intercambiar. [Requerimiento-TP]
-          case _: CondicionEvolutiva => this.genero match {
-            case Macho => this.copy(peso = peso + 1)
-            case Hembra => this.copy(peso = peso - 10)
-          }
+          case _: CondicionEvolutiva => this.fingiIntercambio()
         }
         case actividad: UsarPiedra => this.evaluarEfectos(actividad.piedra)
         case actividad: LevantarPesas => this.estado match {
@@ -107,10 +109,7 @@ case class Pokemon(
               resultadoAtaque.tipo match {
                 case Dragon => pokemonAfectado.aumentaExperiencia(80)
                 case pokemonAfectado.tipoPrincipal => pokemonAfectado.aumentaExperiencia(50)
-                case pokemonAfectado.tipoSecundario => pokemonAfectado.genero match {
-                  case Macho => pokemonAfectado.aumentaExperiencia(20)
-                  case Hembra => pokemonAfectado.aumentaExperiencia(40)
-                }
+                case pokemonAfectado.tipoSecundario => pokemonAfectado.aumentaExpEnBaseAGenero()
               }
             }
           }
