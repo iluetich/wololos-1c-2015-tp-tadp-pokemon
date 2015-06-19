@@ -2,6 +2,7 @@ package ar.wololo.pokemon.dominio
 
 import scala.util.Try
 import scala.util.Success
+import ar.wololo.pokemon.test.Fixt
 
 object SuperSistemaDeAnalisis {
 /*
