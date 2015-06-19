@@ -8,9 +8,9 @@ object Fixt {
   val fabricaDeEspecies = new EspecieFactory
 
   // tupla =(Ataque(nombre, efecto, tipo, puntosDeIniciales),puntosDeAtaque,puntosDeAtaqueMax)
-  val impactrueno = (new Ataque("Impactrueno", (Pokemon => Pokemon), Electrico, 20),1,20)
-  val embestida = (new Ataque("Embestida", (Pokemon => Pokemon.copy(estado = Dormido(3))), Normal, 10),7,10)
-  val llama = (new Ataque("Llama", (Pokemon => Pokemon), Dragon, 30),15,30)
+  val impactrueno = (new Ataque("Impactrueno", (Pokemon => Pokemon), Electrico),1,20)
+  val embestida = (new Ataque("Embestida", (Pokemon => Pokemon.copy(estado = Dormido(3))), Normal),7,10)
+  val llama = (new Ataque("Llama", (Pokemon => Pokemon), Dragon),15,30)
 
 /* CREACIÓN DE ESPECIES SIN USAR ESPECIE FACTORY
   // Especie(tipoPrincipal, tipoSecundario, incFuerza, incVelocidad, incPeso, incEnergiaMax, pesoMaxSaludable, resistEvol, condicionEvol, especieEvol)
