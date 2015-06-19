@@ -131,14 +131,14 @@ class ActividadesTest extends FunSuite {
     }
   }
 
-  ignore("pokemon realiza un ataque de su tipo principal se baja en 1 el pa del ataque y gana 50 de exp") {
+  test("pokemon realiza un ataque de su tipo principal se baja en 1 el pa del ataque y gana 50 de exp") {
     assert(fixture.impactrueno._2 == 1)
 
     val pikachu = fixture.pikachu
 
     val actividad = new RealizarUnAtaque(fixture.impactrueno._1)
 
-    val impactrueno2 = pikachu.listaAtaques.find { ataque => ataque == fixture.impactrueno }
+    val impactrueno2 = pikachu.listaAtaques.find { ataque => ataque._1 == fixture.impactrueno._1 }
     impactrueno2 match {
       case Some(impactrueno2) => assert(impactrueno2._2 == 1)
       case None => assert(false)
@@ -149,7 +149,7 @@ class ActividadesTest extends FunSuite {
     assert(pikachu.experiencia == 0)
     assert(pikachu2.experiencia == 50)
 
-    val impactrueno = pikachu2.listaAtaques.find { ataque => ataque == Fixt.impactrueno }
+    val impactrueno = pikachu2.listaAtaques.find { ataque => ataque._1 == Fixt.impactrueno._1 }
     impactrueno match {
       case Some(impactrueno) => assert(impactrueno._2 == 0)
       case None => assert(false)
@@ -187,7 +187,7 @@ class ActividadesTest extends FunSuite {
     assert(gyarados2.experiencia == 80)
   }
 
-  ignore("pokemon no tiene Pa suficiente entonces tira error") {
+  test("pokemon no tiene Pa suficiente entonces tira error") {
     val pikachu = fixture.pikachu
 
     val actividad = new RealizarUnAtaque(fixture.impactrueno._1)

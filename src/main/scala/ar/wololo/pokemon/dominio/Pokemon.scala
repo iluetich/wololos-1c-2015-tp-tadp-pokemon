@@ -95,7 +95,7 @@ case class Pokemon(
   }
   
   def realizaAtaqueSiPodes(ataqueARealizar :Ataque):Pokemon = {
-          val resultadoAtaque = this.listaAtaques.find{case (ataque,pa,_) => ataque == ataqueARealizar && pa > 1}
+          val resultadoAtaque = this.listaAtaques.find{case (ataque,pa,_) => ataque == ataqueARealizar && pa > 0}
           resultadoAtaque match {
             case None => throw PokemonNoConoceMovONoTienePA(this)
             case Some(resultadoAtaque) => this.realizaAtaque(ataqueARealizar)
