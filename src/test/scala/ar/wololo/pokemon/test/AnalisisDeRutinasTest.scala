@@ -24,9 +24,9 @@ class AnalisisDeRutinasTest extends FunSuite {
   test("Si no paso rutinas el análisis arroja excepción para cualquier criterio") {
     def analisisAux(criterio: CriterioRutina) = obtenerMejorRutinaSegun(List[Rutina]())(criterio)
     
-    assert(analisisAux(MaxEnergia) === None)
-    assert(analisisAux(MaxNivel) === None)
-    assert(analisisAux(MinPeso) === None)
+    assert(analisisAux(MaxEnergia).isEmpty)
+    assert(analisisAux(MaxNivel).isEmpty)
+    assert(analisisAux(MinPeso).isEmpty)
   }
 
   test("Si pikachu está knockout el análisis no retorna ningún nombre") {
@@ -45,7 +45,7 @@ class AnalisisDeRutinasTest extends FunSuite {
     val pocionado = fixture.rutinaPocionado
     val nado = fixture.rutinaNado
     val nadoQueNoPuedeHacer = fixture.rutinaPhelps
-    assert(obtenerMejorRutinaSegun(List(nadoQueNoPuedeHacer))(MaxNivel) === None)
+    assert(obtenerMejorRutinaSegun(List(nadoQueNoPuedeHacer))(MaxNivel).isEmpty)
 
     val mejorRutina = obtenerMejorRutinaSegun(List(nadoQueNoPuedeHacer, pocionado, nado))(MaxNivel)
     assert(mejorRutina === Some(nado.nombre))
