@@ -12,9 +12,6 @@ class AnalisisDeRutinasTest extends FunSuite {
     val pocionado = fixture.rutinaPocionado
     val mejorRutina = obtenerMejorRutinaSegun(List(pocionado))(MaxEnergia)
     assert(mejorRutina === Some(pocionado.nombre))
-
-    val pokeKo = fixture.pikachu.copy(estado = Ko)
-    assert(obtenerMejorRutinaSegun(List[Rutina](fixture.rutinaPocionado))(MaxEnergia) === None)
   }
 
   test("Si pikachu es macho y su condicion evolutiva es SubirDeNivel le conviene la rutina de pocionado para aumentar energía") {
@@ -34,7 +31,7 @@ class AnalisisDeRutinasTest extends FunSuite {
 
   test("Si pikachu está knockout el análisis no retorna ningún nombre") {
     val pokeKo = fixture.pikachu.copy(estado = Ko)
-    assert(obtenerMejorRutinaSegun(List[Rutina](fixture.rutinaNado, fixture.rutinaIntercambio, fixture.rutinaPocionado))(MinPeso) === None)
+    assert(SuperSistemaDeAnalisis.obtenerMejorRutinaSegun(pokeKo)(List[Rutina](fixture.rutinaNado, fixture.rutinaIntercambio, fixture.rutinaPocionado))(MinPeso) === None)
   }
 
   test("Conviene más nadar lo máximo posible para subir de nivel que usar pociones") {
