@@ -79,19 +79,27 @@ case class Pokemon(
     }
   }
 
-  def nada(minutos: Int): Pokemon = {
-    (this.tipoPrincipal, this.tipoSecundario) match {
-      case (Agua, _) | (_, Agua) => this.modificaEnergia(minutos * -1).modificaVelocidad(minutos).aumentaExperiencia(minutos * 200)
+  def nadar(minutos: Int): Pokemon = {
+    (tipoPrincipal, tipoSecundario) match {
       case (Fuego, _) | (_, Fuego) | (Tierra, _) | (_, Tierra) | (Roca, _) | (_, Roca) => this.cambiaAEstado(Ko)
-      case _ => this.modificaEnergia(minutos * -1).aumentaExperiencia(minutos * 200)
+      case (tP, tS) =>
+        val pokeAfectado = (tP, tS) match {
+          case (Agua, _) | (_, Agua) => {
+            this.modificaVelocidad(minutos)
+          }
+          case _ => this
+        }
+        pokeAfectado.modificaEnergia(-minutos).aumentaExperiencia(minutos * 200)
     }
   }
 
   def podesLevantar(kg: Int): Boolean = kg < (10 * this.fuerza + 1)
 
-  def aprendeAtaqueSiPodes(ataqueAAprender: (Ataque, Int, Int)): Pokemon = ataqueAAprender._1.tipo match {
-    case Normal | this.tipoPrincipal | this.tipoSecundario => this.modificaListaAtaque(ataqueAAprender :: this.listaAtaques)
-    case _ => this.cambiaAEstado(Ko)
+  def aprenderAtaque(ataqueAAprender: (Ataque, Int, Int)): Pokemon = {
+    if (ataqueAAprender._1.tePuedeAprender(this))
+      this.modificaListaAtaque(ataqueAAprender :: this.listaAtaques)
+    else
+      this.cambiaAEstado(Ko)
   }
 
   def realizarAtaque(ataqueARealizar: Ataque): Pokemon = {
@@ -128,9 +136,9 @@ case class Pokemon(
         }
         case FingirIntercambio => this.condicionEvolutiva.intercambiaronA(this)
         case actividad: UsarPiedra => this.evaluarEfectos(actividad.piedra)
-        case actividad: Nadar => this.nada(actividad.minutos)
+        case actividad: Nadar => this.nadar(actividad.minutos)
         case actividad: RealizarUnAtaque => this.realizarAtaque(actividad.ataqueARealizar)
-        case actividad: AprenderAtaque => this.aprendeAtaqueSiPodes(actividad.ataqueAAprender)
+        case actividad: AprenderAtaque => this.aprenderAtaque(actividad.ataqueAAprender)
         case actividad: LevantarPesas => this.estado match {
           case Paralizado => this.cambiaAEstado(Ko)
           case _: EstadoPokemon => this.levantaSiPodes(actividad.kg)

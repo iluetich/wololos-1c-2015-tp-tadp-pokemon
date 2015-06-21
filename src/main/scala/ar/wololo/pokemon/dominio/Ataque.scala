@@ -4,10 +4,17 @@ case class Ataque(val nombre: String,
     val efecto: Pokemon => Pokemon,
     val tipo: Tipo) {
 
+  def tePuedeAprender(pokemon: Pokemon): Boolean = {
+    tipo match {
+      case Normal | pokemon.tipoPrincipal | pokemon.tipoSecundario => true
+      case _ => false
+    }
+  }
+
   def teUtiliza(pokemon: Pokemon): Pokemon = {
     val pokeAfectado = efecto(pokemon.reducirPa(this))
     var experiencia = 0
-    
+
     tipo match {
       case pokeAfectado.tipoSecundario => pokeAfectado.aumentaExpEnBaseAGenero()
       case t =>
