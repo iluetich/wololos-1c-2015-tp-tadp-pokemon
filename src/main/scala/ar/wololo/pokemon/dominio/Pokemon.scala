@@ -103,12 +103,9 @@ case class Pokemon(
   }
 
   def realizarAtaque(ataqueARealizar: Ataque): Pokemon = {
-    val resultadoAtaque = this.listaAtaques.find { case (ataque, pa, _) => ataque.equals(ataqueARealizar) && pa > 0 }
-    resultadoAtaque.fold { throw PokemonNoConoceMovONoTienePA(this) } { case (atk, _, _) => atk.teUtiliza(this) }
+    listaAtaques.find { case (ataque, pa, _) => ataque.equals(ataqueARealizar) && pa > 0 }
+      .fold { throw PokemonNoConoceMovONoTienePA(this) } { case (atk, _, _) => atk.teUtiliza(this) }
   }
-
-  // TODO deberíamos chequear que no se aprenda un ataque que ya está aprendido, 
-  // sino bajaríamos los pA de todos los que sean iguales.
 
   def reducirPa(ataque: Ataque): Pokemon = {
     val listaAtaquesNueva = listaAtaques.map {
