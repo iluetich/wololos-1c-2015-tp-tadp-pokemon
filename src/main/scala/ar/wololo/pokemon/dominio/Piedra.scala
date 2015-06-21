@@ -1,18 +1,13 @@
 package ar.wololo.pokemon.dominio
 
-abstract class Piedra
+abstract class Piedra { def afectarA(pokemon: Pokemon): Pokemon }
 
+object PiedraLunar extends Piedra { def afectarA(pokemon: Pokemon) = pokemon.evolucionar }
 case class PiedraEvolutiva(val tipo: Tipo) extends Piedra {
-  def aplicaEfectos(pokemon : Pokemon) = this.tipo match{
+  def afectarA(pokemon: Pokemon) = this.tipo match {
     case pokemon.tipoPrincipal => pokemon.evolucionar
-    case tipoDistinto =>  
-         if (tipoDistinto.aQuienesLeGanas.exists { t => t == pokemon.tipoPrincipal || t == pokemon.tipoSecundario })
-               pokemon.copy(estado = Envenenado)
-         else
-               pokemon
+    case tipoDistinto if tipoDistinto.leGanasA(pokemon.tipoPrincipal) || tipoDistinto.leGanasA(tipoDistinto) => pokemon.copy(estado = Envenenado)
+    case _ => pokemon
   }
 }
 
-object PiedraLunar extends Piedra {  
-  def aplicaEfectos(pokemon : Pokemon) = pokemon.evolucionar
-}

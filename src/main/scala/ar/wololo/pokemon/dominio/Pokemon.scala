@@ -28,7 +28,7 @@ case class Pokemon(
   private def sufriEfectosSecundarios(ataque: Ataque): Pokemon = ataque.efecto(this)
 
   def aumentaExpEnBaseAGenero(): Pokemon = genero.aumentaExperiencia(this)
-  def fingiIntercambio(): Pokemon = genero.fingiIntercambio(this)
+  def teIntercambiaron(): Pokemon = genero.fingiIntercambio(this)
 
   def modificaPeso(cantidad: Int): Pokemon = this.copy(peso = this.peso + cantidad).verificarParams()
   def modificaVelocidad(cantidad: Int): Pokemon = this.copy(velocidad = Math.min(this.velocidad + cantidad, this.velocidadMax)).verificarParams()
@@ -54,11 +54,12 @@ case class Pokemon(
 
   private def descansar(): Pokemon = {
     val nuevaListaAtaque = this.listaAtaques.map { case (ataque: Ataque, _, paMax: Int) => new Tuple3(ataque, paMax, paMax) }
-
-    energia match {
-      case energia if energia < energiaMax * 0.5 => this.cambiaAEstado(Dormido(3)).modificaListaAtaque(nuevaListaAtaque)
-      case _ => this.modificaListaAtaque(nuevaListaAtaque)
+    val pokeAfectado = energia match {
+      case energia if energia < energiaMax * 0.5 => this.cambiaAEstado(Dormido(3))
+      case _ => this
     }
+
+    pokeAfectado.modificaListaAtaque(nuevaListaAtaque)
   }
 
   private def aumentaPAMaximo(cant: Int): Pokemon = {
@@ -93,41 +94,20 @@ case class Pokemon(
     case _ => this.cambiaAEstado(Ko)
   }
 
-  def realizaAtaqueSiPodes(ataqueARealizar: Ataque): Pokemon = {
-    val resultadoAtaque = this.listaAtaques.find { case (ataque, pa, _) => ataque == ataqueARealizar && pa > 0 }
-    resultadoAtaque match {
-      case None => throw PokemonNoConoceMovONoTienePA(this)
-      case Some(resultadoAtaque) => this.realizaAtaque(ataqueARealizar)
-    }
-  }
-
-  /*
-   * FIXME! Hay 3 métodos que implican realizar ataque o utilizar ataque, y reducirPa también
-   * implica lo mismo. Habría que juntarlos todos en uno sólo, o modificar la semántica, de
-   * manera tal que no queden similares en lo que hacen.
-   */
-  
-  def realizaAtaque(ataqueARealizar: Ataque): Pokemon = {
-    val pokemonAfectado = this.utilizaAtaque(ataqueARealizar) //this.sufriEfectosSecundarios(ataqueARealizar)
-    ataqueARealizar.tipo match {
-      case Dragon => pokemonAfectado.aumentaExperiencia(80)
-      case pokemonAfectado.tipoPrincipal => pokemonAfectado.aumentaExperiencia(50)
-      case pokemonAfectado.tipoSecundario => pokemonAfectado.aumentaExpEnBaseAGenero()
-    }
-  }
-
-  def utilizaAtaque(ataque: Ataque): Pokemon = {
-    val nuevaListaAtaques = this.reducirPa(ataque)
-    this.modificaListaAtaque(nuevaListaAtaques).sufriEfectosSecundarios(ataque)
+  def realizarAtaque(ataqueARealizar: Ataque): Pokemon = {
+    val resultadoAtaque = this.listaAtaques.find { case (ataque, pa, _) => ataque.equals(ataqueARealizar) && pa > 0 }
+    resultadoAtaque.fold { throw PokemonNoConoceMovONoTienePA(this) } { case (atk, _, _) => atk.teUtiliza(this) }
   }
 
   // TODO deberíamos chequear que no se aprenda un ataque que ya está aprendido, 
   // sino bajaríamos los pA de todos los que sean iguales.
-  def reducirPa(ataque: Ataque): List[(Ataque, Int, Int)] = {
-    listaAtaques.map {
+
+  def reducirPa(ataque: Ataque): Pokemon = {
+    val listaAtaquesNueva = listaAtaques.map {
       case (attack: Ataque, puntosAtaque, pAMax) if attack.equals(ataque) => (attack, puntosAtaque - 1, pAMax)
-      case (a, p, pMax) => (a, p, pMax)
+      case atk => atk
     }
+    this.modificaListaAtaque(listaAtaquesNueva)
   }
 
   def realizarActividad(actividad: Actividad): Pokemon = {
@@ -146,13 +126,10 @@ case class Pokemon(
           case Envenenado => this.cambiaAEstado(Bueno)
           case _: EstadoPokemon => this
         }
-        case FingirIntercambio => this.condicionEvolutiva match {
-          case Intercambiar => this.evolucionar //Como me intercambiaron, evoluciono porque mi condicion evolutiva es Intercambiar. [Requerimiento-TP]
-          case _: CondicionEvolutiva => this.fingiIntercambio()
-        }
+        case FingirIntercambio => this.condicionEvolutiva.intercambiaronA(this)
         case actividad: UsarPiedra => this.evaluarEfectos(actividad.piedra)
         case actividad: Nadar => this.nada(actividad.minutos)
-        case actividad: RealizarUnAtaque => this.realizaAtaqueSiPodes(actividad.ataqueARealizar)
+        case actividad: RealizarUnAtaque => this.realizarAtaque(actividad.ataqueARealizar)
         case actividad: AprenderAtaque => this.aprendeAtaqueSiPodes(actividad.ataqueAAprender)
         case actividad: LevantarPesas => this.estado match {
           case Paralizado => this.cambiaAEstado(Ko)
