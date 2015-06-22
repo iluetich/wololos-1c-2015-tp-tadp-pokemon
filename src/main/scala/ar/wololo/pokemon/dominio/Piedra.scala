@@ -6,7 +6,7 @@ object PiedraLunar extends Piedra { def afectarA(pokemon: Pokemon) = pokemon.evo
 case class PiedraEvolutiva(val tipo: Tipo) extends Piedra {
   def afectarA(pokemon: Pokemon) = this.tipo match {
     case pokemon.tipoPrincipal => pokemon.evolucionar
-    case tipoDistinto if tipoDistinto.leGanasA(pokemon.tipoPrincipal) || tipoDistinto.leGanasA(tipoDistinto) => pokemon.copy(estado = Envenenado)
+    case tipoDistinto if tipoDistinto.leGanasA(pokemon.tipoPrincipal) || tipoDistinto.leGanasA(pokemon.tipoSecundario) => pokemon.copy(estado = Envenenado)
     case _ => pokemon
   }
 }
