@@ -22,7 +22,7 @@ case class BuildFactoryException(mensaje: String) extends Exception(mensaje)
 case class PokemonFactory(var estado: EstadoPokemon = null,
     var ataques: List[Ataque] = List(),
     var nivel: Int = 0,
-    var experiencia: Long = 0,
+    var experiencia: Int = 0,
     var genero: Genero = null,
     var energia: Int = 0,
     var energiaMax: Int = 0,
@@ -98,7 +98,7 @@ case class PokemonFactory(var estado: EstadoPokemon = null,
       throw new NivelFactoryException("Nivel menor o igual a 0")
   }
 
-  def setExperiencia(ptsDeExperiencia: Long): PokemonFactory = {
+  def setExperiencia(ptsDeExperiencia: Int): PokemonFactory = {
     nivel match {
       case n if n == 0 => throw new NivelFactoryException("Nivel aún no asignado")
       case n if n > 0 => {

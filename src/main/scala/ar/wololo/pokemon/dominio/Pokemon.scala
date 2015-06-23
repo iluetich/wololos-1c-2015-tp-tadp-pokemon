@@ -6,7 +6,7 @@ case class Pokemon(
     val estado: EstadoPokemon,
     val listaAtaques: List[Ataque],
     val nivel: Int,
-    val experiencia: Long,
+    val experiencia: Int,
     val genero: Genero,
     val energia: Int,
     val energiaMax: Int,
@@ -22,8 +22,12 @@ case class Pokemon(
   val pesoMaximoSaludable: Int = especie.pesoMaximoSaludable
   val condicionEvolutiva: CondicionEvolutiva = especie.condicionEvolutiva
 
-  def aumentaExperiencia(cantidad: Long): Pokemon = especie.aumentaExperienciaDe(this, cantidad)
-  def evolucionar: Pokemon = especie.evolucionarA(this)
+  def aumentaExperiencia(cant: Int): Pokemon = copy (experiencia = experiencia + cant).checkLevel
+  def checkLevel =
+    if (experiencia >= especie.experienciaParaNivel(nivel + 1))
+      especie.subirDeNivelA(this)
+    else this  
+  def evolucionar: Pokemon = copy(especie = especie.especieEvolucion).checkLevel // puede que haya que cambiar
   def realizarRutina(rutina: Rutina): Try[Pokemon] = rutina.esHechaPor(this)
   private def usar(ataque: Ataque): Pokemon = ataque.teUsa(this)
 
@@ -136,7 +140,7 @@ case class Pokemon(
     futuroPokemon.verificarParams() // retorno el posible pokemon habiendo realizado la actividad
   }
 
-  override def equals(unPokemon: Any): Boolean = {
+/*  override def equals(unPokemon: Any): Boolean = {
     // XXX Revisar
     var that: Pokemon = unPokemon.asInstanceOf[Pokemon]
     return that.estado == this.estado &&
@@ -154,4 +158,6 @@ case class Pokemon(
       that.condicionEvolutiva == this.condicionEvolutiva &&
       that.especie.resistenciaEvolutiva == especie.resistenciaEvolutiva
   }
+*/
 }
+
