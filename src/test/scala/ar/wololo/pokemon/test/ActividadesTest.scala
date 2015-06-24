@@ -103,14 +103,16 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
     
     val embestida = charmander.listaAtaques.find { ataque => ataque.nombre == "Embestida"}
     embestida match {
-      case Some(embestida) => assert(embestida.puntosAtaque == 7)
+      case Some(emb) => assert(emb.puntosAtaque == 7)
+      case None => fail
     }
     
     val charmanderDescansado = charmander.realizarActividad(Descansar)
         
     val embestida2 = charmanderDescansado.listaAtaques.find { ataque => ataque.nombre == "Embestida"}
     embestida2 match {
-      case Some(embestida2) => assert(embestida2.puntosAtaque == 10)
+      case Some(emb2) => assert(emb2.puntosAtaque == 10)
+      case None => fail
     }
   }
   
@@ -123,7 +125,8 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
     
     val embestida = pikachuDescansado.listaAtaques.find { ataque => ataque.nombre == "Embestida"}
     embestida match {
-      case Some(embestida) => assert(embestida.puntosAtaque == 10)
+      case Some(emb) => assert(emb.puntosAtaque == 10)
+      case None=> fail
     }
   }
   
@@ -136,8 +139,8 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
     
     val impactrueno2 = pikachu.listaAtaques.find { ataque => ataque.nombre == "Impactrueno"}
     impactrueno2 match {
-      case Some(impactrueno2) => assert(impactrueno2.puntosAtaque == 1)
-      case None => assert(false)
+      case Some(impact2) => assert(impact2.puntosAtaque == 1)
+      case None => fail
     }
     
     val pikachu2 = pikachu.realizarActividad(actividad)
@@ -148,8 +151,8 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
     
     val impactrueno = pikachu2.listaAtaques.find { ataque => ataque.nombre == "Impactrueno"}
     impactrueno match {
-      case Some(impactrueno) => assert(impactrueno.puntosAtaque == 0)
-      case None => assert(false)
+      case Some(impact) => assert(impact.puntosAtaque == 0)
+      case None => fail
     }
   }
   
