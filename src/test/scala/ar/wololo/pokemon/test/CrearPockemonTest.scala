@@ -39,29 +39,8 @@ class SetSpec extends FlatSpec {
   }
   it should "evolucionar cuanda gana 110 de experiencia de evolucionar por condicionEvolutiva (SubirNivel(5))" in {
     val pikachuMejorado = pikachu.aumentaExperiencia(110)
-    System.out.println(pikachuMejorado.nivel)
-    System.out.println(pikachuMejorado.experiencia)
-    System.out.println(pikachuMejorado.especie)
-    System.out.println(pikachuMejorado.fuerza)
-    System.out.println(pikachuMejorado.energiaMax)
-    System.out.println(pikachuMejorado.peso)
-    System.out.println(pikachuMejorado)
-    System.out.println(pikachu.copy( nivel = 5, experiencia = 110, especie = especiePokeMix,
-                                              fuerza = 23, energiaMax = 1400, peso = 9))
     assert ( pikachuMejorado == pikachu.copy( nivel = 5, experiencia = 110, especie = especiePokeMix,
                                               fuerza = 23, energiaMax = 1400, peso = 9) )
     assert ( pikachuMejorado.especie.experienciaParaNivel(pikachuMejorado.nivel) ===  75)
-                                                            
   }
-  
 }
-//    System.out.println("Picachu del Futuro: nivel: " + picachu.ganarExperiencia(5).nivel)
-//    System.out.println("Picachu del Futuro: exp: " + picachu.ganarExperiencia(5).experiencia)
-//    System.out.println("Picachu del Futuro: exp Salto: " + picachu.ganarExperiencia(5).experienciaSaltoNivel)
-
-//    System.out.println("Picachu: exp Salto: " +picachu.experienciaSaltoNivel)
-//    System.out.println("Picachu del Futuro: exp: " +picachu.ganarExperiencia(2).experiencia)
-//    System.out.println("Picachu del Futuro: exp Salto: " +picachu.ganarExperiencia(2).experienciaSaltoNivel)
-
-
-
