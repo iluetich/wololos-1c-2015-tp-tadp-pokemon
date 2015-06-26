@@ -8,16 +8,16 @@ import ar.wololo.pokemon.dominio._
  */
 
 
-case class IncrementosPorNivelFactoryException(msg: String) extends Exception(msg)
-case class TipoDeEspecieFactoryException(msg: String) extends Exception(msg)
-case class PesoMaxSaludableFactoryException(msg: String) extends Exception(msg)
-case class ResistenciaEvolutivaFactoryException(msg: String) extends Exception(msg)
-case class CondicionEvolutivaFactoryException(msg: String) extends Exception(msg)
-case class EspecieEvolucionFactoryException(msg: String) extends Exception(msg)
-case class EspecieCreacionFactoryException(msg: String) extends Exception(msg)
+case class IncrementosPorNivelBuilderException(msg: String) extends Exception(msg)
+case class TipoDeEspecieBuilderException(msg: String) extends Exception(msg)
+case class PesoMaxSaludableBuilderException(msg: String) extends Exception(msg)
+case class ResistenciaEvolutivaBuilderException(msg: String) extends Exception(msg)
+case class CondicionEvolutivaBuilderException(msg: String) extends Exception(msg)
+case class EspecieEvolucionBuilderException(msg: String) extends Exception(msg)
+case class EspecieCreacionBuilderException(msg: String) extends Exception(msg)
 
 
-case class EspecieFactory(var tipoPrincipal: Tipo = null,
+case class EspecieBuilder(var tipoPrincipal: Tipo = null,
     var tipoSecundario: Tipo = null,
     var incrementoPeso: Int = 0,
     var incrementoFuerza: Int = 0,
@@ -28,51 +28,51 @@ case class EspecieFactory(var tipoPrincipal: Tipo = null,
     var condicionEvolutiva: CondicionEvolutiva = null,
     var especieEvolucion: Especie = null) {
 
-  def setTipos(principal: Tipo, secundario: Tipo = null): EspecieFactory = {
+  def setTipos(principal: Tipo, secundario: Tipo = null): EspecieBuilder = {
     if (principal.equals(secundario))
-      throw new TipoDeEspecieFactoryException("El tipo principal es el mismo que el secundario.")
+      throw new TipoDeEspecieBuilderException("El tipo principal es el mismo que el secundario.")
     else
       copy(tipoPrincipal = principal, tipoSecundario = secundario)
   }
 
-  def setIncrementos(incPeso: Int, incFuerza: Int, incEnergiaMax: Int, incVelocidad: Int): EspecieFactory = {
+  def setIncrementos(incPeso: Int, incFuerza: Int, incEnergiaMax: Int, incVelocidad: Int): EspecieBuilder = {
     if (incPeso > 0 && incFuerza > 0 && incEnergiaMax > 0 && incVelocidad > 0)
       copy(incrementoPeso = incPeso, incrementoFuerza = incFuerza, incrementoEnergiaMax = incEnergiaMax, incrementoVelocidad = incVelocidad)
     else
-      throw new IncrementosPorNivelFactoryException("Algunos incrementos son iguales o menores a 0.")
+      throw new IncrementosPorNivelBuilderException("Algunos incrementos son iguales o menores a 0.")
   }
 
-  def setPesoMaximoSaludable(pesoMax: Int): EspecieFactory = {
+  def setPesoMaximoSaludable(pesoMax: Int): EspecieBuilder = {
     if (pesoMax > 0)
       copy(pesoMaximoSaludable = pesoMax)
     else
-      throw new PesoMaxSaludableFactoryException("El peso máximo saludable debe ser mayor a 0")
+      throw new PesoMaxSaludableBuilderException("El peso máximo saludable debe ser mayor a 0")
   }
 
-  def setResistenciaEvolutiva(resEvol: Int): EspecieFactory = {
+  def setResistenciaEvolutiva(resEvol: Int): EspecieBuilder = {
     if (resEvol > 0)
       copy(resistenciaEvolutiva = resEvol)
     else
-      throw new ResistenciaEvolutivaFactoryException("La resistencia evolutiva debe ser mayor a 0")
+      throw new ResistenciaEvolutivaBuilderException("La resistencia evolutiva debe ser mayor a 0")
   }
 
-  def setCondicionEvolutiva(condicion: CondicionEvolutiva): EspecieFactory = {
+  def setCondicionEvolutiva(condicion: CondicionEvolutiva): EspecieBuilder = {
     condicion match {
       case c: SubirDeNivel => {
         if (c.nivelParaEvolucionar > 0)
           copy(condicionEvolutiva = condicion)
         else
-          throw new CondicionEvolutivaFactoryException("Subir de nivel debe tener un nivel mayor a 0.")
+          throw new CondicionEvolutivaBuilderException("Subir de nivel debe tener un nivel mayor a 0.")
       }
       case _ => copy(condicionEvolutiva = condicion)
     }
   }
 
-  def setEspecieEvolucion(especie: Especie): EspecieFactory = {
+  def setEspecieEvolucion(especie: Especie): EspecieBuilder = {
     if (!(condicionEvolutiva == null))
       copy(especieEvolucion = especie)
     else
-      throw new EspecieEvolucionFactoryException("Es necesario asignar una condicion de evolucion antes de especificar la especie de evolucion")
+      throw new EspecieEvolucionBuilderException("Es necesario asignar una condicion de evolucion antes de especificar la especie de evolucion")
   }
 
   def build: Especie = {
@@ -94,7 +94,7 @@ case class EspecieFactory(var tipoPrincipal: Tipo = null,
         condicionEvolutiva,
         especieEvolucion)
     else
-      throw new EspecieCreacionFactoryException("Parámetros de creación de especie inválidos")
+      throw new EspecieCreacionBuilderException("Parámetros de creación de especie inválidos")
 
   }
 

@@ -28,10 +28,7 @@ case class Especie(val tipoPrincipal: Tipo,
     val pesoNuevo = Math.min(pokemon.peso + incrementoPeso, pesoMaximoSaludable)
     val pokemonMejorado = pokemon.copy(nivel = nivelNuevo, fuerza = fuerzaNueva, energiaMax = energiaMaxNueva)
 
-    condicionEvolutiva match {
-      case c: SubirDeNivel if (c.nivelParaEvolucionar == nivelNuevo) => evolucionarA(pokemonMejorado)
-      case _ => pokemonMejorado
-    }
+    condicionEvolutiva.subioDeNivel(pokemonMejorado)
   }
 
   def aumentaExperienciaDe(pokemon: Pokemon, cantidad: Long): Pokemon = {

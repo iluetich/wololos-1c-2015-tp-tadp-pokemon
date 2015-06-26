@@ -1,6 +1,9 @@
 package ar.wololo.pokemon.dominio
 
-trait Tipo { def aQuienesLeGanas(): List[Tipo] }
+trait Tipo { 
+  def aQuienesLeGanas(): List[Tipo] 
+  def leGanasA(tipo: Tipo) = aQuienesLeGanas.exists {t => t.equals(tipo)}  
+}
 object Fuego extends Tipo { def aQuienesLeGanas: List[Tipo] = List(Planta, Hielo, Bicho) }
 object Agua extends Tipo { def aQuienesLeGanas: List[Tipo] = List(Fuego, Tierra, Roca) }
 object Planta extends Tipo { def aQuienesLeGanas: List[Tipo] = List(Agua, Tierra, Roca) }
