@@ -101,8 +101,8 @@ class ActividadesTest extends FunSuite {
 
     val charmander = fixture.charmander
 
-    val embestida = charmander.listaAtaques.find {ataque => ataque._1 == Fixt.embestida._1}
-    
+    val embestida = charmander.listaAtaques.find { ataque => ataque._1 == Fixt.embestida._1 }
+
     embestida match {
       case Some(embestida) => assert(embestida._2 == 7)
       case None => assert(false)
@@ -111,7 +111,7 @@ class ActividadesTest extends FunSuite {
     val charmanderDescansado = charmander.realizarActividad(Descansar)
 
     val embestida2 = charmanderDescansado.listaAtaques.find { ataque => ataque._1 == Fixt.embestida._1 }
-    
+
     embestida2 match {
       case Some(embestida2) => assert(embestida2._2 == 10)
       case None => assert(false)

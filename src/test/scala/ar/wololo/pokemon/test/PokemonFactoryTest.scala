@@ -8,16 +8,16 @@ import ar.wololo.pokemon.dominio._
  */
 class PokemonFactoryTest extends FunSuite {
   test("Si pido crear un pokemón sin parámetros necesarios tira excepción") {
-    intercept[BuildFactoryException](Fixt.fabricaDePokes.build)
+    intercept[BuilderException](Fixt.fabricaDePokes.build)
   }
   test("No puedo armar un pokemón con experiencia desorbitante") {
-    intercept[ExperienciaFactoryException](Fixt.fabricaDePokes.setEstado(Bueno).setEspecie(Fixt.especiePikachu).setNivel(1).setEnergia(55).setExperiencia(1000))
+    intercept[ExperienciaBuilderException](Fixt.fabricaDePokes.setEstado(Bueno).setEspecie(Fixt.especiePikachu).setNivel(1).setEnergia(55).setExperiencia(1000))
   }
   test("No puedo armar un pokemón con experiencia ínfima y nivel alto") {
-    intercept[ExperienciaFactoryException](Fixt.fabricaDePokes.setEspecie(Fixt.especiePikachu).setNivel(10).setExperiencia(0).isInstanceOf[PokemonFactory])
+    intercept[ExperienciaBuilderException](Fixt.fabricaDePokes.setEspecie(Fixt.especiePikachu).setNivel(10).setExperiencia(0).isInstanceOf[PokemonBuilder])
   }
   test("No puedo armar un pokemón con ataques que no pueda aprender") {
-    intercept[AtaqueFactoryException](Fixt.fabricaDePokes.setEspecie(Fixt.especieHitmonchan).setAtaques(List(Fixt.embestida, Fixt.impactrueno)))
+    intercept[AtaqueBuilderException](Fixt.fabricaDePokes.setEspecie(Fixt.especieHitmonchan).setAtaques(List(Fixt.embestida, Fixt.impactrueno)))
   }
   test("Si armo un poke con criterio, la fábrica me lo da") {
     val pokeBien = Fixt.fabricaDePokes.setEstado(Bueno)
@@ -32,7 +32,7 @@ class PokemonFactoryTest extends FunSuite {
   test("armo un pokemon con ataque impactrueno y tiene que tener los mismo pa que el impactrueno del fixture"){
     assert(Fixt.impactrueno._2 == 1)
     
-    val fabricaDePokes = new PokemonFactory
+    val fabricaDePokes = new PokemonBuilder
     val especiePokemon = Fixt.especiePikachu
     
     val pikachu = fabricaDePokes.setEstado(Bueno)
