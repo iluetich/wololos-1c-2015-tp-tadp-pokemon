@@ -34,7 +34,7 @@ class PokemonFactoryTest extends FunSuite {
     
     val fabricaDePokes = new PokemonBuilder
     val especiePokemon = Fixt.especiePikachu
-    
+
     val pikachu = fabricaDePokes.setEstado(Bueno)
     .setEspecie(Fixt.especiePikachu)
     .setAtaques(List(Fixt.impactrueno, Fixt.embestida))

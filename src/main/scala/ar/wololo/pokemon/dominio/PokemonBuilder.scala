@@ -17,7 +17,7 @@ case class BuilderException(mensaje: String) extends Exception(mensaje)
  */
 
 case class PokemonBuilder(var estado: EstadoPokemon = null,
-    var ataques: List[(Ataque,Int,Int)] = List(),
+    var ataques: List[(Ataque, Int, Int)] = List(),
     var nivel: Int = 0,
     var experiencia: Long = 0,
     var genero: Genero = null,
@@ -52,9 +52,9 @@ case class PokemonBuilder(var estado: EstadoPokemon = null,
       unaEspecie.incrementoPeso > 0 &&
       unaEspecie.incrementoVelocidad > 0 &&
       unaEspecie.resistenciaEvolutiva > 0)
-      if(unaEspecie.condicionEvolutiva == null)
+      if (unaEspecie.condicionEvolutiva == null)
         copy(especie = unaEspecie.copy(condicionEvolutiva = NoEvoluciona))
-      else  
+      else
         copy(especie = unaEspecie)
     else
       throw new EspecieBuilderException("Especie con parámetros inválidos")
@@ -91,8 +91,10 @@ case class PokemonBuilder(var estado: EstadoPokemon = null,
     }
   }
 
-  def setAtaques(unosAtaques: List[(Ataque,Int,Int)]): PokemonBuilder = {
-    if (unosAtaques.forall {case (atk :Ataque,_,_) => atk.tipo == especie.tipoPrincipal || atk.tipo == especie.tipoSecundario || atk.tipo == Normal })
+  private def ataqueAprendible(ataque: Ataque) = List(Normal, especie.tipoPrincipal, especie.tipoSecundario).contains(ataque.tipo) 
+  
+  def setAtaques(unosAtaques: List[(Ataque, Int, Int)]): PokemonBuilder = {
+    if (unosAtaques.forall { tuplaAtaque => ataqueAprendible(tuplaAtaque._1) })
       copy(ataques = unosAtaques)
     else
       throw new AtaqueBuilderException("Hay ataques que no puede aprender el pokemón")
@@ -107,7 +109,7 @@ case class PokemonBuilder(var estado: EstadoPokemon = null,
       energia > 0 &&
       !(especie == null) &&
       (ataques.isEmpty ||
-        ataques.forall {case (atk : Ataque,_,_) => atk.tipo == especie.tipoPrincipal || atk.tipo == especie.tipoSecundario || atk.tipo == Normal }))
+        ataques.forall { tuplaAtaque => ataqueAprendible(tuplaAtaque._1) }))
 
       new Pokemon(estado,
         ataques,
