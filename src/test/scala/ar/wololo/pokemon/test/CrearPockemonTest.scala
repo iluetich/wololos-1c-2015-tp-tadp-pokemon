@@ -16,7 +16,7 @@ class SetSpec extends FlatSpec {
       incrementoEnergiaMax = 100, pesoMaximoSaludable = 100, 
       resistenciaEvolutiva = 3, condicionEvolutiva = new SubirDeNivel(5),
       especieEvolucion = especiePokeMix)
-  val pikachu = Fixt.fabricaDePokes
+  val pikachu = Fixture.fabricaDePokes
     .setEspecie(especiePoke)
     .setEstado(Dormido(3))
     .setAtaques(List[Ataque]())

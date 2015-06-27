@@ -24,7 +24,7 @@ class PokemonFactoryTest extends FunSuite {
   test("No puedo armar un pokemón con ataques que no pueda aprender") {
     val fabricaDePokes = new PokemonFactory
     val especiePoke = new Especie(Fuego, Veneno, 1, 1, 1, 1, 100, 200, null, null)
-    intercept[AtaqueFactoryException](fabricaDePokes.setEspecie(especiePoke).setAtaques(List(Fixt.embestida, Fixt.impactrueno)))
+    intercept[AtaqueFactoryException](fabricaDePokes.setEspecie(especiePoke).setAtaques(List(Fixture.embestida, Fixture.impactrueno)))
   }
   test("Si armo un poke con criterio, la fábrica me lo da") {
     val fabricaDePokes = new PokemonFactory
@@ -43,14 +43,14 @@ class PokemonFactoryTest extends FunSuite {
     assert(pokeBien.isInstanceOf[Pokemon])
   }
   test("armo un pokemon con ataque impactrueno y tiene que tener los mismo pa que el impactrueno del fixture"){
-    assert(Fixt.impactrueno.puntosAtaque == 1)
+    assert(Fixture.impactrueno.puntosAtaque == 1)
     
     val fabricaDePokes = new PokemonFactory
-    val especiePokemon = Fixt.especiePikachu
+    val especiePokemon = Fixture.especiePikachu
     
     val pikachu = fabricaDePokes.setEstado(Bueno)
-    .setEspecie(Fixt.especiePikachu)
-    .setAtaques(List(Fixt.impactrueno, Fixt.embestida))
+    .setEspecie(Fixture.especiePikachu)
+    .setAtaques(List(Fixture.impactrueno, Fixture.embestida))
     .setNivel(1)
     .setExperiencia(0)
     .setGenero(Macho)

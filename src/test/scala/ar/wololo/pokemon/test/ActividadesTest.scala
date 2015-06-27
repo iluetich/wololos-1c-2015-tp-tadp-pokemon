@@ -6,18 +6,16 @@ import org.scalatest.BeforeAndAfter
 
 class ActividadesTest extends FunSuite with BeforeAndAfter{ 
   
-  val fixture = Fixt
-  
   test("un pokemon realiza actividad Usar Pocion y se recarga 50 de vida"){
     
-    val pikachuCurado = fixture.pikachu.realizarActividad(UsarPocion)
+    val pikachuCurado = Fixture.pikachu.realizarActividad(UsarPocion)
     
     assert(pikachuCurado.energia == 80)
   }
   
   test("pokemon realiza actividad UsarPocion y se reestablece toda la vida por que le falta 10"){
     
-    val charmanderCurado = fixture.charmander.realizarActividad(UsarPocion)
+    val charmanderCurado = Fixture.charmander.realizarActividad(UsarPocion)
     
     assert(charmanderCurado.energia == 1000)
     assert(charmanderCurado.energia == charmanderCurado.energiaMax)
@@ -25,24 +23,24 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
     
   test("pokemon Envenenado realiza Actividad Usar Antidoto y se recupera"){
     
-    val gyaradosCurado = fixture.gyarados.realizarActividad(UsarAntidoto)
+    val gyaradosCurado = Fixture.gyarados.realizarActividad(UsarAntidoto)
     
-    assert(fixture.gyarados.estado == Envenenado)
+    assert(Fixture.gyarados.estado == Envenenado)
     assert(gyaradosCurado.estado == Bueno)
   }
   
   test("pokemon Bueno realiza Actividad Usar Antidoto y no Hace nada"){
     
-    val pikachuCurado = fixture.pikachu.realizarActividad(UsarAntidoto)
+    val pikachuCurado = Fixture.pikachu.realizarActividad(UsarAntidoto)
     
-    assert(fixture.pikachu.estado == Bueno)
+    assert(Fixture.pikachu.estado == Bueno)
     assert(pikachuCurado.estado == Bueno)
   }
   
   test("pokemon de cualquier estado menos KO usa Ether y se pone normal"){
     
-    val charmander = fixture.charmander.realizarActividad(UsarEther)
-    val pikachu = fixture.pikachu.realizarActividad(UsarEther)
+    val charmander = Fixture.charmander.realizarActividad(UsarEther)
+    val pikachu = Fixture.pikachu.realizarActividad(UsarEther)
     
     assert(charmander.estado == Bueno)
     assert(pikachu.estado == Bueno)
@@ -50,7 +48,7 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
   
   test("pokemon dormido ignora 3 actividades y desp se recupera"){
         
-    var scuartul = fixture.squirtle.realizarActividad(UsarPocion)//esta dormido
+    var scuartul = Fixture.squirtle.realizarActividad(UsarPocion)//esta dormido
     
     assert(scuartul.energia == 500)
            
@@ -73,7 +71,7 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
     
     var tiroError = false
     
-    try {val bulvasor = fixture.bulbasaur.realizarActividad(UsarEther)}//esta ko
+    try {val bulvasor = Fixture.bulbasaur.realizarActividad(UsarEther)}//esta ko
     
     catch{case _ : EstaKo => tiroError = true}
     assert(tiroError)
@@ -81,7 +79,7 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
   
   test("pokemon come hierro y aumenta en 5 su fuerza"){
     
-    val pokemon = fixture.pikachu
+    val pokemon = Fixture.pikachu
     val pokemonConHierro = pokemon.realizarActividad(ComerHierro)
     
     assert(pokemon.fuerza == 90)
@@ -90,7 +88,7 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
   
   test("pokemon come calcio y aumenta en 5 su velocidad"){
     
-    val pokemon = fixture.pikachu
+    val pokemon = Fixture.pikachu
     val pokemonConCalcio = pokemon.realizarActividad(ComerCalcio)
     
     assert(pokemon.velocidad == 20)
@@ -99,7 +97,7 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
   
   test("pokemon al descansar recupera el maximo de PA de todos sus ataques"){
     
-    val charmander = fixture.charmander
+    val charmander = Fixture.charmander
     
     val embestida = charmander.listaAtaques.find { ataque => ataque.nombre == "Embestida"}
     embestida match {
@@ -117,7 +115,7 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
   }
   
   test("pokemon si no tiene estado Bueno y tiene menos de la mitad de la vida al realiza la actividad descansar se duerme por 3 turnos"){
-    val pikachu = fixture.pikachu
+    val pikachu = Fixture.pikachu
     
     val pikachuDescansado = pikachu.realizarActividad(Descansar)
     
@@ -131,11 +129,11 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
   }
   
   test("pokemon realiza un ataque de su tipo principal se baja en 1 el pa del ataque y gana 50 de exp"){
-    assert(fixture.impactrueno.puntosAtaque == 1)
+    assert(Fixture.impactrueno.puntosAtaque == 1)
     
-    val pikachu = fixture.pikachu
+    val pikachu = Fixture.pikachu
     
-    val actividad = new RealizarUnAtaque(fixture.impactrueno)
+    val actividad = new RealizarUnAtaque(Fixture.impactrueno)
     
     val impactrueno2 = pikachu.listaAtaques.find { ataque => ataque.nombre == "Impactrueno"}
     impactrueno2 match {
@@ -157,9 +155,9 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
   }
   
   test("pokemon realiza ataque tipo secundario y es macho gana 20 puntos de experiencia"){
-    val pikachu = fixture.pikachu
+    val pikachu = Fixture.pikachu
     
-    val ataque = new RealizarUnAtaque(fixture.embestida)
+    val ataque = new RealizarUnAtaque(Fixture.embestida)
     
     val pikachu2 = pikachu.realizarActividad(ataque)
     
@@ -167,9 +165,9 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
   }
   
   test("pokemon realiza ataque tipo secundario y es Hembra gana 40 puntos de experiencia y aparte se aplican los efectos secundarios"){
-    val charmander = fixture.charmander
+    val charmander = Fixture.charmander
     
-    val ataque = new RealizarUnAtaque(fixture.embestida)
+    val ataque = new RealizarUnAtaque(Fixture.embestida)
     
     val charmander2 = charmander.realizarActividad(ataque)
     
@@ -178,9 +176,9 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
   }
   
   test("pokemon realiza ataque tipo dragon y gana 80 puntos"){
-    val gyarados = fixture.gyarados
+    val gyarados = Fixture.gyarados
     
-    val ataque = new RealizarUnAtaque(fixture.llama)
+    val ataque = new RealizarUnAtaque(Fixture.llama)
     
     val gyarados2 = gyarados.realizarActividad(ataque)
     
@@ -188,9 +186,9 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
   }
   
   test("pokemon no tiene Pa suficiente entonces tira error"){
-    val pikachu = fixture.pikachu
+    val pikachu = Fixture.pikachu
     
-    val actividad = new RealizarUnAtaque(fixture.impactrueno)
+    val actividad = new RealizarUnAtaque(Fixture.impactrueno)
     print("Imprimo pa de impactrueno de pikachu de fixture antes de realizar actividad\n")
     print(pikachu.listaAtaques.find {a => a.nombre == "Impactrueno"}.get.puntosAtaque+ "\n")
     
@@ -206,9 +204,9 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
   }
   
   test("pokemon no conoce ataque entonces tira error"){
-    val pikachu = fixture.pikachu
+    val pikachu = Fixture.pikachu
     
-    val actividad = new RealizarUnAtaque(fixture.llama)
+    val actividad = new RealizarUnAtaque(Fixture.llama)
     
     var tiroError = false
     
@@ -222,8 +220,8 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
   test("pokemon realiza nadar y pierde 1 pt de energia por cada min,y por cada minuto gana 200 de exp, ademas los de agua ganan 1 de vel por cada min"){
     val actividad = Nadar(1)
     
-    val lapras = fixture.lapras.realizarActividad(actividad)
-    val gyarados = fixture.gyarados.realizarActividad(actividad)
+    val lapras = Fixture.lapras.realizarActividad(actividad)
+    val gyarados = Fixture.gyarados.realizarActividad(actividad)
     
     assert(gyarados.experiencia == 200)
     assert(gyarados.energia == 399)
@@ -235,16 +233,16 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
   test("pokemon realiza nada y tipo principal o secundario pierden contra agua, entonces queda Ko y no gana experiencia"){
     val actividad = Nadar(2)
     
-    val charmander = fixture.charmander.realizarActividad(actividad)
+    val charmander = Fixture.charmander.realizarActividad(actividad)
     
     assert(charmander.estado == Ko)
     assert(charmander.experiencia == 0)
   }
   
   test("pokemon levanta pesas, si esta bueno gana 1 de exp por kilo levantado, si tipo principal o secundario es pelea gana 2 por kilo,si es de tipo fantasma tira error"){
-    val pikachu = fixture.pikachu
-    val hitmonchan = fixture.hitmonchan
-    val hunter = fixture.hunter
+    val pikachu = Fixture.pikachu
+    val hitmonchan = Fixture.hitmonchan
+    val hunter = Fixture.hunter
     
     val actividad = LevantarPesas(2)
     
@@ -264,7 +262,7 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
   }
   
   test("pokemon levanta pesas y esta paralizado entonces se va a Ko"){
-    val pikachu = fixture.pikachu.copy(estado = Paralizado)
+    val pikachu = Fixture.pikachu.copy(estado = Paralizado)
     
     val actividad = LevantarPesas(2)
     
@@ -274,7 +272,7 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
   }
   
   test("pokemon levantar pesas levanta mas de 10kg por cada punto de fuerza entonces queda paralizado"){
-    val pikachu = fixture.pikachu
+    val pikachu = Fixture.pikachu
     val actividad = LevantarPesas(1000)
     val pikachu2 = pikachu.realizarActividad(actividad)
     
@@ -282,8 +280,8 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
   }
   
   test("pokemon trata de aprender un ataque normal y uno afin a su especie"){
-    val voltod = fixture.voltorb
-    val actividad = AprenderAtaque(fixture.impactrueno)
+    val voltod = Fixture.voltorb
+    val actividad = AprenderAtaque(Fixture.impactrueno)
     
     assert(voltod.listaAtaques.size == 0)
     
@@ -294,7 +292,7 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
     assert(voltod2.listaAtaques.size == 1)
     assert(contieneImpactrueno != None)
     
-    val actividad2 = AprenderAtaque(fixture.embestida)
+    val actividad2 = AprenderAtaque(Fixture.embestida)
     val voltod3 = voltod2.realizarActividad(actividad2)
     
     val contieneEmbestida = voltod3.listaAtaques.find { ataque => ataque.nombre == "Embestida" }
@@ -304,8 +302,8 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
   } 
   
   test("pokemon trata de aprender un ataque que no es de tipo afin, entonces no aprende nada y queda Ko"){
-    val voltod = fixture.voltorb
-    val actividad = AprenderAtaque(fixture.llama)
+    val voltod = Fixture.voltorb
+    val actividad = AprenderAtaque(Fixture.llama)
     
     val voltod2 = voltod.realizarActividad(actividad)
     
@@ -315,8 +313,8 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
   }
   
   test("pokemon realiza fingir Intercambio y no tiene condicion evolutiva Intercambiar, si es macho aumenta 1 de peso, si es hembra baja 10"){
-    val pikachu = fixture.pikachu
-    val hunter = fixture.hunter
+    val pikachu = Fixture.pikachu
+    val hunter = Fixture.hunter
     
     assert(pikachu.peso == 5)
     assert(hunter.peso == 15)
@@ -330,7 +328,7 @@ class ActividadesTest extends FunSuite with BeforeAndAfter{
   
   test("pokemon tiene como condicion evolutiva usarUnaPiedra y realiza UsarPiedra pero la piedra le gana al tipo primario o secundario y el pokemon queda Envenenado"){
     val actividad = UsarPiedra( PiedraEvolutiva(Agua))
-    val charmander = fixture.charmander
+    val charmander = Fixture.charmander
     val charmander2 = charmander.realizarActividad(actividad)
     
     assert(charmander.estado == Bueno)

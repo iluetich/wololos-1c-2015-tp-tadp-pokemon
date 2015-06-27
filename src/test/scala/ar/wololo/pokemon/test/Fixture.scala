@@ -1,9 +1,9 @@
 package ar.wololo.pokemon.test
 import ar.wololo.pokemon.dominio._
 
-object Fixt {
+object Fixture {
 
-  val fabricaDePokes = new PokemonFactory
+  object fabricaDePokes extends PokemonFactory
 
   // Ataque(nombre, efecto, tipo, puntosDeAtaque, puntosDeAtaqueMax)
   val impactrueno = Ataque("Impactrueno", (Pokemon => Pokemon), Electrico, 1, 20)
