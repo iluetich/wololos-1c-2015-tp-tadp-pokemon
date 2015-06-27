@@ -5,7 +5,8 @@ import org.scalatest.FunSuite
 import org.scalatest.FlatSpec
 
 class SetSpec extends FlatSpec {
-  val especiePokeMix = new Especie(tipoPrincipal = Hielo, tipoSecundario = Roca,
+  
+   val especiePokeMix = new Especie(tipoPrincipal = Hielo, tipoSecundario = Roca,
       incrementoFuerza = 3, incrementoVelocidad = 2, incrementoPeso = 4, 
       incrementoEnergiaMax = 1000, pesoMaximoSaludable = 200, 
       resistenciaEvolutiva = 5, condicionEvolutiva = NoEvoluciona,
@@ -15,10 +16,19 @@ class SetSpec extends FlatSpec {
       incrementoEnergiaMax = 100, pesoMaximoSaludable = 100, 
       resistenciaEvolutiva = 3, condicionEvolutiva = new SubirDeNivel(5),
       especieEvolucion = especiePokeMix)
-  val pikachu = new Pokemon( estado = new Dormido(3), listaAtaques = List[Ataque](),
-      nivel = 1, experiencia = 0,
-      genero = Macho, energia = 30, energiaMax = 1000, peso = 5, fuerza = 7,
-      velocidad = 20, especie = especiePoke)
+  val pikachu = Fixt.fabricaDePokes
+    .setEspecie(especiePoke)
+    .setEstado(Dormido(3))
+    .setAtaques(List[Ataque]())
+    .setNivel(1)
+    .setExperiencia(0)
+    .setGenero(Macho)
+    .setEnergiaMax(1000)   
+    .setEnergia(30)
+    .setPeso(5)
+    .setFuerza(7)
+    .setVelocidad(20)
+    .build
   "Un pichachu que gana experiencia" should "si picachu gana 2 de experiencia entonces aumenta solo 2 la experiencia" in {
     assert( pikachu.aumentaExperiencia(2) === pikachu.copy(nivel = 1, experiencia = 2))
   }
