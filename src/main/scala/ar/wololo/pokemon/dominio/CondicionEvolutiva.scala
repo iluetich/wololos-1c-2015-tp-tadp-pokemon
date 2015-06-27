@@ -5,16 +5,26 @@ abstract class CondicionEvolutiva {
   def subioDeNivel(unPokemon: Pokemon): Pokemon = unPokemon
   def intercambiaronA(unPokemon: Pokemon): Pokemon = unPokemon.teIntercambiaron()
 }
-/*
- * TODO Implementar lógica de cada condición
- * FIXME! Cómo vamos a usar estas condiciones?
- */
+
 object NoEvoluciona extends CondicionEvolutiva
 object Intercambiar extends CondicionEvolutiva {
   override def intercambiaronA(unPokemon: Pokemon) = unPokemon.evolucionar
 }
+
+//agrego cond evolutiva que falta por que sino todos los pokemones al llegarle la piedra lunar evolucionan
+object UsarPiedraLunar extends CondicionEvolutiva {
+  override def evaluarEfectosPiedra(unPokemon: Pokemon, piedra: Piedra) = piedra match{
+    case PiedraLunar => piedra.afectarA(unPokemon)
+    case _ => unPokemon
+  }
+}
+
+//solo si le llega una piedra que no es la piedra lunar ahi afecta a un pokemon
 object UsarUnaPiedra extends CondicionEvolutiva {
-  override def evaluarEfectosPiedra(unPokemon: Pokemon, piedra: Piedra) = piedra.afectarA(unPokemon)
+  override def evaluarEfectosPiedra(unPokemon: Pokemon, piedra: Piedra) = piedra match{
+    case PiedraLunar => unPokemon
+    case _ => piedra.afectarA(unPokemon)
+  }
 }
 case class SubirDeNivel(val nivelParaEvolucionar: Integer) extends CondicionEvolutiva {
   override def subioDeNivel(unPokemon: Pokemon) = unPokemon.nivel match {

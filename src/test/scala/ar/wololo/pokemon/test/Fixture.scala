@@ -59,6 +59,12 @@ object Fixt {
     .setCondicionEvolutiva(UsarUnaPiedra)
     .setEspecieEvolucion(especieCharmeleon)
     .build
+  val especieElectrode = fabricaDeEspecies
+    .setTipos(principal = Electrico)
+    .setIncrementos(incPeso= 10, incFuerza = 12, incEnergiaMax = 40, incVelocidad= 5)
+    .setPesoMaximoSaludable(20)
+    .setResistenciaEvolutiva(250)
+    .build
   val especieWarturtle = fabricaDeEspecies
     .setTipos(principal = Agua)
     .setIncrementos(incPeso = 4, incFuerza = 6, incEnergiaMax = 80, incVelocidad = 5)
@@ -108,6 +114,8 @@ object Fixt {
     .setIncrementos(incPeso = 7, incFuerza = 5, incEnergiaMax = 80, incVelocidad = 6)
     .setPesoMaximoSaludable(15)
     .setResistenciaEvolutiva(83)
+    .setCondicionEvolutiva(UsarPiedraLunar)
+    .setEspecieEvolucion(especieElectrode)
     .build
     
   /*
@@ -202,6 +210,15 @@ object Fixt {
     .setEnergia(75)
     .build
 
+  val charmeleon = fabricaDePokes
+  .setEstado(Bueno)
+  .setEspecie(especieCharmeleon)
+  .setAtaques(List())
+  .setNivel(16)
+  .setExperiencia(9830100)
+  .setGenero(Macho)
+  .setEnergia(120)
+  .build
   /*
    * Algunas rutinas
    * Rutina(nombre, actividades)

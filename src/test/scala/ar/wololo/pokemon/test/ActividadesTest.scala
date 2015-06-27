@@ -336,4 +336,32 @@ class ActividadesTest extends FunSuite {
     assert(charmander.estado == Bueno)
     assert(charmander2.estado == Envenenado)
   }
+  
+  test("pokemon realiza actividad fingir intercambio y tiene condEvolutiva Intercambiar entonces Evoluciona"){
+    val charmeleon = fixture.charmeleon
+    val charizard = charmeleon.realizarActividad(FingirIntercambio)
+    
+    assert(charizard.especie == Fixt.especieCharizard)
+  }
+  
+  test("pokemon con condicion evolutiva UsarPiedraLunar, realiza la actividad Usar PiedraLunar y evoluciona"){
+    val voltorb = fixture.voltorb
+    val electrode = voltorb.realizarActividad(UsarPiedra(PiedraLunar))
+    
+    assert(electrode.especie == Fixt.especieElectrode)
+  }
+  
+  test("pokemon con condicion evolutiva UsarPiedra y realiza actividad usar Piedra con una piedra lunar entonces no evoluciona"){
+    val charmander = fixture.charmander
+    val sigueCharmander = charmander.realizarActividad(UsarPiedra(PiedraLunar))
+    
+    assert(sigueCharmander.especie == Fixt.especieCharmander)
+  }
+  
+  test("pokemon con condEvolutiva UsarPiedra y realiza actividad con una Piedra afin a su tipo entonces evoluciona"){
+    val charmander = fixture.charmander
+    val charmeleon = charmander.realizarActividad(UsarPiedra(PiedraEvolutiva(Fuego)))
+    
+    assert(charmeleon.especie == Fixt.especieCharmeleon)
+  }
 }
