@@ -26,7 +26,19 @@ object Fixture {
   val especieHitmonchan = new Especie(Pelea, Normal, 5, 3, 10, 80, 95, 450,Intercambiar)
   val especieHunter = new Especie(Fantasma, Normal, 2, 15, 12, 80, 65, 550)
   val especieVoltorb = new Especie(Electrico, Tierra, 5, 6, 7, 80, 15, 83,UsarUnaPiedra)
-
+  val especiePokeMix = new Especie(tipoPrincipal = Hielo, tipoSecundario = Roca,
+      incrementoFuerza = 3, incrementoVelocidad = 2, incrementoPeso = 4, 
+      incrementoEnergiaMax = 1000, pesoMaximoSaludable = 200, 
+      resistenciaEvolutiva = 5, condicionEvolutiva = NoEvoluciona,
+      especieEvolucion = null)
+  val especiePoke = new Especie(tipoPrincipal = Fuego, tipoSecundario = Veneno,
+      incrementoFuerza = 4, incrementoVelocidad = 1, incrementoPeso = 1, 
+      incrementoEnergiaMax = 100, pesoMaximoSaludable = 100, 
+      resistenciaEvolutiva = 3, condicionEvolutiva = new SubirDeNivel(5),
+      especieEvolucion = especiePokeMix)
+  
+  
+  
   /*
    * Pokemones
    */
@@ -147,7 +159,19 @@ object Fixture {
     .setFuerza(95)
     .setVelocidad(40)
     .build
-
+  val pikaka = Fixture.fabricaDePokes
+    .setEspecie(especiePoke)
+    .setEstado(Dormido(3))
+    .setAtaques(List[Ataque]())
+    .setNivel(1)
+    .setExperiencia(0)
+    .setGenero(Macho)
+    .setEnergiaMax(1000)   
+    .setEnergia(30)
+    .setPeso(5)
+    .setFuerza(7)
+    .setVelocidad(20)
+    .build
   /*
    * Algunas rutinas
    * Rutina(nombre, actividades)
