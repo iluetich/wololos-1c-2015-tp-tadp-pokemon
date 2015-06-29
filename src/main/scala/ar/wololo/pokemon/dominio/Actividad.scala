@@ -1,5 +1,7 @@
 package ar.wololo.pokemon.dominio
 
+import Tipos._
+
 /*
 * Actividades como funciones.
 * No es necesario crear nuevos objetos ni clases para agregar nuevas actividades. Aquellas que tenían
@@ -7,9 +9,6 @@ package ar.wololo.pokemon.dominio
 */
 
 object activity {
-
-  type TernaAtaque = (Ataque, Int, Int)
-  type Actividad = Pokemon => Pokemon
 
   val usarPocion: Actividad = _.modificaEnergia(50)
   val usarEther: Actividad = _.cambiaAEstado(Bueno)

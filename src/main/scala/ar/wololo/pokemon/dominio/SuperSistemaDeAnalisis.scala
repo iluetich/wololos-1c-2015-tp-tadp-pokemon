@@ -3,30 +3,28 @@ package ar.wololo.pokemon.dominio
 import scala.util.Try
 import scala.util.Success
 
+import Tipos._
+
+object criteriosDeAnalisis {
+
+  val maxNivel: Criterio = _.maxBy { _._2.nivel }._1
+  val maxEnergia: Criterio = _.maxBy { _._2.nivel }._1
+  val minPeso: Criterio = _.minBy { _._2.peso }._1
+
+}
 
 object SuperSistemaDeAnalisis {
-/*
- * Criterios como objetos
- */
-  def obtenerMejorRutinaSegun(pokemon: Pokemon)(rutinas: Seq[Rutina])(criterio: CriterioRutina): Option[String] = {
-    val rutinasYPokemones = rutinas.map { rutina => (rutina, pokemon.realizarRutina(rutina)) }.filter { case (_, e) => e.isSuccess }
+
+  def obtenerMejorRutinaSegun(pokemon: Pokemon)(rutinas: Seq[Rutina])(mejorRutina: Criterio): Option[String] = {
+    val rutinasYPokemones = aplicarA(pokemon, rutinas)
     rutinasYPokemones.size match {
       case 0 => None
-      case _ => Some(criterio.obtenerMejorRutina(rutinasYPokemones).nombre)
+      case _ => Some(mejorRutina(rutinasYPokemones).nombre)
     }
   }
-/*
- * Criterios como funciones
- */
-//  def obtenerMejorRutinaSegun(pokemon: Pokemon) (rutinas: Seq[Rutina], mejorRutina: Seq[(Rutina, Pokemon)] => Rutina): Option[String] = {
-//    val rutinasYPokemones = aplicarA(pokemon, rutinas)
-//    rutinasYPokemones.size match {
-//      case 0 => None
-//      case _ => Some(mejorRutina(rutinasYPokemones).nombre)
-//    }
-//  }
-//
-//  private def aplicarA(pokemon: Pokemon, rutinas: Seq[Rutina]): Seq[(Rutina, Pokemon)] = rutinas.map { rutina => (rutina, pokemon.realizarRutina(rutina)) }
-//    .filter { case (_, e) => e.isSuccess }
-//    .map { case (r, e) => (r, e.get) }
+
+  private def aplicarA(pokemon: Pokemon, rutinas: Seq[Rutina]): Seq[(Rutina, Pokemon)] = for {
+    rutina <- rutinas
+    tryPoke = pokemon.realizarRutina(rutina) if tryPoke.isSuccess
+  } yield (rutina, tryPoke.get)
 }
