@@ -52,7 +52,7 @@ case class Pokemon(
     this
   }
 
-  private def descansar(): Pokemon = {
+  def descansar(): Pokemon = {
     val nuevaListaAtaque = this.listaAtaques.map { case (ataque: Ataque, _, paMax: Int) => new Tuple3(ataque, paMax, paMax) }
     val pokeAfectado = energia match {
       case energia if energia < energiaMax * 0.5 => this.cambiaAEstado(Dormido(3))
@@ -62,7 +62,7 @@ case class Pokemon(
     pokeAfectado.modificaListaAtaque(nuevaListaAtaque)
   }
 
-  private def aumentaPAMaximo(cant: Int): Pokemon = {
+  def aumentaPAMaximo(cant: Int): Pokemon = {
     val nuevaListaAtaque = this.listaAtaques.map { case (ataque: Ataque, pa: Int, paMax: Int) => (ataque, pa, paMax + cant) }
     this.modificaListaAtaque(nuevaListaAtaque)
   }
@@ -114,33 +114,15 @@ case class Pokemon(
     }
     this.modificaListaAtaque(listaAtaquesNueva)
   }
-
-  def realizarActividad(actividad: Actividad): Pokemon = {
-    this.estado match {
+  
+  def realizarActividad(actividad: Pokemon => Pokemon): Pokemon = {
+    estado match {
       case Ko => throw EstaKo(this)
-      case e: Dormido if e.turnos > 0 => this.cambiaAEstado(Dormido(e.turnos - 1))
-      case e: Dormido => this.cambiaAEstado(Bueno).realizarActividad(actividad)
-      case _: EstadoPokemon => actividad match {
-        case UsarPocion => this.modificaEnergia(50)
-        case UsarEther => this.cambiaAEstado(Bueno)
-        case ComerHierro => this.modificaFuerza(5)
-        case ComerCalcio => this.modificaVelocidad(5)
-        case ComerZinc => this.aumentaPAMaximo(2)
-        case Descansar => this.descansar
-        case UsarAntidoto => this.estado match {
-          case Envenenado => this.cambiaAEstado(Bueno)
-          case _: EstadoPokemon => this
-        }
-        case FingirIntercambio => this.condicionEvolutiva.intercambiaronA(this)
-        case actividad: UsarPiedra => this.evaluarEfectos(actividad.piedra)
-        case actividad: Nadar => this.nadar(actividad.minutos)
-        case actividad: RealizarUnAtaque => this.realizarAtaque(actividad.ataqueARealizar)
-        case actividad: AprenderAtaque => this.aprenderAtaque(actividad.ataqueAAprender)
-        case actividad: LevantarPesas => this.estado match {
-          case Paralizado => this.cambiaAEstado(Ko)
-          case _: EstadoPokemon => this.levantaSiPodes(actividad.kg)
-        }
+      case e: Dormido => e.turnos match {
+        case t if t > 0 => cambiaAEstado(Dormido(t - 1))
+        case t if t == 0 => actividad(cambiaAEstado(Bueno))
       }
+      case _: EstadoPokemon => actividad(this)
     }
   }
 }
