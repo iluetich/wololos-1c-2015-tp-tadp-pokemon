@@ -6,8 +6,6 @@ import org.scalatest.FlatSpec
 
 class SetSpec extends FlatSpec {
   val pikaka = Fixture.pikaka
-
-
   "Un pichachu que gana experiencia" should "si picachu gana 2 de experiencia entonces aumenta solo 2 la experiencia" in {
     assert( pikaka.aumentaExperiencia(2) === pikaka.copy(nivel = 1, experiencia = 2))
   }
