@@ -17,7 +17,7 @@ object activity {
   val comerCalcio: Actividad = _.modificaVelocidad(5)
   val comerZinc: Actividad = _.aumentaPAMaximo(2)
   val descansar: Actividad = _.descansar
-  val fingirIntercambio: Actividad = pokemon => pokemon.condicionEvolutiva.intercambiaronA(pokemon)
+  val fingirIntercambio: Actividad = pokemon => pokemon.teIntercambiaron
   val nadar: Integer => Actividad = minutos => _.nadar(minutos)
   val usarPiedra: Piedra => Actividad = piedra => _.evaluarEfectos(piedra)
   val aprenderAtaque: TernaAtaque => Actividad = ataque => _.aprenderAtaque(ataque)

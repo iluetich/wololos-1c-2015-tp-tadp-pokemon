@@ -17,17 +17,18 @@ case class Pokemon(
 
   val velocidadMax = 100 //constante de enunciado
   val fuerzaMax = 100 //constante de enunciado
-  val tipoPrincipal: Tipo = especie.tipoPrincipal
-  val tipoSecundario: Tipo = especie.tipoSecundario
-  val pesoMaximoSaludable: Int = especie.pesoMaximoSaludable
-  val condicionEvolutiva: Option[CondicionEvolutiva] = especie.condicionEvolutiva
+  val tipoPrincipal = especie.tipoPrincipal
+  val tipoSecundario = especie.tipoSecundario
+  val pesoMaximoSaludable = especie.pesoMaximoSaludable
+  val condicionEvolutiva = especie.condicionEvolutiva
 
   def aumentaExperiencia(cantidad: Long): Pokemon = especie.aumentaExperienciaDe(this, cantidad)
   def evolucionar: Pokemon = especie.evolucionarA(this)
   def realizarRutina(rutina: Rutina): Try[Pokemon] = rutina.esHechaPor(this)
 
   def aumentaExpEnBaseAGenero(): Pokemon = genero.aumentaExperiencia(this)
-  def teIntercambiaron(): Pokemon = genero.fingiIntercambio(this)
+  def teIntercambiaron(): Pokemon = especie.intercambiaronA(this)
+  def evaluarEfectos(piedra: Piedra): Pokemon = especie.evaluarEfectos(piedra, this)
 
   def modificaPeso(cantidad: Int): Pokemon = this.copy(peso = this.peso + cantidad).verificarParams()
   def modificaVelocidad(cantidad: Int): Pokemon = this.copy(velocidad = Math.min(this.velocidad + cantidad, this.velocidadMax)).verificarParams()
@@ -37,7 +38,6 @@ case class Pokemon(
 
   def cambiaAEstado(nuevoEstado: EstadoPokemon): Pokemon = this.copy(estado = nuevoEstado)
 
-  def evaluarEfectos(piedra: Piedra): Pokemon = condicionEvolutiva.fold { this } { _.evaluarEfectosPiedra(this, piedra) }
 
   def verificarParams(): Pokemon = {
     if (energia < 0)

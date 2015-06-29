@@ -67,7 +67,8 @@ case class EspecieBuilder(var tipoPrincipal: Tipo = null,
 
   def setEspecieEvolucion(especie: Especie): EspecieBuilder = {
     if (condicionEvolutiva.isDefined) copy(especieEvolucion = Some(especie))
-    throw new EspecieEvolucionBuilderException("Es necesario asignar una condicion de evolucion antes de especificar la especie de evolucion")
+    else
+      throw new EspecieEvolucionBuilderException("Es necesario asignar una condicion de evolucion antes de especificar la especie de evolucion")
   }
 
   def build: Especie = {

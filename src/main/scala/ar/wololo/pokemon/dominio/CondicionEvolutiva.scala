@@ -3,7 +3,7 @@ package ar.wololo.pokemon.dominio
 abstract class CondicionEvolutiva {
   def evaluarEfectosPiedra(unPokemon: Pokemon, piedra: Piedra): Pokemon = unPokemon
   def subioDeNivel(unPokemon: Pokemon): Pokemon = unPokemon
-  def intercambiaronA(unPokemon: Pokemon): Pokemon = unPokemon.teIntercambiaron()
+  def intercambiaronA(unPokemon: Pokemon): Pokemon = unPokemon.genero.fingiIntercambio(unPokemon)
 }
 
 object NoEvoluciona extends CondicionEvolutiva

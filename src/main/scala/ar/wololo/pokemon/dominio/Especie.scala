@@ -14,20 +14,23 @@ case class Especie(val tipoPrincipal: Tipo,
 
   def evolucionarA(pokemon: Pokemon): Pokemon = especieEvolucion.fold { pokemon } { especieAEvolucionar => pokemon.copy(especie = especieAEvolucionar) }
 
+  def intercambiaronA(pokemon: Pokemon): Pokemon = condicionEvolutiva.fold { pokemon } { _.intercambiaronA(pokemon) }
+
+  def evaluarEfectos(piedra: Piedra, pokemon: Pokemon): Pokemon = condicionEvolutiva.fold { pokemon } { _.evaluarEfectosPiedra(pokemon, piedra) }
+  
   def experienciaParaNivel(nivel: Integer): Long = {
     nivel match {
       case n if n == 0 || n == 1 => 0
       case n => 2 * experienciaParaNivel(n - 1) + resistenciaEvolutiva
     }
   }
-
+  
   def subirDeNivelA(pokemon: Pokemon): Pokemon = {
     val nivelNuevo = pokemon.nivel + 1
     val fuerzaNueva = Math.min(pokemon.fuerza + incrementoFuerza, pokemon.fuerzaMax)
     val energiaMaxNueva = pokemon.energiaMax + incrementoEnergiaMax
     val pesoNuevo = Math.min(pokemon.peso + incrementoPeso, pesoMaximoSaludable)
     val pokemonMejorado = pokemon.copy(nivel = nivelNuevo, fuerza = fuerzaNueva, energiaMax = energiaMaxNueva)
-
     condicionEvolutiva.fold { pokemonMejorado } { _.subioDeNivel(pokemonMejorado) }
   }
 
