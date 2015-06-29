@@ -20,7 +20,7 @@ case class Pokemon(
   val tipoPrincipal: Tipo = especie.tipoPrincipal
   val tipoSecundario: Tipo = especie.tipoSecundario
   val pesoMaximoSaludable: Int = especie.pesoMaximoSaludable
-  val condicionEvolutiva: CondicionEvolutiva = especie.condicionEvolutiva
+  val condicionEvolutiva: Option[CondicionEvolutiva] = especie.condicionEvolutiva
 
   def aumentaExperiencia(cantidad: Long): Pokemon = especie.aumentaExperienciaDe(this, cantidad)
   def evolucionar: Pokemon = especie.evolucionarA(this)
@@ -37,7 +37,7 @@ case class Pokemon(
 
   def cambiaAEstado(nuevoEstado: EstadoPokemon): Pokemon = this.copy(estado = nuevoEstado)
 
-  def evaluarEfectos(piedra: Piedra): Pokemon = condicionEvolutiva.evaluarEfectosPiedra(this, piedra)
+  def evaluarEfectos(piedra: Piedra): Pokemon = condicionEvolutiva.fold { this } { _.evaluarEfectosPiedra(this, piedra) }
 
   def verificarParams(): Pokemon = {
     if (energia < 0)

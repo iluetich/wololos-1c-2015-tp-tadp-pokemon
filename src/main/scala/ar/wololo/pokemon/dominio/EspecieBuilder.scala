@@ -2,11 +2,9 @@ package ar.wololo.pokemon.dominio
 
 import ar.wololo.pokemon.dominio._
 
-
 /**
  * @author ivan
  */
-
 
 case class IncrementosPorNivelBuilderException(msg: String) extends Exception(msg)
 case class TipoDeEspecieBuilderException(msg: String) extends Exception(msg)
@@ -16,7 +14,6 @@ case class CondicionEvolutivaBuilderException(msg: String) extends Exception(msg
 case class EspecieEvolucionBuilderException(msg: String) extends Exception(msg)
 case class EspecieCreacionBuilderException(msg: String) extends Exception(msg)
 
-
 case class EspecieBuilder(var tipoPrincipal: Tipo = null,
     var tipoSecundario: Tipo = null,
     var incrementoPeso: Int = 0,
@@ -25,8 +22,8 @@ case class EspecieBuilder(var tipoPrincipal: Tipo = null,
     var incrementoVelocidad: Int = 0,
     var pesoMaximoSaludable: Int = 0,
     var resistenciaEvolutiva: Int = 0,
-    var condicionEvolutiva: CondicionEvolutiva = null,
-    var especieEvolucion: Especie = null) {
+    var condicionEvolutiva: Option[CondicionEvolutiva] = None,
+    var especieEvolucion: Option[Especie] = None) {
 
   def setTipos(principal: Tipo, secundario: Tipo = null): EspecieBuilder = {
     if (principal.equals(secundario))
@@ -60,19 +57,17 @@ case class EspecieBuilder(var tipoPrincipal: Tipo = null,
     condicion match {
       case c: SubirDeNivel => {
         if (c.nivelParaEvolucionar > 0)
-          copy(condicionEvolutiva = condicion)
+          copy(condicionEvolutiva = Some(condicion))
         else
           throw new CondicionEvolutivaBuilderException("Subir de nivel debe tener un nivel mayor a 0.")
       }
-      case _ => copy(condicionEvolutiva = condicion)
+      case _ => copy(condicionEvolutiva = Some(condicion))
     }
   }
 
   def setEspecieEvolucion(especie: Especie): EspecieBuilder = {
-    if (!(condicionEvolutiva == null))
-      copy(especieEvolucion = especie)
-    else
-      throw new EspecieEvolucionBuilderException("Es necesario asignar una condicion de evolucion antes de especificar la especie de evolucion")
+    if (condicionEvolutiva.isDefined) copy(especieEvolucion = Some(especie))
+    throw new EspecieEvolucionBuilderException("Es necesario asignar una condicion de evolucion antes de especificar la especie de evolucion")
   }
 
   def build: Especie = {

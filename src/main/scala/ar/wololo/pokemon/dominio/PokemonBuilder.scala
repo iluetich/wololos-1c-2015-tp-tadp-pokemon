@@ -52,8 +52,8 @@ case class PokemonBuilder(var estado: EstadoPokemon = null,
       unaEspecie.incrementoPeso > 0 &&
       unaEspecie.incrementoVelocidad > 0 &&
       unaEspecie.resistenciaEvolutiva > 0)
-      if (unaEspecie.condicionEvolutiva == null)
-        copy(especie = unaEspecie.copy(condicionEvolutiva = NoEvoluciona))
+      if (unaEspecie.condicionEvolutiva.isEmpty)
+        copy(especie = unaEspecie.copy(condicionEvolutiva = Some(NoEvoluciona)))
       else
         copy(especie = unaEspecie)
     else
@@ -61,19 +61,20 @@ case class PokemonBuilder(var estado: EstadoPokemon = null,
   }
 
   def setNivel(unNivel: Int): PokemonBuilder = {
-    especie.condicionEvolutiva match {
-      case c: SubirDeNivel =>
-        if (unNivel < c.nivelParaEvolucionar)
-          copy(nivel = unNivel)
-        else
-          throw NivelBuilderException("El nivel debe ser menor al nivel especificado para evolucionar.")
-      case _ =>
-        if (unNivel > 0)
-          copy(nivel = unNivel)
-        else
-          throw NivelBuilderException("El nivel debe ser mayor a 0")
+    especie.condicionEvolutiva.fold { copy(nivel = unNivel) } { condicion =>
+      condicion match {
+        case c: SubirDeNivel =>
+          if (unNivel < c.nivelParaEvolucionar)
+            copy(nivel = unNivel)
+          else
+            throw NivelBuilderException("El nivel debe ser menor al nivel especificado para evolucionar.")
+        case _ =>
+          if (unNivel > 0)
+            copy(nivel = unNivel)
+          else
+            throw NivelBuilderException("El nivel debe ser mayor a 0")
+      }
     }
-
   }
 
   def setExperiencia(ptsDeExperiencia: Long): PokemonBuilder = {
@@ -91,8 +92,8 @@ case class PokemonBuilder(var estado: EstadoPokemon = null,
     }
   }
 
-  private def ataqueAprendible(ataque: Ataque) = List(Normal, especie.tipoPrincipal, especie.tipoSecundario).contains(ataque.tipo) 
-  
+  private def ataqueAprendible(ataque: Ataque) = List(Normal, especie.tipoPrincipal, especie.tipoSecundario).contains(ataque.tipo)
+
   def setAtaques(unosAtaques: List[(Ataque, Int, Int)]): PokemonBuilder = {
     if (unosAtaques.forall { tuplaAtaque => ataqueAprendible(tuplaAtaque._1) })
       copy(ataques = unosAtaques)

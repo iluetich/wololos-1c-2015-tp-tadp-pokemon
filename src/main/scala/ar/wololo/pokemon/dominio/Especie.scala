@@ -2,17 +2,17 @@ package ar.wololo.pokemon.dominio
 import ar.wololo.pokemon.dominio._
 
 case class Especie(val tipoPrincipal: Tipo,
-    val tipoSecundario: Tipo,
+    val tipoSecundario: Tipo = null,
     val incrementoFuerza: Int,
     val incrementoVelocidad: Int,
     val incrementoPeso: Int,
     val incrementoEnergiaMax: Int,
     val pesoMaximoSaludable: Int,
     val resistenciaEvolutiva: Int,
-    val condicionEvolutiva: CondicionEvolutiva = null,
-    val especieEvolucion: Especie = null) {
+    val condicionEvolutiva: Option[CondicionEvolutiva] = None,
+    val especieEvolucion: Option[Especie] = None) {
 
-  def evolucionarA(pokemon: Pokemon): Pokemon = pokemon.copy(especie = especieEvolucion)
+  def evolucionarA(pokemon: Pokemon): Pokemon = especieEvolucion.fold { pokemon } { especieAEvolucionar => pokemon.copy(especie = especieAEvolucionar) }
 
   def experienciaParaNivel(nivel: Integer): Long = {
     nivel match {
@@ -28,7 +28,7 @@ case class Especie(val tipoPrincipal: Tipo,
     val pesoNuevo = Math.min(pokemon.peso + incrementoPeso, pesoMaximoSaludable)
     val pokemonMejorado = pokemon.copy(nivel = nivelNuevo, fuerza = fuerzaNueva, energiaMax = energiaMaxNueva)
 
-    condicionEvolutiva.subioDeNivel(pokemonMejorado)
+    condicionEvolutiva.fold { pokemonMejorado } { _.subioDeNivel(pokemonMejorado) }
   }
 
   def aumentaExperienciaDe(pokemon: Pokemon, cantidad: Long): Pokemon = {
