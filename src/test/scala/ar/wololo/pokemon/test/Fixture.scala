@@ -114,7 +114,7 @@ object Fixt {
     .setIncrementos(incPeso = 7, incFuerza = 5, incEnergiaMax = 80, incVelocidad = 6)
     .setPesoMaximoSaludable(15)
     .setResistenciaEvolutiva(83)
-    .setCondicionEvolutiva(UsarPiedraLunar)
+    .setCondicionEvolutiva(UsarUnaPiedra)
     .setEspecieEvolucion(especieElectrode)
     .build
     
