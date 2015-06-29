@@ -101,6 +101,8 @@ case class Pokemon(
 
   def podesLevantar(kg: Int): Boolean = kg < (10 * this.fuerza + 1)
 
+  def sabesAtaque(ataque: Ataque) = listaAtaques.map {_._1}.contains(ataque)
+  
   def aprenderAtaque(ataqueAAprender: (Ataque, Int, Int)): Pokemon = {
     if (ataqueAAprender._1.tePuedeAprender(this))
       this.modificaListaAtaque(ataqueAAprender :: this.listaAtaques)
