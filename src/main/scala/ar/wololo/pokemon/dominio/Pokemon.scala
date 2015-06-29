@@ -25,7 +25,6 @@ case class Pokemon(
   def aumentaExperiencia(cantidad: Long): Pokemon = especie.aumentaExperienciaDe(this, cantidad)
   def evolucionar: Pokemon = especie.evolucionarA(this)
   def realizarRutina(rutina: Rutina): Try[Pokemon] = rutina.esHechaPor(this)
-  private def sufriEfectosSecundarios(ataque: Ataque): Pokemon = ataque.efecto(this)
 
   def aumentaExpEnBaseAGenero(): Pokemon = genero.aumentaExperiencia(this)
   def teIntercambiaron(): Pokemon = genero.fingiIntercambio(this)
@@ -52,8 +51,15 @@ case class Pokemon(
     this
   }
 
+  implicit class aumentosPA(ataque: (Ataque, Int, Int)) {
+    def aumentarPAMax(i: Int) = (ataque._1, ataque._2, ataque._3 + i) // aumento paMax
+    def regenerar = (ataque._1, ataque._3, ataque._3) // paAct = paMAx
+    def sosIgualA(unAtaque: Ataque) = ataque._1.eq(unAtaque) && ataque._2 > 0
+    def teUtiliza(pokemon: Pokemon) = ataque._1.teUtiliza(pokemon)
+  }
+
   def descansar(): Pokemon = {
-    val nuevaListaAtaque = this.listaAtaques.map { case (ataque: Ataque, _, paMax: Int) => new Tuple3(ataque, paMax, paMax) }
+    val nuevaListaAtaque = this.listaAtaques.map { _.regenerar }
     val pokeAfectado = energia match {
       case energia if energia < energiaMax * 0.5 => this.cambiaAEstado(Dormido(3))
       case _ => this
@@ -63,7 +69,7 @@ case class Pokemon(
   }
 
   def aumentaPAMaximo(cant: Int): Pokemon = {
-    val nuevaListaAtaque = this.listaAtaques.map { case (ataque: Ataque, pa: Int, paMax: Int) => (ataque, pa, paMax + cant) }
+    val nuevaListaAtaque = this.listaAtaques.map { _.aumentarPAMax(cant) }
     this.modificaListaAtaque(nuevaListaAtaque)
   }
 
@@ -103,24 +109,25 @@ case class Pokemon(
   }
 
   def realizarAtaque(ataqueARealizar: Ataque): Pokemon = {
-    listaAtaques.find { case (ataque, pa, _) => ataque.equals(ataqueARealizar) && pa > 0 }
-      .fold { throw PokemonNoConoceMovONoTienePA(this) } { case (atk, _, _) => atk.teUtiliza(this) }
+    listaAtaques
+      .find { _.sosIgualA(ataqueARealizar) }
+      .fold { throw PokemonNoConoceMovONoTienePA(this) } { _.teUtiliza(this) }
   }
 
   def reducirPa(ataque: Ataque): Pokemon = {
     val listaAtaquesNueva = listaAtaques.map {
-      case (attack: Ataque, puntosAtaque, pAMax) if attack.equals(ataque) => (attack, puntosAtaque - 1, pAMax)
+      case (`ataque`, puntosAtaque, pAMax) => (ataque, puntosAtaque - 1, pAMax)
       case atk => atk
     }
     this.modificaListaAtaque(listaAtaquesNueva)
   }
-  
+
   def realizarActividad(actividad: Pokemon => Pokemon): Pokemon = {
     estado match {
       case Ko => throw EstaKo(this)
       case e: Dormido => e.turnos match {
         case t if t > 0 => cambiaAEstado(Dormido(t - 1))
-        case t if t == 0 => actividad(cambiaAEstado(Bueno))
+        case 0 => actividad(cambiaAEstado(Bueno))
       }
       case _: EstadoPokemon => actividad(this)
     }
