@@ -8,9 +8,9 @@ object Fixt {
   val fabricaDeEspecies = new EspecieBuilder
 
   // tupla =(Ataque(nombre, efecto, tipo, puntosDeIniciales),puntosDeAtaque,puntosDeAtaqueMax)
-  val impactrueno = (new Ataque("Impactrueno", (Pokemon => Pokemon), Electrico),1,20)
-  val embestida = (new Ataque("Embestida", (Pokemon => Pokemon.copy(estado = Dormido(3))), Normal),7,10)
-  val llama = (new Ataque("Llama", (Pokemon => Pokemon), Dragon),15,30)
+  val impactrueno = (new Ataque("Impactrueno", Some(pokemon => pokemon), Electrico),1,20)
+  val embestida = (new Ataque("Embestida", Some(pokemon => pokemon.copy(estado = Dormido(3))), Normal),7,10)
+  val llama = (new Ataque("Llama", Some(pokemon => pokemon), Dragon),15,30)
 
   /*
    * Especies
@@ -225,7 +225,7 @@ object Fixt {
    */
 
   val rutinaNado = new Rutina("natación_tranca", List[Pokemon => Pokemon](activity.nadar(1), activity.nadar(1), activity.nadar(1), activity.nadar(1)))
-  val rutinaPhelps = new Rutina("natación_pro", List[Pokemon => Pokemon](activity.nadar(100), activity.nadar(100), activity.nadar(100), activity.nadar(100)))
+  val rutinaPhelps = new Rutina("natación_pro", List[Pokemon => Pokemon](activity.nadar(1000), activity.nadar(1000), activity.nadar(1000), activity.nadar(1000)))
   val rutinaPocionado = new Rutina("pocionado", List[Pokemon => Pokemon](activity.usarPocion, activity.usarPocion, activity.usarPocion, activity.usarPocion))
   val rutinaIntercambio = new Rutina("intercambiado", List[Pokemon => Pokemon](activity.fingirIntercambio, activity.fingirIntercambio, activity.fingirIntercambio))
   

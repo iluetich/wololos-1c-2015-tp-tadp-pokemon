@@ -1,7 +1,7 @@
 package ar.wololo.pokemon.dominio
 
 case class Ataque(val nombre: String,
-    val efecto: Pokemon => Pokemon,
+    val efecto: Option[Pokemon => Pokemon] = None,
     val tipo: Tipo) {
 
   def tePuedeAprender(pokemon: Pokemon): Boolean = {
@@ -9,18 +9,15 @@ case class Ataque(val nombre: String,
   }
 
   def teUtiliza(pokemon: Pokemon): Pokemon = {
-    val pokeAfectado = efecto(pokemon.reducirPa(this))
+    val pokemonHabiendoUsadoAtaque = pokemon.reducirPa(this)
     var experiencia = 0
 
-    tipo match {
-      case pokeAfectado.tipoSecundario => pokeAfectado.aumentaExpEnBaseAGenero()
-      case t =>
-        t match {
-          case Dragon => experiencia = 80
-          case pokeAfectado.tipoPrincipal => experiencia = 50
-        }
-        pokeAfectado.aumentaExperiencia(experiencia)
+    val pokemonConMasExperiencia = tipo match {
+      case Dragon => pokemonHabiendoUsadoAtaque.aumentaExperiencia(80)
+      case pokemonHabiendoUsadoAtaque.tipoSecundario => pokemonHabiendoUsadoAtaque.aumentaExpEnBaseAGenero()
+      case pokemonHabiendoUsadoAtaque.tipoPrincipal => pokemonHabiendoUsadoAtaque.aumentaExperiencia(50)
     }
+    efecto.fold { pokemonConMasExperiencia } { _(pokemonConMasExperiencia) }
   }
 
 }
