@@ -8,7 +8,7 @@ import Tipos._
 object criteriosDeAnalisis {
 
   val maxNivel: Criterio = _.maxBy { _._2.nivel }._1
-  val maxEnergia: Criterio = _.maxBy { _._2.nivel }._1
+  val maxEnergia: Criterio = _.maxBy { _._2.energia }._1
   val minPeso: Criterio = _.minBy { _._2.peso }._1
 
 }
