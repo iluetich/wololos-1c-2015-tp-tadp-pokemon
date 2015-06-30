@@ -1,6 +1,5 @@
 package ar.wololo.pokemon.test
 import ar.wololo.pokemon.dominio._
-import sun.awt.AppContext.GetAppContextLock
 
 object Fixt {
 

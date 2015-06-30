@@ -10,7 +10,7 @@ import Tipos._
 
 object activity {
 
-  implicit class aumentosPA(ataque: (Ataque, Int, Int)) {
+  implicit class AtaqueSyntax(ataque: (Ataque, Int, Int)) {
     def aumentarPAMax(i: Int) = (ataque._1, ataque._2, ataque._3 + i) // aumento paMax
     def regenerar = (ataque._1, ataque._3, ataque._3) // paAct = paMAx
     def sosIgualA(unAtaque: Ataque) = ataque._1.eq(unAtaque) && ataque._2 > 0
@@ -25,12 +25,12 @@ object activity {
   val usarPiedra: Piedra => Actividad = piedra => _.evaluarEfectos(piedra)
 
   val comerZinc: Actividad = pokemon => {
-    val ataquesMejorados = pokemon.listaAtaques.map { case (atk, pAAct, pAMax) => (atk, pAAct, pAMax + 2) }
+    val ataquesMejorados = pokemon.listaAtaques.map { _.aumentarPAMax(2) }
     pokemon.modificaListaAtaque(ataquesMejorados)
   }
 
   val descansar: Actividad = pokemon => {
-    val ataquesRegenerados = pokemon.listaAtaques.map { case (atk, _, pAMax) => (atk, pAMax, pAMax) }
+    val ataquesRegenerados = pokemon.listaAtaques.map { _.regenerar }
     val pokemonConAtaquesRegenerados = pokemon.modificaListaAtaque(ataquesRegenerados)
 
     pokemonConAtaquesRegenerados.energia match {
