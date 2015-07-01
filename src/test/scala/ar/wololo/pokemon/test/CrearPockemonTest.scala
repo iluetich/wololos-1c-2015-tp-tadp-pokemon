@@ -1,47 +1,33 @@
-//package ar.wololo.pokemon.test
-//
-//import ar.wololo.pokemon.dominio.Pokemon
-//import ar.wololo.pokemon.dominio.Dormido
-//import ar.wololo.pokemon.dominio.Ataque
-//import ar.wololo.pokemon.dominio.Fuego
-//import ar.wololo.pokemon.dominio.Agua
-//import ar.wololo.pokemon.dominio.Macho
-//import ar.wololo.pokemon.dominio.SubirDeNivel
-//import org.scalatest.FunSuite
-//import org.scalatest.FlatSpec
-//
-//class SetSpec extends FlatSpec {
-//  "Un pichachu gue gana diferentes cantidades de experiencia" should "debe aumentar la experiencia, el nivel y la experienciaDeSaltoNivel" in {
-//    val picachu = new Pokemon( estado = Dormido(3), listaAtaques = List[Ataque](), tipoPrincipal = Fuego,
-//        tipoSecundario = Agua, nivel = 1, experiencia = 0, genero = Macho, energia = 30, energiaMax = 1000,
-//        peso = 5, fuerza = 100, velocidad = 20, condicionEvolutiva = SubirDeNivel(100), resistenciaEvolutiva = 3, null)
-////    val picachuGana2Exp = new Pokemon( estado = Dormido(3), listaAtaques = List[Ataque](), tipoPrincipal = Fuego,
-////        tipoSecundario = Agua, nivel = 1, experiencia = 0 + 2, genero = Macho, energia = 30,
-////        energiaMax = 1000, peso = 5, fuerza = 100, velocidad = 20, condicionEvolutiva = SubirDeNivel(100), resistenciaEvolutiva = 3, null)
-////    val picachuGana10Exp = new Pokemon( estado = Dormido(3), listaAtaques = List[Ataque](), tipoPrincipal = Fuego,
-////        tipoSecundario = Agua, nivel = 4, experiencia = 0 + 10, genero = Macho, energia = 30,
-////        energiaMax = 1000, peso = 5, fuerza = 100, velocidad = 20, condicionEvolutiva = SubirDeNivel(100), resistenciaEvolutiva = 3, null)
-//    
-//    
-//    val picachuCon2Exp = picachu.aumentaExperiencia(2)
-//    assert(picachuCon2Exp.experiencia == 2)
-////    System.out.println("nivel: " + picachu.aumentaExperiencia(10).nivel)
-//    val picachuCon10Exp = picachu.aumentaExperiencia(10)
-//    assert(picachuCon10Exp.experiencia == 10)
-//    
-//  }
-//  
-//  "Un picachu que le falte un nivel para evolucionar gana suficiente exp para evolucionar" should "debe evolucionar en raychu" in {
-//    val raychu = new Pokemon (null, null, null, null, 1, 0, null, 100, 100, 100, 100, 100, null, 100)
-//    val picachu = new Pokemon( estado = Dormido(3), listaAtaques = List[Ataque](), tipoPrincipal = Fuego,
-//        tipoSecundario = Agua, nivel = 5, experiencia = 0, genero = Macho, energia = 30, energiaMax = 1000,
-//        peso = 5, fuerza = 100, velocidad = 20, condicionEvolutiva = SubirDeNivel(6), resistenciaEvolutiva = 10, raychu)
-//    
-//    val posibleRaychu = picachu.aumentaExperiencia(1270) // i did the math... =D
-//    assert(picachu.experienciaParaNivel(6) == 1270)
-//    assert(posibleRaychu == raychu)
-//  }
-//  
-//  
-//  
-//}
+package ar.wololo.pokemon.test
+
+import ar.wololo.pokemon.dominio._
+import org.scalatest.FunSuite
+import org.scalatest.FlatSpec
+
+class SetSpec extends FlatSpec {
+  val pikaka = Fixt.pikaka
+  "Un pichachu que gana experiencia" should "si picachu gana 2 de experiencia entonces aumenta solo 2 la experiencia" in {
+    assert( pikaka.aumentaExperiencia(2) === pikaka.copy(nivel = 1, experiencia = 2))
+  }
+  it should "si picachu gana 5 de experiencia entonces la experiencia debería aumentar a 5 y el nivel a 2" in {
+    val pikachuMejorado = pikaka.aumentaExperiencia(5)
+    assert( pikachuMejorado equals pikaka.copy(nivel = 2, experiencia = 5,
+                                               fuerza = 8, energiaMax = 200, peso = 2) )
+    assert( pikachuMejorado.especie.experienciaParaNivel(pikachuMejorado.nivel +1) === 9)
+  }
+  it should "si picachu gana 10 de experiencia entonces la experiencia debería aumentar a 10 y el nivel pasar 4 y el salto de nivel a 12" in {
+    val pikachuMejorado = pikaka.aumentaExperiencia(10)
+    assert( pikachuMejorado === pikaka.copy(nivel = 3, experiencia = 10,
+                                            fuerza = 12, energiaMax = 300, peso = 3) )
+    assert( pikachuMejorado.especie.experienciaParaNivel(pikachuMejorado.nivel + 1) === 21 ) 
+  }
+  it should "si picachu gana 5 y despues 5 de experiencia tiene que ser igual a ganar 10 todo junto" in {
+    assert( pikaka.aumentaExperiencia(5).aumentaExperiencia(5) === pikaka.aumentaExperiencia(10))
+  }
+  it should "evolucionar cuanda gana 110 de experiencia de evolucionar por condicionEvolutiva (SubirNivel(5))" in {
+    val pikachuMejorado = pikaka.aumentaExperiencia(110)
+    assert ( pikachuMejorado == pikaka.copy( nivel = 5, experiencia = 110, especie = Fixt.especiePokeMix,
+                                              fuerza = 20, energiaMax = 500, peso = 5) )
+    assert ( pikachuMejorado.especie.experienciaParaNivel(pikachuMejorado.nivel) ===  75)
+  }
+}

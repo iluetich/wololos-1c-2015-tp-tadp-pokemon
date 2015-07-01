@@ -1,10 +1,12 @@
 package ar.wololo.pokemon.dominio
 
 case class Ataque(val nombre: String,
-    val efecto: Pokemon => Pokemon,
-    val tipo: Tipo) {
+                  val efecto: Pokemon => Pokemon,
+                  val tipo: Tipo) {
 
-  def tePuedeAprender(pokemon: Pokemon): Boolean = List(Normal, pokemon.tipoPrincipal, pokemon.tipoSecundario).contains(tipo)
+  def tePuedeAprender(pokemon: Pokemon): Boolean
+       = List(Normal, pokemon.tipoPrincipal, pokemon.tipoSecundario)
+         .contains(tipo)
 
   def teUtiliza(pokemon: Pokemon): Pokemon = {
     val pokeAfectado = efecto(pokemon.reducirPa(this))
@@ -20,6 +22,4 @@ case class Ataque(val nombre: String,
         pokeAfectado.aumentaExperiencia(experiencia)
     }
   }
-
 }
-             

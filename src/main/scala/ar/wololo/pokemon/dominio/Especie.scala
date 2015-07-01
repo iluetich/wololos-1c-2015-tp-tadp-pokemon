@@ -12,8 +12,6 @@ case class Especie(val tipoPrincipal: Tipo,
     val condicionEvolutiva: CondicionEvolutiva = null,
     val especieEvolucion: Especie = null) {
 
-  def evolucionarA(pokemon: Pokemon): Pokemon = pokemon.copy(especie = especieEvolucion)
-
   def experienciaParaNivel(nivel: Integer): Long = {
     nivel match {
       case n if n == 0 || n == 1 => 0
@@ -22,28 +20,17 @@ case class Especie(val tipoPrincipal: Tipo,
   }
 
   def subirDeNivelA(pokemon: Pokemon): Pokemon = {
-    val nivelNuevo = pokemon.nivel + 1
-    val fuerzaNueva = Math.min(pokemon.fuerza + incrementoFuerza, pokemon.fuerzaMax)
-    val energiaMaxNueva = pokemon.energiaMax + incrementoEnergiaMax
-    val pesoNuevo = Math.min(pokemon.peso + incrementoPeso, pesoMaximoSaludable)
-    val pokemonMejorado = pokemon.copy(nivel = nivelNuevo, fuerza = fuerzaNueva, energiaMax = energiaMaxNueva)
+    val pokemonMejorado =
+      pokemon.copy(nivel = pokemon.nivel + 1,
+                   fuerza = Math.min(pokemon.fuerza + incrementoFuerza, pokemon.fuerzaMax),
+                   energiaMax = pokemon.energiaMax + incrementoEnergiaMax,
+                   peso = Math.min(pokemon.peso + incrementoPeso, pesoMaximoSaludable))
 
-    condicionEvolutiva.subioDeNivel(pokemonMejorado)
-  }
-
-  def aumentaExperienciaDe(pokemon: Pokemon, cantidad: Long): Pokemon = {
-    cantidad match {
-      case n if n == 0 => pokemon
-      case n if n > 0 =>
-        val expAcum = pokemon.experiencia + cantidad
-        val expSgteNivel = experienciaParaNivel(pokemon.nivel + 1)
-
-        if (expAcum >= expSgteNivel) {
-          val pokemonConExpAumentada = pokemon.copy(experiencia = expSgteNivel)
-          subirDeNivelA(pokemonConExpAumentada).aumentaExperiencia(expAcum - expSgteNivel)
-        } else {
-          pokemon.copy(experiencia = pokemon.experiencia + expAcum)
-        }
+    condicionEvolutiva match {
+      case c: SubirDeNivel if (c.nivelParaEvolucionar == pokemonMejorado.nivel) 
+               => pokemonMejorado.evolucionar.checkLevel
+      case _ => pokemonMejorado.checkLevel
     }
   }
+
 }
