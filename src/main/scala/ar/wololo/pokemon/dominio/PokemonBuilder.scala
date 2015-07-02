@@ -18,16 +18,15 @@ case class BuilderException(mensaje: String) extends Exception(mensaje)
 
 case class PokemonBuilder(var estado: EstadoPokemon = null,
     var ataques: List[(Ataque, Int, Int)] = List(),
-    var nivel: Int = 0,
     var experiencia: Long = 0,
     var genero: Genero = null,
     var energia: Int = 0,
     var especie: Especie = null) {
 
-  def getFuerza: Int = if (nivel > 0) nivel * especie.incrementoFuerza else throw NivelBuilderException("Definir nivel mayor a 0 antes de asignar fuerza.")
-  def getPeso: Int = if (nivel > 0) Math.min(nivel * especie.incrementoPeso, especie.pesoMaximoSaludable) else throw NivelBuilderException("Definir nivel mayor a 0 antes de asignar peso.")
-  def getEnergiaMax: Int = if (nivel > 0) nivel * especie.incrementoEnergiaMax else throw NivelBuilderException("Definir nivel mayor a 0 antes de asignar energia.")
-  def getVelocidad: Int = if (nivel > 0) nivel * especie.incrementoVelocidad else throw NivelBuilderException("Definir nivel mayor a 0 antes de asignar velocidad.")
+  def getFuerza: Int = especie.incrementoFuerza
+  def getPeso: Int = Math.min(especie.incrementoPeso, especie.pesoMaximoSaludable)
+  def getEnergiaMax: Int = especie.incrementoEnergiaMax
+  def getVelocidad: Int = especie.incrementoVelocidad
 
   def setGenero(identidad: Genero): PokemonBuilder = copy(genero = identidad)
   def setEstado(unEstado: EstadoPokemon): PokemonBuilder = copy(estado = unEstado)
@@ -60,35 +59,10 @@ case class PokemonBuilder(var estado: EstadoPokemon = null,
       throw new EspecieBuilderException("Especie con parámetros inválidos")
   }
 
-  def setNivel(unNivel: Int): PokemonBuilder = {
-    especie.condicionEvolutiva.fold { copy(nivel = unNivel) } { condicion =>
-      condicion match {
-        case c: SubirDeNivel =>
-          if (unNivel < c.nivelParaEvolucionar)
-            copy(nivel = unNivel)
-          else
-            throw NivelBuilderException("El nivel debe ser menor al nivel especificado para evolucionar.")
-        case _ =>
-          if (unNivel > 0)
-            copy(nivel = unNivel)
-          else
-            throw NivelBuilderException("El nivel debe ser mayor a 0")
-      }
-    }
-  }
-
   def setExperiencia(ptsDeExperiencia: Long): PokemonBuilder = {
-    nivel match {
-      case n if n == 0 => throw new NivelBuilderException("Nivel aún no asignado")
-      case n if n > 0 => {
-        val expSgteNivel = especie.experienciaParaNivel(nivel + 1)
-        val expNivelAct = especie.experienciaParaNivel(nivel)
-        ptsDeExperiencia match {
-          case exp if exp >= expSgteNivel => throw new ExperienciaBuilderException("Experiencia mayor a nivel asignado. Debe ser menor a " + expSgteNivel)
-          case exp if exp >= expNivelAct => copy(experiencia = exp)
-          case _ => throw new ExperienciaBuilderException("Experiencia menor a nivel asignado. Debe ser mayor a " + expNivelAct)
-        }
-      }
+    ptsDeExperiencia match {
+      case exp if exp < 0 => throw new ExperienciaBuilderException("Experiencia negativa => " + ptsDeExperiencia)
+      case exp if exp >= 0 => copy(experiencia = ptsDeExperiencia)
     }
   }
 
@@ -103,9 +77,6 @@ case class PokemonBuilder(var estado: EstadoPokemon = null,
 
   def build: Pokemon = {
     if (!(estado == null) &&
-      nivel > 0 &&
-      experiencia >= especie.experienciaParaNivel(nivel) &&
-      experiencia < especie.experienciaParaNivel(nivel + 1) &&
       !genero.eq(null) &&
       energia > 0 &&
       !(especie == null) &&
@@ -114,14 +85,13 @@ case class PokemonBuilder(var estado: EstadoPokemon = null,
 
       new Pokemon(estado,
         ataques,
-        nivel,
         experiencia,
         genero,
         energia,
-        energiaMax = getEnergiaMax,
-        peso = getPeso,
-        fuerza = getFuerza,
-        velocidad = getVelocidad,
+        energiaMaxBase = 0,
+        pesoBase = 0,
+        fuerzaBase = 0,
+        velocidadBase = 0,
         especie)
     else
       throw new BuilderException("Faltan parámetros para la creación del pokemón")

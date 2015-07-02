@@ -7,16 +7,16 @@ object Fixt {
   val fabricaDeEspecies = new EspecieBuilder
 
   // tupla =(Ataque(nombre, efecto, tipo, puntosDeIniciales),puntosDeAtaque,puntosDeAtaqueMax)
-  val impactrueno = (new Ataque("Impactrueno", Some(pokemon => pokemon), Electrico),1,20)
-  val embestida = (new Ataque("Embestida", Some(pokemon => pokemon.copy(estado = Dormido(3))), Normal),7,10)
-  val llama = (new Ataque("Llama", Some(pokemon => pokemon), Dragon),15,30)
+  val impactrueno = (new Ataque("Impactrueno", Some(pokemon => pokemon), Electrico), 1, 20)
+  val embestida = (new Ataque("Embestida", Some(pokemon => pokemon.copy(estado = Dormido(3))), Normal), 7, 10)
+  val llama = (new Ataque("Llama", Some(pokemon => pokemon), Dragon), 15, 30)
 
   /*
    * Especies
    * Los seteos son en cualquier orden, excepto la especie evolucion, que debe ir despues
    * de asignar la condicion evolutiva.
    */
-  
+
   val especieRaychu = fabricaDeEspecies
     .setTipos(principal = Electrico, secundario = Normal)
     .setIncrementos(incPeso = 6, incFuerza = 3, incEnergiaMax = 100, incVelocidad = 4)
@@ -60,7 +60,7 @@ object Fixt {
     .build
   val especieElectrode = fabricaDeEspecies
     .setTipos(principal = Electrico)
-    .setIncrementos(incPeso= 10, incFuerza = 12, incEnergiaMax = 40, incVelocidad= 5)
+    .setIncrementos(incPeso = 10, incFuerza = 12, incEnergiaMax = 40, incVelocidad = 5)
     .setPesoMaximoSaludable(20)
     .setResistenciaEvolutiva(250)
     .build
@@ -74,7 +74,7 @@ object Fixt {
     .build
   val especieSquirtle = fabricaDeEspecies
     .setTipos(principal = Agua, secundario = Normal)
-    .setIncrementos(incPeso = 4, incFuerza = 1, incEnergiaMax = 80, incVelocidad = 2)
+    .setIncrementos(incPeso = 4, incFuerza = 1, incEnergiaMax = 130, incVelocidad = 2)
     .setPesoMaximoSaludable(45)
     .setResistenciaEvolutiva(230)
     .build
@@ -116,19 +116,19 @@ object Fixt {
     .setCondicionEvolutiva(UsarUnaPiedra)
     .setEspecieEvolucion(especieElectrode)
     .build
-    /*
+  /*
      * Especies para Tests de Pablo
      */
   val especiePokeMix = new Especie(tipoPrincipal = Hielo, tipoSecundario = Roca,
-      incrementoFuerza = 3, incrementoVelocidad = 2, incrementoPeso = 4, 
-      incrementoEnergiaMax = 1000, pesoMaximoSaludable = 200, 
-      resistenciaEvolutiva = 5, condicionEvolutiva = None,
-      especieEvolucion = null)
+    incrementoFuerza = 3, incrementoVelocidad = 2, incrementoPeso = 4,
+    incrementoEnergiaMax = 1000, pesoMaximoSaludable = 200,
+    resistenciaEvolutiva = 5, condicionEvolutiva = None,
+    especieEvolucion = null)
   val especiePoke = new Especie(tipoPrincipal = Fuego, tipoSecundario = Veneno,
-      incrementoFuerza = 4, incrementoVelocidad = 1, incrementoPeso = 1, 
-      incrementoEnergiaMax = 100, pesoMaximoSaludable = 100, 
-      resistenciaEvolutiva = 3, condicionEvolutiva = Some(SubirDeNivel(5)),
-      especieEvolucion = Some(especiePokeMix))
+    incrementoFuerza = 4, incrementoVelocidad = 1, incrementoPeso = 1,
+    incrementoEnergiaMax = 100, pesoMaximoSaludable = 100,
+    resistenciaEvolutiva = 3, condicionEvolutiva = Some(SubirDeNivel(5)),
+    especieEvolucion = Some(especiePokeMix))
   /*
    * Pokemones[Los atributos ahora dependen del nivel y de la especie, para asegurarnos que sean válidos.]
    * fuerza = nivel * incrementoFuerza
@@ -138,12 +138,11 @@ object Fixt {
    * 
    * Los seteos deben ser: estado => especie => cualquier otro (menos nivel y experiencia) => nivel => experiencia => cualquier otro 
    */
-    
+
   val pikachu = fabricaDePokes
     .setEstado(Bueno)
     .setEspecie(especiePikachu)
     .setAtaques(List(impactrueno, embestida))
-    .setNivel(1)
     .setExperiencia(0)
     .setGenero(Macho)
     .setEnergia(30)
@@ -152,25 +151,22 @@ object Fixt {
     .setEstado(Bueno)
     .setEspecie(especieCharmander)
     .setAtaques(List(embestida))
-    .setNivel(1)
     .setExperiencia(0)
     .setGenero(Hembra)
-    .setEnergia(75)
+    .setEnergia(30)
     .build
   val squirtle = fabricaDePokes
     .setEstado(Dormido(3))
     .setEspecie(especieSquirtle)
     .setAtaques(List())
-    .setNivel(7)
     .setExperiencia(25000)
     .setGenero(Hembra)
-    .setEnergia(500)
+    .setEnergia(80)
     .build
   val lapras = fabricaDePokes
     .setEstado(Bueno)
     .setEspecie(especieLapras)
     .setAtaques(List())
-    .setNivel(1)
     .setExperiencia(0)
     .setGenero(Macho)
     .setEnergia(75)
@@ -179,7 +175,6 @@ object Fixt {
     .setEstado(Ko)
     .setEspecie(especieBulbasaur)
     .setAtaques(List())
-    .setNivel(6)
     .setExperiencia(8000)
     .setGenero(Macho)
     .setEnergia(75)
@@ -188,7 +183,6 @@ object Fixt {
     .setEstado(Envenenado)
     .setEspecie(especieGyarados)
     .setAtaques(List(llama))
-    .setNivel(1)
     .setExperiencia(0)
     .setGenero(Macho)
     .setEnergia(75)
@@ -197,7 +191,6 @@ object Fixt {
     .setEstado(Bueno)
     .setEspecie(especieHitmonchan)
     .setAtaques(List())
-    .setNivel(1)
     .setExperiencia(0)
     .setGenero(Macho)
     .setEnergia(60)
@@ -206,7 +199,6 @@ object Fixt {
     .setEstado(Bueno)
     .setEspecie(especieHunter)
     .setAtaques(List())
-    .setNivel(1)
     .setExperiencia(0)
     .setGenero(Hembra)
     .setEnergia(75)
@@ -215,28 +207,24 @@ object Fixt {
     .setEstado(Bueno)
     .setEspecie(especieVoltorb)
     .setAtaques(List())
-    .setNivel(1)
     .setExperiencia(50)
     .setGenero(Hembra)
     .setEnergia(75)
     .build
 
   val charmeleon = fabricaDePokes
-  .setEstado(Bueno)
-  .setEspecie(especieCharmeleon)
-  .setAtaques(List())
-  .setNivel(16)
-  .setExperiencia(9830100)
-  .setGenero(Macho)
-  .setEnergia(120)
-  .build
+    .setEstado(Bueno)
+    .setEspecie(especieCharmeleon)
+    .setAtaques(List())
+    .setExperiencia(9830100)
+    .setGenero(Macho)
+    .setEnergia(100)
+    .build
 
-
-val pikaka = fabricaDePokes
+  val pikaka = fabricaDePokes
     .setEspecie(especiePoke)
     .setEstado(Dormido(3))
     .setAtaques(List())
-    .setNivel(1)
     .setExperiencia(0)
     .setGenero(Macho)
     .setEnergia(30)
@@ -250,5 +238,5 @@ val pikaka = fabricaDePokes
   val rutinaPhelps = new Rutina("natación_pro", List[Pokemon => Pokemon](activity.nadar(1000), activity.nadar(1000), activity.nadar(1000), activity.nadar(1000)))
   val rutinaPocionado = new Rutina("pocionado", List[Pokemon => Pokemon](activity.usarPocion, activity.usarPocion, activity.usarPocion, activity.usarPocion))
   val rutinaIntercambio = new Rutina("intercambiado", List[Pokemon => Pokemon](activity.fingirIntercambio, activity.fingirIntercambio, activity.fingirIntercambio))
-  
+
 }

@@ -14,12 +14,14 @@ class ActividadesComoFuncionesTest extends FunSuite {
     assert(pikachuCurado.energia == 80)
   }
 
-  test("pokemon realiza actividad UsarPocion y se reestablece toda la vida por que le falta 10") {
+  test("pokemon realiza actividad UsarPocion y se reestablece toda la vida por que le falta 50") {
 
-    assert(fixture.charmander.energia == 75)
+    assert(fixture.charmander.energia == 30)
+
     val charmanderCurado = fixture.charmander.realizarActividad(activity.usarPocion)
 
     assert(charmanderCurado.energia == 80)
+
     assert(charmanderCurado.energia == charmanderCurado.energiaMax)
   }
 
@@ -52,19 +54,19 @@ class ActividadesComoFuncionesTest extends FunSuite {
 
     var scuartul = fixture.squirtle.realizarActividad(activity.usarPocion) //esta dormido
 
-    assert(scuartul.energia == 500)
+    assert(scuartul.energia == 80)
 
     scuartul = scuartul.realizarActividad(activity.usarPocion) //esta dormido
 
-    assert(scuartul.energia == 500)
+    assert(scuartul.energia == 80)
 
     scuartul = scuartul.realizarActividad(activity.usarPocion) //esta dormido
 
-    assert(scuartul.energia == 500)
+    assert(scuartul.energia == 80)
 
     scuartul = scuartul.realizarActividad(activity.usarPocion) //esta despierto
 
-    assert(scuartul.energia == 550)
+    assert(scuartul.energia == 130)
     assert(scuartul.estado == Bueno)
 
   }
@@ -183,7 +185,7 @@ class ActividadesComoFuncionesTest extends FunSuite {
     val pikachu = fixture.pikachu
 
     val actividad = activity.realizarAtaque(fixture.impactrueno._1)
-    
+
     val pikachu2 = pikachu.realizarActividad(actividad)
 
     var tiroError = false
@@ -326,34 +328,34 @@ class ActividadesComoFuncionesTest extends FunSuite {
     assert(charmander.estado == Bueno)
     assert(charmander2.estado == Envenenado)
   }
-  
-  test("pokemon realiza actividad fingir intercambio y tiene condEvolutiva Intercambiar entonces Evoluciona"){
+
+  test("pokemon realiza actividad fingir intercambio y tiene condEvolutiva Intercambiar entonces Evoluciona") {
     val charmeleon = fixture.charmeleon
     val charizard = charmeleon.realizarActividad(activity.fingirIntercambio)
-    
+
     assert(charizard.especie == Fixt.especieCharizard)
   }
-  
-  test("pokemon con condicion evolutiva UsarUnaPiedra, realiza la actividad Usar PiedraLunar y evoluciona"){
+
+  test("pokemon con condicion evolutiva UsarUnaPiedra, realiza la actividad Usar PiedraLunar y evoluciona") {
     val voltorb = fixture.voltorb
     val electrode = voltorb.realizarActividad(activity.usarPiedra(PiedraLunar))
-    
+
     assert(electrode.especie == Fixt.especieElectrode)
   }
-  
-  test("pokemon con condicion evolutiva UsarPiedra y realiza actividad usar Piedra con una piedra lunar entonces no evoluciona"){
-//    val charmander = fixture.charmander
-//    val sigueCharmander = charmander.realizarActividad(activity.usarPiedra(PiedraLunar))
-//    
-//    assert(sigueCharmander.especie == Fixt.especieCharmander)
-    
+
+  test("pokemon con condicion evolutiva UsarPiedra y realiza actividad usar Piedra con una piedra lunar entonces no evoluciona") {
+    //    val charmander = fixture.charmander
+    //    val sigueCharmander = charmander.realizarActividad(activity.usarPiedra(PiedraLunar))
+    //    
+    //    assert(sigueCharmander.especie == Fixt.especieCharmander)
+
     val charmander = fixture.charmander
     val charmeleon = charmander.realizarActividad(activity.usarPiedra(PiedraLunar))
-    
+
     assert(charmeleon.especie.eq(fixture.especieCharmeleon))
   }
-  
-  test("pokemon con condEvolutiva UsarPiedra y realiza actividad con una Piedra afin a su tipo entonces evoluciona"){
+
+  test("pokemon con condEvolutiva UsarPiedra y realiza actividad con una Piedra afin a su tipo entonces evoluciona") {
     val charmander = fixture.charmander
     val charmeleon = charmander.realizarActividad(activity.usarPiedra(PiedraEvolutiva(Fuego)))
 

@@ -18,6 +18,10 @@ case class Especie(val tipoPrincipal: Tipo,
 
   def evaluarEfectos(piedra: Piedra, pokemon: Pokemon): Pokemon = condicionEvolutiva.fold { pokemon } { condicion => condicion.evaluarEfectosPiedra(pokemon, piedra) }
 
+  def getNivelPara(pokemon: Pokemon) = (1 until 100)
+    .find { nivel => pokemon.experiencia >= experienciaParaNivel(nivel - 1) && pokemon.experiencia < experienciaParaNivel(nivel + 1) }
+    .fold { 100 } { nivel => nivel }
+
   def experienciaParaNivel(nivel: Integer): Long = {
     nivel match {
       case n if n == 0 || n == 1 => 0
@@ -25,14 +29,11 @@ case class Especie(val tipoPrincipal: Tipo,
     }
   }
 
-  def subirDeNivelA(pokemon: Pokemon): Pokemon = {
-    val pokemonMejorado = pokemon.copy(
-      nivel = pokemon.nivel + 1,
-      fuerza = Math.min(pokemon.fuerza + incrementoFuerza, pokemon.fuerzaMax),
-      energiaMax = pokemon.energiaMax + incrementoEnergiaMax,
-      peso = Math.min(pokemon.peso + incrementoPeso, pesoMaximoSaludable))
-
-    condicionEvolutiva.fold { pokemonMejorado } { condicion => condicion.subioDeNivel(pokemonMejorado) }
+  def aumentaExperiencia(pokemon: Pokemon, exp: Long) = {
+    val pokemonConExpAumentada = pokemon.copy(experiencia = pokemon.experiencia + exp)
+    if (getNivelPara(pokemonConExpAumentada) > getNivelPara(pokemon))
+      condicionEvolutiva.fold { pokemonConExpAumentada } { condicion => condicion.subioDeNivel(pokemonConExpAumentada) }
+    else
+      pokemonConExpAumentada
   }
-
 }

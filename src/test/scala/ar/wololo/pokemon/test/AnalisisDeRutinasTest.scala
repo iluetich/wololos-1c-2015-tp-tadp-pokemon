@@ -49,6 +49,9 @@ class AnalisisDeRutinasTest extends FunSuite {
     assert(obtenerMejorRutinaSegun(List(nadoQueNoPuedeHacer))(criteriosDeAnalisis.maxNivel).isEmpty)
 
     val mejorRutina = obtenerMejorRutinaSegun(List(nadoQueNoPuedeHacer, pocionado, nado))(criteriosDeAnalisis.maxNivel)
+    
+    print("JAJJAJA => pocionado => " + fixture.pikachu.realizarRutina(fixture.rutinaPocionado).get.experiencia + "\n")
+    print("JAJJAJA => nado => " + fixture.pikachu.realizarRutina(fixture.rutinaNado).get.nivel)
     assert(mejorRutina === Some(nado.nombre))
   }
 }

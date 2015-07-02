@@ -26,7 +26,7 @@ class RutinaTest extends FunSuite {
 
     assert(scuartulDespierto.map(_.velocidad) == Success(14))
     assert(scuartulDespierto.map(_.fuerza) == Success(7))
-    assert(scuartulDespierto.map(_.energia) == Success(550))
+    assert(scuartulDespierto.map(_.energia) == Success(130))
     assert(scuartulDespierto.map(_.estado) == Success(Bueno))
   }
 
@@ -40,11 +40,13 @@ class RutinaTest extends FunSuite {
 
   test("pokemon descansa en medio de la rutina") {
 
-    val charmander = fixture.charmeleon
+    val charmander = fixture.charmander
     val charmanderEntrenado = charmander.realizarRutina(rutinaConDescanso)
 
+    print(charmander.peso + "\n")
+    print(charmanderEntrenado.get.peso + "\n")
     assert(charmanderEntrenado.map(_.estado) == Success(Dormido(1)))
-    assert(charmanderEntrenado.map(_.velocidad) == Success(37))
+    assert(charmanderEntrenado.map(_.velocidad) == Success(6))
   }
 }  
   
