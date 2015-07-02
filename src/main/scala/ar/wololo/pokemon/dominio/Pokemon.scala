@@ -22,22 +22,26 @@ case class Pokemon(
   val pesoMaximoSaludable = especie.pesoMaximoSaludable
   val condicionEvolutiva = especie.condicionEvolutiva
 
-  def aumentaExperiencia(cantidad: Long): Pokemon = especie.aumentaExperienciaDe(this, cantidad)
-  def evolucionar: Pokemon = especie.evolucionarA(this)
+  def aumentaExperiencia(cant: Long): Pokemon = copy(experiencia = experiencia + cant).checkLevel
+  def checkLevel =
+    if (experiencia >= especie.experienciaParaNivel(nivel + 1))
+      especie.subirDeNivelA(this)
+    else this
+  def evolucionar: Pokemon = especie.evolucionarA(this) // puede que haya que cambiar
   def realizarRutina(rutina: Rutina): Try[Pokemon] = rutina.esHechaPor(this)
   def aumentaExpEnBaseAGenero(): Pokemon = genero.aumentaExperiencia(this)
   def teIntercambiaron(): Pokemon = especie.intercambiaronA(this)
   def evaluarEfectos(piedra: Piedra): Pokemon = especie.evaluarEfectos(piedra, this)
-  
+
   def modificaPeso(cantidad: Int): Pokemon = this.copy(peso = this.peso + cantidad).verificarParams()
   def modificaVelocidad(cantidad: Int): Pokemon = this.copy(velocidad = Math.min(this.velocidad + cantidad, this.velocidadMax)).verificarParams()
   def modificaEnergia(cantidad: Int): Pokemon = this.copy(energia = Math.min(this.energia + cantidad, this.energiaMax)).verificarParams()
   def modificaFuerza(cantidad: Int): Pokemon = this.copy(fuerza = Math.min(this.fuerza + cantidad, this.fuerzaMax)).verificarParams()
   def modificaListaAtaque(listaNueva: List[(Ataque, Int, Int)]): Pokemon = this.copy(listaAtaques = listaNueva)
-  
+
   def cambiaAEstado(nuevoEstado: EstadoPokemon): Pokemon = this.copy(estado = nuevoEstado)
   def podesLevantar(kg: Long): Boolean = kg < (10 * this.fuerza + 1)
-  def sabesAtaque(ataque: Ataque) = listaAtaques.map {_._1}.contains(ataque)
+  def sabesAtaque(ataque: Ataque) = listaAtaques.map { _._1 }.contains(ataque)
 
   def verificarParams(): Pokemon = {
     if (energia < 0)
@@ -69,4 +73,6 @@ case class Pokemon(
       case _: EstadoPokemon => actividad(this)
     }
   }
+
 }
+

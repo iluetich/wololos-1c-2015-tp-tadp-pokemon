@@ -116,7 +116,19 @@ object Fixt {
     .setCondicionEvolutiva(UsarUnaPiedra)
     .setEspecieEvolucion(especieElectrode)
     .build
-    
+    /*
+     * Especies para Tests de Pablo
+     */
+  val especiePokeMix = new Especie(tipoPrincipal = Hielo, tipoSecundario = Roca,
+      incrementoFuerza = 3, incrementoVelocidad = 2, incrementoPeso = 4, 
+      incrementoEnergiaMax = 1000, pesoMaximoSaludable = 200, 
+      resistenciaEvolutiva = 5, condicionEvolutiva = None,
+      especieEvolucion = null)
+  val especiePoke = new Especie(tipoPrincipal = Fuego, tipoSecundario = Veneno,
+      incrementoFuerza = 4, incrementoVelocidad = 1, incrementoPeso = 1, 
+      incrementoEnergiaMax = 100, pesoMaximoSaludable = 100, 
+      resistenciaEvolutiva = 3, condicionEvolutiva = Some(SubirDeNivel(5)),
+      especieEvolucion = Some(especiePokeMix))
   /*
    * Pokemones[Los atributos ahora dependen del nivel y de la especie, para asegurarnos que sean válidos.]
    * fuerza = nivel * incrementoFuerza
@@ -218,6 +230,17 @@ object Fixt {
   .setGenero(Macho)
   .setEnergia(120)
   .build
+
+
+val pikaka = fabricaDePokes
+    .setEspecie(especiePoke)
+    .setEstado(Dormido(3))
+    .setAtaques(List())
+    .setNivel(1)
+    .setExperiencia(0)
+    .setGenero(Macho)
+    .setEnergia(30)
+    .build
   /*
    * Algunas rutinas
    * Rutina(nombre, actividades)

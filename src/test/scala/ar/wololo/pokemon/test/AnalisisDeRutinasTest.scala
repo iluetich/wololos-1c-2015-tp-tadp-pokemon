@@ -51,5 +51,4 @@ class AnalisisDeRutinasTest extends FunSuite {
     val mejorRutina = obtenerMejorRutinaSegun(List(nadoQueNoPuedeHacer, pocionado, nado))(criteriosDeAnalisis.maxNivel)
     assert(mejorRutina === Some(nado.nombre))
   }
-
 }

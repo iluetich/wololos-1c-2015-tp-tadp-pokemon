@@ -19,6 +19,4 @@ case class Ataque(val nombre: String,
     }
     efecto.fold { pokemonConMasExperiencia } { _(pokemonConMasExperiencia) }
   }
-
 }
-             

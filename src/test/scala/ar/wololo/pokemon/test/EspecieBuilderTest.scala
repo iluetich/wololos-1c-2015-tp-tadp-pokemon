@@ -1,11 +1,10 @@
 package ar.wololo.pokemon.test
 
 import org.scalatest.FunSuite
-import ar.wololo.pokemon.dominio.EspecieCreacionBuilderException
-import ar.wololo.pokemon.dominio.EspecieCreacionBuilderException
 import ar.wololo.pokemon.dominio.Fuego
 import ar.wololo.pokemon.dominio.Electrico
 import ar.wololo.pokemon.dominio.Especie
+import ar.wololo.pokemon.dominio.EspecieCreacionBuilderException
 
 /**
  * @author ivan
