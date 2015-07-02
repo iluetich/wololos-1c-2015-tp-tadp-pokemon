@@ -20,17 +20,13 @@ case class Especie(val tipoPrincipal: Tipo,
   }
 
   def subirDeNivelA(pokemon: Pokemon): Pokemon = {
-    val pokemonMejorado =
-      pokemon.copy(nivel = pokemon.nivel + 1,
-                   fuerza = Math.min(pokemon.fuerza + incrementoFuerza, pokemon.fuerzaMax),
-                   energiaMax = pokemon.energiaMax + incrementoEnergiaMax,
-                   peso = Math.min(pokemon.peso + incrementoPeso, pesoMaximoSaludable))
+    val pokemonMejorado = pokemon.copy(
+      nivel = pokemon.nivel + 1,
+      fuerza = Math.min(pokemon.fuerza + incrementoFuerza, pokemon.fuerzaMax),
+      energiaMax = pokemon.energiaMax + incrementoEnergiaMax,
+      peso = Math.min(pokemon.peso + incrementoPeso, pesoMaximoSaludable))
 
-    condicionEvolutiva match {
-      case c: SubirDeNivel if (c.nivelParaEvolucionar == pokemonMejorado.nivel) 
-               => pokemonMejorado.evolucionar.checkLevel
-      case _ => pokemonMejorado.checkLevel
-    }
+    condicionEvolutiva.subioDeNivel(pokemonMejorado)
   }
 
 }
