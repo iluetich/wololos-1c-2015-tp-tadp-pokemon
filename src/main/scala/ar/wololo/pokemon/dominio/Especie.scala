@@ -19,7 +19,7 @@ case class Especie(val tipoPrincipal: Tipo,
   def evaluarEfectos(piedra: Piedra, pokemon: Pokemon): Pokemon = condicionEvolutiva.fold { pokemon } { condicion => condicion.evaluarEfectosPiedra(pokemon, piedra) }
 
   def getNivelPara(pokemon: Pokemon) = (1 until 100)
-    .find { nivel => pokemon.experiencia >= experienciaParaNivel(nivel - 1) && pokemon.experiencia < experienciaParaNivel(nivel + 1) }
+    .find { nivel => pokemon.experiencia < experienciaParaNivel(nivel + 1) }
     .fold { 100 } { nivel => nivel }
 
   def experienciaParaNivel(nivel: Integer): Long = {
