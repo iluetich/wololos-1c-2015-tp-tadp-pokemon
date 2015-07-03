@@ -15,7 +15,7 @@ case class EspecieEvolucionBuilderException(msg: String) extends Exception(msg)
 case class EspecieCreacionBuilderException(msg: String) extends Exception(msg)
 
 case class EspecieBuilder(var tipoPrincipal: Tipo = null,
-    var tipoSecundario: Tipo = null,
+    var tipoSecundario: Option[Tipo] = None,
     var incrementoPeso: Int = 0,
     var incrementoFuerza: Int = 0,
     var incrementoEnergiaMax: Int = 0,
@@ -29,7 +29,7 @@ case class EspecieBuilder(var tipoPrincipal: Tipo = null,
     if (principal.equals(secundario))
       throw new TipoDeEspecieBuilderException("El tipo principal es el mismo que el secundario.")
     else
-      copy(tipoPrincipal = principal, tipoSecundario = secundario)
+      copy(tipoPrincipal = principal, tipoSecundario = Some(secundario))
   }
 
   def setIncrementos(incPeso: Int, incFuerza: Int, incEnergiaMax: Int, incVelocidad: Int): EspecieBuilder = {

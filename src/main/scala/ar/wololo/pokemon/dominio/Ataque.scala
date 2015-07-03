@@ -10,7 +10,6 @@ case class Ataque(val nombre: String,
 
   def teUtiliza(pokemon: Pokemon): Pokemon = {
     val pokemonHabiendoUsadoAtaque = pokemon.reducirPa(this)
-    var experiencia = 0
 
     val pokemonConMasExperiencia = tipo match {
       case Dragon => pokemonHabiendoUsadoAtaque.aumentaExperiencia(80)

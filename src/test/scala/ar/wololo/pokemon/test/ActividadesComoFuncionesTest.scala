@@ -343,12 +343,7 @@ class ActividadesComoFuncionesTest extends FunSuite {
     assert(electrode.especie == Fixt.especieElectrode)
   }
 
-  test("pokemon con condicion evolutiva UsarPiedra y realiza actividad usar Piedra con una piedra lunar entonces no evoluciona") {
-    //    val charmander = fixture.charmander
-    //    val sigueCharmander = charmander.realizarActividad(activity.usarPiedra(PiedraLunar))
-    //    
-    //    assert(sigueCharmander.especie == Fixt.especieCharmander)
-
+  test("pokemon con condicion evolutiva UsarPiedra y realiza actividad usar Piedra con una piedra lunar entonces sí evoluciona") {
     val charmander = fixture.charmander
     val charmeleon = charmander.realizarActividad(activity.usarPiedra(PiedraLunar))
 

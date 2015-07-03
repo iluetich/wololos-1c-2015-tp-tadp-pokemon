@@ -17,7 +17,7 @@ case class Pokemon(
   val velocidadMax = 100 //constante de enunciado
   val fuerzaMax = 100 //constante de enunciado
   val tipoPrincipal = especie.tipoPrincipal
-  val tipoSecundario = especie.tipoSecundario
+  val tipoSecundario = especie.tipoSecundario.orNull
   val pesoMaximoSaludable = especie.pesoMaximoSaludable
   val condicionEvolutiva = especie.condicionEvolutiva
 
@@ -30,30 +30,39 @@ case class Pokemon(
    * Si evoluciona, usará la nueva especie.
    */
   
-  def nivel: Int = especie.getNivelPara(this)
-  def peso: Int = pesoBase + especie.incrementoPeso * nivel
-  def fuerza: Int = fuerzaBase + especie.incrementoFuerza * nivel
-  def velocidad: Int = velocidadBase + especie.incrementoVelocidad * nivel
-  def energiaMax: Int = energiaMaxBase + especie.incrementoEnergiaMax * nivel
+  /*
+   * Acá estaría bueno tirar una meta-magia como en Ruby, pero la API de reflection
+   * no es tan copada, y no da mezclar meta-programación con un dominio específico.
+   */
   
-  def aumentaExperiencia(exp: Long): Pokemon = especie.aumentaExperiencia(this, exp)
-  def evolucionar: Pokemon = especie.evolucionarA(this) // puede que haya que cambiar
-  def realizarRutina(rutina: Rutina): Try[Pokemon] = rutina.esHechaPor(this)
-  def aumentaExpEnBaseAGenero(): Pokemon = genero.aumentaExperiencia(this)
-  def teIntercambiaron(): Pokemon = especie.intercambiaronA(this)
-  def evaluarEfectos(piedra: Piedra): Pokemon = especie.evaluarEfectos(piedra, this)
+  private def getAtributoActual(unAtributo: Int, unIncremento: Int) = unAtributo + unIncremento * nivel
+  
+  def peso = getAtributoActual(pesoBase, especie.incrementoPeso)
+  def fuerza = getAtributoActual(fuerzaBase, especie.incrementoFuerza)
+  def velocidad = getAtributoActual(velocidadBase, especie.incrementoVelocidad)
+  def energiaMax = getAtributoActual(energiaMaxBase, especie.incrementoEnergiaMax)
 
-  def modificaPeso(cantidad: Int): Pokemon = this.copy(pesoBase = this.pesoBase + cantidad).verificarParams()
-  def modificaVelocidad(cantidad: Int): Pokemon = this.copy(velocidadBase = Math.min(this.velocidadBase + cantidad, this.velocidadMax)).verificarParams()
-  def modificaEnergia(cantidad: Int): Pokemon = this.copy(energia = Math.min(this.energia + cantidad, this.energiaMax)).verificarParams()
-  def modificaFuerza(cantidad: Int): Pokemon = this.copy(fuerzaBase = Math.min(this.fuerzaBase + cantidad, this.fuerzaMax)).verificarParams()
-  def modificaListaAtaque(listaNueva: List[(Ataque, Int, Int)]): Pokemon = this.copy(listaAtaques = listaNueva)
+  def nivel = especie.getNivelPara(this)
+  def sosDeTipo(tipo: Tipo) = List(especie.tipoPrincipal, especie.tipoSecundario).contains(tipo)
+  
+  def modificaPeso(cantidad: Int) = this.copy(pesoBase = this.pesoBase + cantidad).verificarParams
+  def modificaVelocidad(cantidad: Int) = this.copy(velocidadBase = Math.min(this.velocidadBase + cantidad, this.velocidadMax)).verificarParams
+  def modificaEnergia(cantidad: Int) = this.copy(energia = Math.min(this.energia + cantidad, this.energiaMax)).verificarParams
+  def modificaFuerza(cantidad: Int) = this.copy(fuerzaBase = Math.min(this.fuerzaBase + cantidad, this.fuerzaMax)).verificarParams
+  def modificaListaAtaque(listaNueva: List[(Ataque, Int, Int)]) = this.copy(listaAtaques = listaNueva)
 
-  def cambiaAEstado(nuevoEstado: EstadoPokemon): Pokemon = this.copy(estado = nuevoEstado)
-  def podesLevantar(kg: Long): Boolean = kg < (10 * this.fuerza + 1)
+  def aumentaExperiencia(exp: Long) = especie.aumentaExperiencia(this, exp)
+  def aumentaExpEnBaseAGenero() = genero.aumentaExperiencia(this)
+  def evolucionar = especie.evolucionarA(this)
+  def evaluarEfectos(piedra: Piedra) = especie.evaluarEfectos(piedra, this)
+  def realizarRutina(rutina: Rutina) = rutina.esHechaPor(this)
+  def teIntercambiaron() = especie.intercambiaronA(this)
+
+  def cambiaAEstado(nuevoEstado: EstadoPokemon) = this.copy(estado = nuevoEstado)
+  def podesLevantar(kg: Long) = kg < (10 * this.fuerza + 1)
   def sabesAtaque(ataque: Ataque) = listaAtaques.map { _._1 }.contains(ataque)
 
-  def verificarParams(): Pokemon = {
+  def verificarParams = {
     if (energia < 0)
       throw NoPuedeEnergiaMenorACero(this)
     if (peso < 0 || peso > pesoMaximoSaludable)

@@ -119,12 +119,12 @@ object Fixt {
   /*
      * Especies para Tests de Pablo
      */
-  val especiePokeMix = new Especie(tipoPrincipal = Hielo, tipoSecundario = Roca,
+  val especiePokeMix = new Especie(tipoPrincipal = Hielo, tipoSecundario = Some(Roca),
     incrementoFuerza = 3, incrementoVelocidad = 2, incrementoPeso = 4,
     incrementoEnergiaMax = 1000, pesoMaximoSaludable = 200,
     resistenciaEvolutiva = 5, condicionEvolutiva = None,
     especieEvolucion = null)
-  val especiePoke = new Especie(tipoPrincipal = Fuego, tipoSecundario = Veneno,
+  val especiePoke = new Especie(tipoPrincipal = Fuego, tipoSecundario = Some(Veneno),
     incrementoFuerza = 4, incrementoVelocidad = 1, incrementoPeso = 1,
     incrementoEnergiaMax = 100, pesoMaximoSaludable = 100,
     resistenciaEvolutiva = 3, condicionEvolutiva = Some(SubirDeNivel(5)),

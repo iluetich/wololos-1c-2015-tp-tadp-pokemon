@@ -42,11 +42,8 @@ object activity {
   val nadar: Integer => Actividad = minutos => pokemon => {
     (pokemon.tipoPrincipal, pokemon.tipoSecundario) match {
       case (tP, tS) if Agua.leGanasA(tP) || Agua.leGanasA(tS) => pokemon.cambiaAEstado(Ko)
-      case (tP, tS) =>
-        val pokemonAfectado = (tP, tS) match {
-          case (Agua, _) | (_, Agua) => pokemon.modificaVelocidad(minutos)
-          case _ => pokemon
-        }
+      case _ =>
+        val pokemonAfectado = if (pokemon.sosDeTipo(Agua)) pokemon.modificaVelocidad(minutos) else pokemon
         pokemonAfectado.modificaEnergia(-minutos).aumentaExperiencia(200)
     }
   }
@@ -74,11 +71,9 @@ object activity {
     case Paralizado => pokemon.cambiaAEstado(Ko)
     case _: EstadoPokemon =>
       if (pokemon.podesLevantar(kg)) {
-        (pokemon.tipoPrincipal, pokemon.tipoSecundario) match {
-          case (Pelea, _) | (_, Pelea) => pokemon.aumentaExperiencia(kg * 2)
-          case (Fantasma, _) | (_, Fantasma) => throw FantasmaNoPuedeLevantarPesas(pokemon)
-          case _ => pokemon.aumentaExperiencia(kg)
-        }
+        if (pokemon.sosDeTipo(Pelea)) pokemon.aumentaExperiencia(kg * 2)
+        else if (pokemon.sosDeTipo(Fantasma)) throw FantasmaNoPuedeLevantarPesas(pokemon)
+        else pokemon.aumentaExperiencia(kg)
       } else {
         pokemon.cambiaAEstado(Paralizado)
       }
