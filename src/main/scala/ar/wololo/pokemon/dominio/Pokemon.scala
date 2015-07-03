@@ -17,7 +17,7 @@ case class Pokemon(
   val velocidadMax = 100 //constante de enunciado
   val fuerzaMax = 100 //constante de enunciado
   val tipoPrincipal = especie.tipoPrincipal
-  val tipoSecundario = especie.tipoSecundario.orNull
+  val tipoSecundario = especie.tipoSecundario.getOrElse(tipoPrincipal)
   val pesoMaximoSaludable = especie.pesoMaximoSaludable
   val condicionEvolutiva = especie.condicionEvolutiva
 
@@ -43,7 +43,7 @@ case class Pokemon(
   def energiaMax = getAtributoActual(energiaMaxBase, especie.incrementoEnergiaMax)
 
   def nivel = especie.getNivelPara(this)
-  def sosDeTipo(tipo: Tipo) = List(especie.tipoPrincipal, especie.tipoSecundario).contains(tipo)
+  def sosDeTipo(tipo: Tipo) = List(tipoPrincipal, tipoSecundario).contains(tipo)
   
   def modificaPeso(cantidad: Int) = this.copy(pesoBase = this.pesoBase + cantidad).verificarParams
   def modificaVelocidad(cantidad: Int) = this.copy(velocidadBase = Math.min(this.velocidadBase + cantidad, this.velocidadMax)).verificarParams
