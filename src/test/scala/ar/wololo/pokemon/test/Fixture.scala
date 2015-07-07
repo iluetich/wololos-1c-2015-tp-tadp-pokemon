@@ -234,9 +234,9 @@ object Fixt {
    * Rutina(nombre, actividades)
    */
 
-  val rutinaNado = new Rutina("natación_tranca", List[Pokemon => Pokemon](activity.nadar(1), activity.nadar(1), activity.nadar(1), activity.nadar(1)))
-  val rutinaPhelps = new Rutina("natación_pro", List[Pokemon => Pokemon](activity.nadar(1000), activity.nadar(1000), activity.nadar(1000), activity.nadar(1000)))
-  val rutinaPocionado = new Rutina("pocionado", List[Pokemon => Pokemon](activity.usarPocion, activity.usarPocion, activity.usarPocion, activity.usarPocion))
-  val rutinaIntercambio = new Rutina("intercambiado", List[Pokemon => Pokemon](activity.fingirIntercambio, activity.fingirIntercambio, activity.fingirIntercambio))
+  val rutinaNado = new Rutina("natación_tranca", List[Actividad](Nadar(1), Nadar(1), Nadar(1), Nadar(1)))
+  val rutinaPhelps = new Rutina("natación_pro", List[Actividad](Nadar(1000), Nadar(1000), Nadar(1000), Nadar(1000)))
+  val rutinaPocionado = new Rutina("pocionado", List[Actividad](UsarPocion, UsarPocion, UsarPocion, UsarPocion))
+  val rutinaIntercambio = new Rutina("intercambiado", List[Actividad](FingirIntercambio, FingirIntercambio, FingirIntercambio))
 
 }

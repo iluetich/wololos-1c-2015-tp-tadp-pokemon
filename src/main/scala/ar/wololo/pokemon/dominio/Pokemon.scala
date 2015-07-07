@@ -74,22 +74,84 @@ case class Pokemon(
     this
   }
 
+  private def descansar(): Pokemon = {
+    val nuevaListaAtaque = this.listaAtaques.map { case (ataque: Ataque, _, paMax: Int) => new Tuple3(ataque, paMax, paMax) }
+    val pokeAfectado = energia match {
+      case energia if energia < energiaMax * 0.5 => this.cambiaAEstado(Dormido(3))
+      case _ => this
+    }
+
+    pokeAfectado.modificaListaAtaque(nuevaListaAtaque)
+  }
+
+  private def aumentaPAMaximo(cant: Int): Pokemon = {
+    val nuevaListaAtaque = this.listaAtaques.map { case (ataque: Ataque, pa: Int, paMax: Int) => (ataque, pa, paMax + cant) }
+    this.modificaListaAtaque(nuevaListaAtaque)
+  }
+
+  def nadar(minutos: Int): Pokemon = {
+    (tipoPrincipal, tipoSecundario) match {
+      case (Fuego, _) | (_, Fuego) | (Tierra, _) | (_, Tierra) | (Roca, _) | (_, Roca) => this.cambiaAEstado(Ko)
+      case (tP, tS) =>
+        val pokeAfectado = (tP, tS) match {
+          case (Agua, _) | (_, Agua) => {
+            this.modificaVelocidad(minutos)
+          }
+          case _ => this
+        }
+        pokeAfectado.modificaEnergia(-minutos).aumentaExperiencia(minutos * 200)
+    }
+  }
+
   def reducirPa(ataque: Ataque): Pokemon = {
     val listaAtaquesNueva = listaAtaques.map {
-      case (`ataque`, puntosAtaque, pAMax) => (ataque, puntosAtaque - 1, pAMax)
+      case (attack: Ataque, puntosAtaque, pAMax) if attack.equals(ataque) => (attack, puntosAtaque - 1, pAMax)
       case atk => atk
     }
     this.modificaListaAtaque(listaAtaquesNueva)
   }
 
-  def realizarActividad(actividad: Pokemon => Pokemon): Pokemon = {
-    estado match {
+  def realizarActividad(actividad: Actividad): Pokemon = {
+    this.estado match {
       case Ko => throw EstaKo(this)
-      case e: Dormido => e.turnos match {
-        case t if t > 0 => cambiaAEstado(Dormido(t - 1))
-        case 0 => actividad(cambiaAEstado(Bueno))
+      case e: Dormido if e.turnos > 0 => this.cambiaAEstado(Dormido(e.turnos - 1))
+      case e: Dormido => this.cambiaAEstado(Bueno).realizarActividad(actividad)
+      case _: EstadoPokemon => actividad match {
+        case UsarPocion => this.modificaEnergia(50)
+        case UsarEther => this.cambiaAEstado(Bueno)
+        case ComerHierro => this.modificaFuerza(5)
+        case ComerCalcio => this.modificaVelocidad(5)
+        case ComerZinc => this.aumentaPAMaximo(2)
+        case Descansar => this.descansar
+        case UsarAntidoto => this.estado match {
+          case Envenenado => this.cambiaAEstado(Bueno)
+          case _: EstadoPokemon => this
+        }
+        case FingirIntercambio => this.teIntercambiaron()
+        case actividad: UsarPiedra => this.evaluarEfectos(actividad.piedra)
+        case actividad: Nadar => this.nadar(actividad.minutos)
+        case actividad: LevantarPesas => this.estado match {
+          case Paralizado => this.cambiaAEstado(Ko)
+          case _: EstadoPokemon => {
+            if (actividad.kg < (10 * this.fuerza + 1))
+              (this.tipoPrincipal, this.tipoSecundario) match {
+                case (Pelea, _) | (_, Pelea) => this.aumentaExperiencia(actividad.kg * 2)
+                case (Fantasma, _) | (_, Fantasma) => throw FantasmaNoPuedeLevantarPesas(this)
+                case _ => this.aumentaExperiencia(actividad.kg)
+              }
+            else
+              this.copy(estado = Paralizado)
+          }
+        }
+        case RealizarUnAtaque(ataqueARealizar) =>
+          listaAtaques.find { case (ataque, pa, _) => ataque.equals(ataqueARealizar) && pa > 0 }
+            .fold { throw PokemonNoConoceMovONoTienePA(this) } { case (atk, _, _) => atk.teUtiliza(this) }
+        case AprenderAtaque((ataque, pa, pamax)) => ataque.tipo match {
+          case Normal | this.tipoPrincipal | this.tipoSecundario => this.copy(listaAtaques = (ataque, pa, pamax) :: this.listaAtaques)
+          case _ => this.copy(estado = Ko)
+        }
+
       }
-      case _: EstadoPokemon => actividad(this)
     }
   }
 

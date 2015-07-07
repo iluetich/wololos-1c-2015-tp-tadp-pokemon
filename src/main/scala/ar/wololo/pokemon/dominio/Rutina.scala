@@ -3,7 +3,7 @@ package ar.wololo.pokemon.dominio
 import scala.util.{ Try, Success, Failure }
 
 
-class Rutina(val nombre: String = null, val actividades: List[Pokemon => Pokemon]) {
+class Rutina(val nombre: String = null, val actividades: List[Actividad]) {
 
   def esHechaPor(pokemon: Pokemon): Try[Pokemon] = {
     actividades.foldLeft(Success(pokemon): Try[Pokemon]) { (resultadoAnterior, actividad) =>

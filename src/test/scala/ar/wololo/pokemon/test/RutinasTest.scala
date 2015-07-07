@@ -8,9 +8,9 @@ import scala.util.Failure
 class RutinaTest extends FunSuite {
 
   val fixture = Fixt
-  val rutinaDeConsumo = new Rutina("rutina de consumo", List(activity.usarPocion, activity.usarAntidoto))
-  val rutinaLarga = new Rutina("rutina larga", List(activity.comerZinc, activity.comerCalcio, activity.comerHierro, activity.usarPocion))
-  val rutinaConDescanso = new Rutina("rutina con descanso", List(activity.comerCalcio, activity.usarAntidoto, activity.descansar, activity.comerHierro, activity.usarPocion))
+  val rutinaDeConsumo = new Rutina("rutina de consumo", List(UsarPocion, UsarAntidoto))
+  val rutinaLarga = new Rutina("rutina larga", List(ComerZinc, ComerCalcio, ComerHierro, UsarPocion))
+  val rutinaConDescanso = new Rutina("rutina con descanso", List(ComerCalcio, UsarAntidoto, Descansar, ComerHierro, UsarPocion))
 
   test("un charmander realiza una rutina de consumo y se cura y ademas aumenta su energia") {
 
