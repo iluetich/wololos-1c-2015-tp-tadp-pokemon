@@ -102,6 +102,38 @@ case class Pokemon(
         pokeAfectado.modificaEnergia(-minutos).aumentaExperiencia(minutos * 200)
     }
   }
+  
+  def levantaSiPodes(kg: Int): Pokemon = {
+    if (this.podesLevantar(kg)) {
+      (this.tipoPrincipal, this.tipoSecundario) match {
+        case (Pelea, _) | (_, Pelea) => this.aumentaExperiencia(kg * 2)
+        case (Fantasma, _) | (_, Fantasma) => throw FantasmaNoPuedeLevantarPesas(this)
+        case _ => this.aumentaExperiencia(kg)
+      }
+    } else {
+      this.cambiaAEstado(Paralizado)
+    }
+  }
+  
+  def podesLevantar(kg: Int): Boolean = kg < (10 * this.fuerza + 1)
+
+  def aprenderAtaque(ataqueAAprender: (Ataque, Int, Int)): Pokemon = {
+    if (ataqueAAprender._1.tePuedeAprender(this))
+      this.modificaListaAtaque(ataqueAAprender :: this.listaAtaques)
+    else
+      this.cambiaAEstado(Ko)
+  }
+
+  def realizarAtaque(ataqueARealizar: Ataque): Pokemon = {
+    listaAtaques.find { case (ataque, pa, _) => ataque.equals(ataqueARealizar) && pa > 0 }
+      .fold { throw PokemonNoConoceMovONoTienePA(this) } { case (atk, _, _) => atk.teUtiliza(this) }
+  }
+  
+  def aprendeAtaque(ataqueAAprender: (Ataque,Int,Int)):Pokemon = ataqueAAprender._1.tipo match {
+     case Normal | this.tipoPrincipal | this.tipoSecundario => this.copy(listaAtaques = ataqueAAprender :: this.listaAtaques)
+     case _ => this.copy(estado = Ko)
+  }
+  
 
   def reducirPa(ataque: Ataque): Pokemon = {
     val listaAtaquesNueva = listaAtaques.map {
@@ -132,28 +164,12 @@ case class Pokemon(
         case actividad: Nadar => this.nadar(actividad.minutos)
         case actividad: LevantarPesas => this.estado match {
           case Paralizado => this.cambiaAEstado(Ko)
-          case _: EstadoPokemon => {
-            if (actividad.kg < (10 * this.fuerza + 1))
-              (this.tipoPrincipal, this.tipoSecundario) match {
-                case (Pelea, _) | (_, Pelea) => this.aumentaExperiencia(actividad.kg * 2)
-                case (Fantasma, _) | (_, Fantasma) => throw FantasmaNoPuedeLevantarPesas(this)
-                case _ => this.aumentaExperiencia(actividad.kg)
-              }
-            else
-              this.copy(estado = Paralizado)
-          }
+          case _: EstadoPokemon => this.levantaSiPodes(actividad.kg)
         }
-        case RealizarUnAtaque(ataqueARealizar) =>
-          listaAtaques.find { case (ataque, pa, _) => ataque.equals(ataqueARealizar) && pa > 0 }
-            .fold { throw PokemonNoConoceMovONoTienePA(this) } { case (atk, _, _) => atk.teUtiliza(this) }
-        case AprenderAtaque((ataque, pa, pamax)) => ataque.tipo match {
-          case Normal | this.tipoPrincipal | this.tipoSecundario => this.copy(listaAtaques = (ataque, pa, pamax) :: this.listaAtaques)
-          case _ => this.copy(estado = Ko)
-        }
-
+        case RealizarUnAtaque(ataqueARealizar) => this.realizarAtaque(ataqueARealizar)
+        case AprenderAtaque(ataqueAAprender) => this.aprendeAtaque(ataqueAAprender)
       }
     }
   }
-
 }
 
